@@ -24,11 +24,11 @@ export default function HomeScreen() {
             <Text style={styles.name}>Kaniz Fatema</Text>
           </View>
 
-          <Pressable style={styles.topIconBtn}>
+          <Pressable style={styles.topIconBtn} onPress={() => router.push("/(notifications)" as any)}>
             <Feather name="bell" size={22} color="#111827" />
           </Pressable>
 
-          <Pressable style={styles.topIconBtn}>
+          <Pressable style={styles.topIconBtn} onPress={() => router.push("/(settings)" as any)}>
             <Feather name="settings" size={22} color="#111827" />
           </Pressable>
         </View>
@@ -59,7 +59,7 @@ export default function HomeScreen() {
           <Text style={styles.checkNow}>Check now</Text>
         </View>
 
-        <Pressable style={styles.emergencyCard}>
+        <Pressable style={styles.emergencyCard} onPress={() => router.push("/(help)/emergency" as any)}>
           <View style={styles.emergencyIconBox}>
             <Feather name="alert-triangle" size={25} color="#fff" />
           </View>
@@ -93,6 +93,7 @@ export default function HomeScreen() {
             bg="#E7C7DC"
             iconBg="#F2DBEA"
             title="Checkup Reminder"
+            onPress={() => router.push("/(reminder)/reminder" as any)}
             icon={<Feather name="bell" size={26} color="#111827" />}
           />
 
@@ -100,6 +101,7 @@ export default function HomeScreen() {
             bg="#F4E8A6"
             iconBg="#FFF4C8"
             title="AI Chat"
+            onPress={() => router.push("/(chat)" as any)}
             icon={<Ionicons name="chatbubble-outline" size={27} color="#111827" />}
           />
 
@@ -107,6 +109,7 @@ export default function HomeScreen() {
             bg="#9FC5DF"
             iconBg="#C9E0EF"
             title="Medical Profile"
+            onPress={() => router.push("/(profile)/medicalProfile" as any)}
             icon={<Feather name="file-text" size={26} color="#111827" />}
           />
         </View>
