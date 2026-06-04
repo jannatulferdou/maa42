@@ -1,0 +1,133 @@
+import { router } from "expo-router";
+import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+
+export default function Login() {
+  return (
+    <View style={styles.container}>
+      <Pressable style={styles.backBtn} onPress={() => router.back()}>
+        <Text style={styles.backText}>‹</Text>
+      </Pressable>
+
+      <Text style={styles.title}>Check In</Text>
+      <Text style={styles.subtitle}>Continue your maternal care</Text>
+
+      <Text style={styles.label}>Email</Text>
+      <TextInput style={styles.input} placeholder="example@gmail.com" />
+
+      <Text style={styles.label}>Password</Text>
+      <TextInput style={styles.input} placeholder="••••••••••••" secureTextEntry />
+
+      <Text style={styles.forgot}>Forgot password?</Text>
+
+      <Pressable style={styles.primaryBtn} onPress={() => router.replace("/(tabs)" as any)}>
+        <Text style={styles.primaryText}>Continue</Text>
+      </Pressable>
+
+      <Text style={styles.or}>Or</Text>
+
+      <Pressable style={styles.googleBtn}>
+        <Text style={styles.googleText}>G  Sign in with Google</Text>
+      </Pressable>
+
+      <Text style={styles.bottomText}>
+        Don’t have an account?{" "}
+        <Text style={styles.link} onPress={() => router.push("/(auth)/register" as any)}>
+          Create account
+        </Text>
+      </Text>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#F5FAF9",
+    padding: 27,
+    paddingTop: 70,
+  },
+  backBtn: {
+    width: 52,
+    height: 52,
+    borderRadius: 26,
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 12,
+  },
+  backText: {
+    fontSize: 38,
+    color: "#263238",
+  },
+  title: {
+    fontSize: 22,
+    fontWeight: "700",
+    color: "#263238",
+  },
+  subtitle: {
+    color: "#7B8288",
+    marginTop: 4,
+    marginBottom: 45,
+  },
+  label: {
+    fontWeight: "600",
+    color: "#263238",
+    marginBottom: 8,
+  },
+  input: {
+    height: 54,
+    backgroundColor: "#fff",
+    borderWidth: 1,
+    borderColor: "#CFD8DC",
+    borderRadius: 12,
+    paddingHorizontal: 18,
+    fontSize: 16,
+    marginBottom: 22,
+  },
+  forgot: {
+    color: "#159B8D",
+    textAlign: "right",
+    fontWeight: "600",
+    marginBottom: 30,
+  },
+  primaryBtn: {
+    height: 56,
+    backgroundColor: "#32A99A",
+    borderRadius: 11,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  primaryText: {
+    color: "#fff",
+    fontSize: 17,
+    fontWeight: "700",
+  },
+  or: {
+    textAlign: "center",
+    color: "#8A8F95",
+    marginVertical: 24,
+  },
+  googleBtn: {
+    height: 54,
+    borderWidth: 1,
+    borderColor: "#32A99A",
+    borderRadius: 11,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#fff",
+  },
+  googleText: {
+    color: "#159B8D",
+    fontWeight: "700",
+    fontSize: 16,
+  },
+  bottomText: {
+    textAlign: "center",
+    color: "#8A8F95",
+    marginTop: 24,
+  },
+  link: {
+    color: "#159B8D",
+    fontWeight: "700",
+  },
+});
