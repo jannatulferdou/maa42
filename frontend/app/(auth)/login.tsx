@@ -19,7 +19,7 @@ export default function Login() {
 
       <Text style={styles.forgot}>Forgot password?</Text>
 
-      <Pressable style={styles.primaryBtn} onPress={() => router.replace("/(tabs)" as any)}>
+      <Pressable style={styles.primaryBtn} onPress={() => router.push("/(home)" as any)}>
         <Text style={styles.primaryText}>Continue</Text>
       </Pressable>
 

@@ -1,7 +1,17 @@
 import { router } from "expo-router";
+import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 
 export default function Onboarding() {
+  const { t, i18n } = useTranslation();
+  const [activeLang, setActiveLang] = useState(i18n.language || "en");
+
+  const changeLanguage = async (lang: "en" | "bn") => {
+    await i18n.changeLanguage(lang);
+    setActiveLang(lang);
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.imageBox}>
@@ -11,28 +21,33 @@ export default function Onboarding() {
         />
       </View>
 
-      <Text style={styles.title}>Welcome back, Kaniz</Text>
-      <Text style={styles.subtitle}>
-        Your maternal care companion{"\n"}for the first 42 days
-      </Text>
+      <Text style={styles.title}>{t("onboarding.title")}</Text>
 
-      <Text style={styles.label}>Choose language</Text>
+      <Text style={styles.subtitle}>{t("onboarding.subtitle")}</Text>
+
+      <Text style={styles.label}>{t("onboarding.chooseLanguage")}</Text>
 
       <View style={styles.langRow}>
-        <Pressable style={[styles.langBtn, styles.activeLang]}>
+        <Pressable
+          style={[styles.langBtn, activeLang === "en" && styles.activeLang]}
+          onPress={() => changeLanguage("en")}
+        >
           <Text style={styles.langText}>English</Text>
         </Pressable>
 
-        <Pressable style={styles.langBtn}>
+        <Pressable
+          style={[styles.langBtn, activeLang === "bn" && styles.activeLang]}
+          onPress={() => changeLanguage("bn")}
+        >
           <Text style={styles.langText}>বাংলা</Text>
         </Pressable>
       </View>
 
       <Pressable style={styles.primaryBtn} onPress={() => router.push("/login")}>
-        <Text style={styles.primaryText}>Get Started</Text>
+        <Text style={styles.primaryText}>{t("onboarding.getStarted")}</Text>
       </Pressable>
 
-      <Text style={styles.footer}>By continuing you agree to our care terms.</Text>
+      <Text style={styles.footer}>{t("onboarding.footer")}</Text>
     </View>
   );
 }
