@@ -44,7 +44,7 @@ export default function Register() {
         </Text>
       </View>
 
-      <Pressable style={styles.primaryBtn} onPress={() => router.replace("/(tabs)" as any)}>
+      <Pressable style={styles.primaryBtn} onPress={() => router.replace("/(home)" as any)}>
         <Text style={styles.primaryText}>Create Account</Text>
       </Pressable>
     </ScrollView>
