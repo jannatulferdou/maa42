@@ -1,7 +1,68 @@
+import useAuth from "@/hooks/useAuth";
 import { router } from "expo-router";
-import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import { useState } from "react";
+import {
+  Pressable,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
+import Toast from "react-native-toast-message";
 
 export default function Login() {
+  const { loginUser } = useAuth();
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const showToast = (
+    type: "success" | "error",
+    text1: string,
+    text2?: string
+  ) => {
+    Toast.show({
+      type,
+      text1,
+      text2,
+      position: "top",
+      visibilityTime: 2500,
+    });
+  };
+
+  const handleLogin = async () => {
+    if (!email.trim() || !password.trim()) {
+      showToast("error", "Missing Info", "Please enter email and password.");
+      return;
+    }
+
+    try {
+      await loginUser(email.trim(), password);
+
+      showToast("success", "Login Successful", "Welcome back.");
+
+      setTimeout(() => {
+        router.replace("/(home)" as any);
+      }, 800);
+    } catch (error: any) {
+      let message = error.message || "Login failed.";
+
+      if (
+        error.code === "auth/invalid-credential" ||
+        error.code === "auth/wrong-password" ||
+        error.code === "auth/user-not-found"
+      ) {
+        message = "Email or password is incorrect.";
+      }
+
+      if (error.code === "auth/invalid-email") {
+        message = "Please enter a valid email.";
+      }
+
+      showToast("error", "Login Failed", message);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <Pressable style={styles.backBtn} onPress={() => router.back()}>
@@ -12,26 +73,48 @@ export default function Login() {
       <Text style={styles.subtitle}>Continue your maternal care</Text>
 
       <Text style={styles.label}>Email</Text>
-      <TextInput style={styles.input} placeholder="example@gmail.com" />
+      <TextInput
+        style={styles.input}
+        placeholder="example@gmail.com"
+        value={email}
+        onChangeText={setEmail}
+        autoCapitalize="none"
+        keyboardType="email-address"
+      />
 
       <Text style={styles.label}>Password</Text>
-      <TextInput style={styles.input} placeholder="••••••••••••" secureTextEntry />
+      <TextInput
+        style={styles.input}
+        placeholder="••••••••••••"
+        value={password}
+        onChangeText={setPassword}
+        secureTextEntry
+        autoCapitalize="none"
+      />
 
       <Text style={styles.forgot}>Forgot password?</Text>
 
-      <Pressable style={styles.primaryBtn} onPress={() => router.replace("/(tabs)" as any)}>
+      <Pressable style={styles.primaryBtn} onPress={handleLogin}>
         <Text style={styles.primaryText}>Continue</Text>
       </Pressable>
 
       <Text style={styles.or}>Or</Text>
 
-      <Pressable style={styles.googleBtn}>
+      <Pressable
+        style={styles.googleBtn}
+        onPress={() =>
+          showToast("error", "Google Login", "Google login is not set up yet.")
+        }
+      >
         <Text style={styles.googleText}>G  Sign in with Google</Text>
       </Pressable>
 
       <Text style={styles.bottomText}>
         Don’t have an account?{" "}
-        <Text style={styles.link} onPress={() => router.push("/(auth)/register" as any)}>
+        <Text
+          style={styles.link}
+          onPress={() => router.push("/(auth)/register" as any)}
+        >
           Create account
         </Text>
       </Text>
@@ -55,25 +138,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginBottom: 12,
   },
-  backText: {
-    fontSize: 38,
-    color: "#263238",
-  },
-  title: {
-    fontSize: 22,
-    fontWeight: "700",
-    color: "#263238",
-  },
-  subtitle: {
-    color: "#7B8288",
-    marginTop: 4,
-    marginBottom: 45,
-  },
-  label: {
-    fontWeight: "600",
-    color: "#263238",
-    marginBottom: 8,
-  },
+  backText: { fontSize: 38, color: "#263238" },
+  title: { fontSize: 22, fontWeight: "700", color: "#263238" },
+  subtitle: { color: "#7B8288", marginTop: 4, marginBottom: 45 },
+  label: { fontWeight: "600", color: "#263238", marginBottom: 8 },
   input: {
     height: 54,
     backgroundColor: "#fff",
@@ -97,16 +165,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  primaryText: {
-    color: "#fff",
-    fontSize: 17,
-    fontWeight: "700",
-  },
-  or: {
-    textAlign: "center",
-    color: "#8A8F95",
-    marginVertical: 24,
-  },
+  primaryText: { color: "#fff", fontSize: 17, fontWeight: "700" },
+  or: { textAlign: "center", color: "#8A8F95", marginVertical: 24 },
   googleBtn: {
     height: 54,
     borderWidth: 1,
@@ -116,18 +176,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: "#fff",
   },
-  googleText: {
-    color: "#159B8D",
-    fontWeight: "700",
-    fontSize: 16,
-  },
-  bottomText: {
-    textAlign: "center",
-    color: "#8A8F95",
-    marginTop: 24,
-  },
-  link: {
-    color: "#159B8D",
-    fontWeight: "700",
-  },
+  googleText: { color: "#159B8D", fontWeight: "700", fontSize: 16 },
+  bottomText: { textAlign: "center", color: "#8A8F95", marginTop: 24 },
+  link: { color: "#159B8D", fontWeight: "700" },
 });
