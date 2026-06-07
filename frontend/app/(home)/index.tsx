@@ -1,12 +1,78 @@
+import useAuth from "@/hooks/useAuth";
 import {
   Feather,
   Ionicons,
   MaterialCommunityIcons,
 } from "@expo/vector-icons";
-import { Image, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { router } from "expo-router";
+import { useEffect, useState } from "react";
+import {
+  ActivityIndicator,
+  Image,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
+
+const API_URL = process.env.EXPO_PUBLIC_API_URL;
+
+type Profile = {
+  uid: string;
+  name: string;
+  email: string;
+  dateOfBirth?: string | null;
+  deliveryType?: string | null;
+  postpartumDay?: number | null;
+  emergencyContact?: string | null;
+};
 
 export default function HomeScreen() {
+  const { user, loading } = useAuth();
+
+  const [profile, setProfile] = useState<Profile | null>(null);
+  const [profileLoading, setProfileLoading] = useState(true);
+
+  useEffect(() => {
+    if (loading) return;
+
+    if (!user) {
+      router.replace("/(auth)/splash" as any);
+      return;
+    }
+
+    const fetchProfile = async () => {
+      try {
+        const res = await fetch(`${API_URL}/users/${user.uid}`);
+        const data = await res.json();
+
+        if (data?.success) {
+          setProfile(data.data);
+        }
+      } catch (error) {
+        console.log("Profile fetch error:", error);
+      } finally {
+        setProfileLoading(false);
+      }
+    };
+
+    fetchProfile();
+  }, [user, loading]);
+
+  if (loading || profileLoading) {
+    return (
+      <View style={styles.loader}>
+        <ActivityIndicator size="large" color="#32A99A" />
+      </View>
+    );
+  }
+
+  const name = profile?.name || user?.displayName || "Mother";
+  const postpartumDay = profile?.postpartumDay || 0;
+  const remainingDays = Math.max(42 - postpartumDay, 0);
+  const progressPercent = Math.min((postpartumDay / 42) * 100, 100);
+
   return (
     <View style={styles.screen}>
       <ScrollView
@@ -21,28 +87,39 @@ export default function HomeScreen() {
 
           <View style={styles.userBox}>
             <Text style={styles.welcome}>Welcome back,</Text>
-            <Text style={styles.name}>Kaniz Fatema</Text>
+            <Text style={styles.name}>{name}</Text>
           </View>
 
-          <Pressable style={styles.topIconBtn} onPress={() => router.push("/(notifications)" as any)}>
+          <Pressable
+            style={styles.topIconBtn}
+            onPress={() => router.push("/(notifications)" as any)}
+          >
             <Feather name="bell" size={22} color="#111827" />
           </Pressable>
 
-          <Pressable style={styles.topIconBtn} onPress={() => router.push("/(settings)" as any)}>
+          <Pressable
+            style={styles.topIconBtn}
+            onPress={() => router.push("/(settings)" as any)}
+          >
             <Feather name="settings" size={22} color="#111827" />
           </Pressable>
         </View>
 
         <View style={styles.journeyCard}>
           <Text style={styles.journeySmall}>Recovery journey</Text>
-          <Text style={styles.journeyTitle}>Day 07 of 42</Text>
+          <Text style={styles.journeyTitle}>Day {postpartumDay} of 42</Text>
 
           <View style={styles.progressTrack}>
-            <View style={styles.progressFill} />
+            <View
+              style={[
+                styles.progressFill,
+                { width: `${progressPercent}%` },
+              ]}
+            />
           </View>
 
           <Text style={styles.journeyText}>
-            35 days of postpartum care remaining
+            {remainingDays} days of postpartum care remaining
           </Text>
         </View>
 
@@ -53,20 +130,27 @@ export default function HomeScreen() {
 
           <View style={styles.statusTextBox}>
             <Text style={styles.statusSmall}>Today’s status</Text>
-            <Text style={styles.statusTitle}>Low Risk</Text>
+            <Text style={styles.statusTitle}>Not checked yet</Text>
           </View>
 
-          <Text style={styles.checkNow}>Check now</Text>
+          <Pressable onPress={() => router.push("/(health)/checkin" as any)}>
+            <Text style={styles.checkNow}>Check now</Text>
+          </Pressable>
         </View>
 
-        <Pressable style={styles.emergencyCard} onPress={() => router.push("/(help)/emergency" as any)}>
+        <Pressable
+          style={styles.emergencyCard}
+          onPress={() => router.push("/(help)/emergency" as any)}
+        >
           <View style={styles.emergencyIconBox}>
             <Feather name="alert-triangle" size={25} color="#fff" />
           </View>
 
           <View style={styles.emergencyTextBox}>
             <Text style={styles.emergencyTitle}>Emergency Help</Text>
-            <Text style={styles.emergencySub}>Tap for immediate support</Text>
+            <Text style={styles.emergencySub}>
+              {profile?.emergencyContact || "Tap for immediate support"}
+            </Text>
           </View>
 
           <Feather name="phone-call" size={25} color="#fff" />
@@ -102,7 +186,13 @@ export default function HomeScreen() {
             iconBg="#FFF4C8"
             title="AI Chat"
             onPress={() => router.push("/(chat)" as any)}
-            icon={<Ionicons name="chatbubble-outline" size={27} color="#111827" />}
+            icon={
+              <Ionicons
+                name="chatbubble-outline"
+                size={27}
+                color="#111827"
+              />
+            }
           />
 
           <ToolCard
@@ -116,11 +206,27 @@ export default function HomeScreen() {
       </ScrollView>
 
       <View style={styles.bottomNav}>
-        <NavItem label="Health" icon="emoticon-happy-outline" />
-        <NavItem label="Reminder" featherIcon="bell" />
+        <NavItem
+          label="Health"
+          icon="emoticon-happy-outline"
+          onPress={() => router.push("/(health)/checkin" as any)}
+        />
+        <NavItem
+          label="Reminder"
+          featherIcon="bell"
+          onPress={() => router.push("/(reminder)/reminder" as any)}
+        />
         <NavItem label="Home" featherIcon="home" active />
-        <NavItem label="Chat" ionIcon="chatbubble-outline" />
-        <NavItem label="Profile" featherIcon="file-text" />
+        <NavItem
+          label="Chat"
+          ionIcon="chatbubble-outline"
+          onPress={() => router.push("/(chat)" as any)}
+        />
+        <NavItem
+          label="Profile"
+          featherIcon="file-text"
+          onPress={() => router.push("/(profile)/medicalProfile" as any)}
+        />
       </View>
     </View>
   );
@@ -140,7 +246,10 @@ function ToolCard({
   onPress?: () => void;
 }) {
   return (
-    <Pressable style={[styles.toolCard, { backgroundColor: bg }]} onPress={onPress}>
+    <Pressable
+      style={[styles.toolCard, { backgroundColor: bg }]}
+      onPress={onPress}
+    >
       <View style={[styles.toolIconBox, { backgroundColor: iconBg }]}>
         {icon}
       </View>
@@ -155,29 +264,36 @@ function NavItem({
   featherIcon,
   ionIcon,
   active,
+  onPress,
 }: {
   label: string;
   icon?: any;
   featherIcon?: any;
   ionIcon?: any;
   active?: boolean;
+  onPress?: () => void;
 }) {
   const color = active ? "#2FA99A" : "#A7AFB3";
 
   return (
-    <View style={styles.navItem}>
-      {icon && (
-        <MaterialCommunityIcons name={icon} size={23} color={color} />
-      )}
+    <Pressable style={styles.navItem} onPress={onPress}>
+      {icon && <MaterialCommunityIcons name={icon} size={23} color={color} />}
       {featherIcon && <Feather name={featherIcon} size={23} color={color} />}
       {ionIcon && <Ionicons name={ionIcon} size={23} color={color} />}
 
       <Text style={[styles.navLabel, { color }]}>{label}</Text>
-    </View>
+    </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
+  loader: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#F5FAF9",
+  },
+
   screen: {
     flex: 1,
     backgroundColor: "#F5FAF9",
@@ -261,7 +377,6 @@ const styles = StyleSheet.create({
   },
 
   progressFill: {
-    width: "18%",
     height: "100%",
     backgroundColor: "#fff",
     borderRadius: 999,
