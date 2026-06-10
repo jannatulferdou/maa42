@@ -41,8 +41,25 @@ const getUserByUid = async (req: Request, res: Response) => {
   }
 };
 
+const updateUser = async (req: Request, res: Response) => {
+  try {
+    const result = await UserService.updateUser(req.params.uid as string, req.body);
+
+    res.status(200).json({
+      success: true,
+      message: "User updated successfully",
+      data: result,
+    });
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      message: error.message || "User update failed",
+    });
+  }
+};
 
 export const UserController = {
   createUser,
   getUserByUid,
+  updateUser,
 };
