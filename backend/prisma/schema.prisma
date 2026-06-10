@@ -15,18 +15,52 @@ datasource db {
 }
 
 model User {
-  id               Int      @id @default(autoincrement())
-  uid              String   @unique
-  name             String
-  email            String   @unique
+  id    Int    @id @default(autoincrement())
+  uid   String @unique
+  name  String
+  email String @unique
 
-  dateOfBirth      String?
-  deliveryType     String?
-  postpartumDay    Int?
+  profileImage String?
+  dateOfBirth  String?
+  age          Int?
+  gender       String?
+  bloodGroup   String?
+
+  childbirthDate String?
+  deliveryType   String?
+  postpartumDay  Int?
+
+  previousComplications    String?
+  existingHealthConditions String?
+  currentMedicines         String?
+
+  doctor           String?
+  clinic           String?
   emergencyContact String?
 
-  role             String   @default("mother")
+  role String @default("mother")
 
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  shareWithDoctor    Boolean @default(true)
+  emergencyAccess     Boolean @default(true)
+  offlineSync        Boolean @default(true)
+  chatHistoryEnabled Boolean @default(true)
+  analyticsEnabled   Boolean @default(false)
+
+  notifications Notification[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+}
+
+model Notification {
+  id     Int @id @default(autoincrement())
+  userId Int
+
+  title    String
+  subtitle String
+  type     String?
+  isRead   Boolean @default(false)
+
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
