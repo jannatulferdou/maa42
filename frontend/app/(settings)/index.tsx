@@ -193,7 +193,7 @@ export default function SettingsScreen() {
         <SettingRow
           icon="user"
           label="Edit profile"
-          onPress={() => router.push("/(profile)/medicalProfile" as any)}
+          onPress={() => router.push("/(profile)/editProfile" as any)}
         />
 
         <SettingRow
@@ -251,7 +251,7 @@ export default function SettingsScreen() {
           icon="shield"
           label="Privacy settings"
           onPress={() =>
-            showToast("info", "Privacy", "Privacy settings coming soon.")
+            router.push("/(settings)/privacySettings" as any)
           }
         />
 

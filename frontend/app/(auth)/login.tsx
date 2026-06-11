@@ -10,6 +10,8 @@ import {
 } from "react-native";
 import Toast from "react-native-toast-message";
 
+const API_URL = process.env.EXPO_PUBLIC_API_URL;
+
 export default function Login() {
   const { loginUser } = useAuth();
 
@@ -36,10 +38,25 @@ export default function Login() {
       return;
     }
 
-    try {
-      await loginUser(email.trim(), password);
+    if (!API_URL) {
+      showToast("error", "API Error", "EXPO_PUBLIC_API_URL is missing.");
+      return;
+    }
 
-      showToast("success", "Login Successful", "Welcome back.");
+    try {
+      const credential = await loginUser(email.trim(), password);
+      const uid = credential.user.uid;
+
+      const res = await fetch(`${API_URL}/users/${uid}`);
+      const data = await res.json();
+
+      console.log("LOGIN USER PROFILE:", data);
+
+      if (!res.ok || !data?.success) {
+        throw new Error(data?.message || "User profile not found in backend.");
+      }
+
+      showToast("success", "Login Successful", `Welcome back, ${data.data.name}`);
 
       setTimeout(() => {
         router.replace("/(home)" as any);

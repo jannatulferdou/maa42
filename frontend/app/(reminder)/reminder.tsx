@@ -39,8 +39,18 @@ type Reminder = {
 const STORAGE_KEY = "maa42_reminders";
 
 const monthNames = [
-  "January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December",
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
 ];
 
 export default function ReminderScreen() {
@@ -63,23 +73,48 @@ export default function ReminderScreen() {
   )}-${String(selectedDate).padStart(2, "0")}`;
 
   useEffect(() => {
-    requestNotificationPermission();
-    loadReminders();
+    const setup = async () => {
+      await setupNotifications();
+      await loadReminders();
+    };
+
+    setup();
   }, []);
 
-  const requestNotificationPermission = async () => {
+  const setupNotifications = async () => {
     if (Platform.OS === "web") return;
+
+    if (Platform.OS === "android") {
+      await Notifications.setNotificationChannelAsync("default", {
+        name: "Default",
+        importance: Notifications.AndroidImportance.MAX,
+        sound: "default",
+        vibrationPattern: [0, 250, 250, 250],
+        lightColor: "#32A99A",
+      });
+    }
 
     const permission = await Notifications.getPermissionsAsync();
 
     if (!permission.granted) {
-      await Notifications.requestPermissionsAsync();
+      const request = await Notifications.requestPermissionsAsync();
+
+      if (!request.granted) {
+        Toast.show({
+          type: "error",
+          text1: "Notification permission denied",
+          text2: "Alarm notification will not work.",
+          position: "top",
+        });
+      }
     }
   };
 
   const loadReminders = async () => {
     const stored = await AsyncStorage.getItem(STORAGE_KEY);
-    if (stored) setReminders(JSON.parse(stored));
+    if (stored) {
+      setReminders(JSON.parse(stored));
+    }
   };
 
   const saveToStorage = async (data: Reminder[]) => {
@@ -108,6 +143,12 @@ export default function ReminderScreen() {
   const scheduleAlarm = async (reminder: Reminder) => {
     if (!reminder.alarm || Platform.OS === "web") return null;
 
+    const permission = await Notifications.getPermissionsAsync();
+
+    if (!permission.granted) {
+      throw new Error("Notification permission is not granted.");
+    }
+
     const triggerDate = parseReminderDate(reminder.date, reminder.time);
 
     if (!triggerDate) {
@@ -118,27 +159,33 @@ export default function ReminderScreen() {
       throw new Error("Please select a future date and time.");
     }
 
-    const trigger: any =
-      reminder.repeat === "Daily"
-        ? {
-            hour: triggerDate.getHours(),
-            minute: triggerDate.getMinutes(),
-            repeats: true,
-          }
-        : reminder.repeat === "Weekly"
-        ? {
-            weekday: triggerDate.getDay() + 1,
-            hour: triggerDate.getHours(),
-            minute: triggerDate.getMinutes(),
-            repeats: true,
-          }
-        : triggerDate;
+    let trigger: Notifications.NotificationTriggerInput;
+
+    if (reminder.repeat === "Daily") {
+      trigger = {
+        type: Notifications.SchedulableTriggerInputTypes.DAILY,
+        hour: triggerDate.getHours(),
+        minute: triggerDate.getMinutes(),
+      };
+    } else if (reminder.repeat === "Weekly") {
+      trigger = {
+        type: Notifications.SchedulableTriggerInputTypes.WEEKLY,
+        weekday: triggerDate.getDay() + 1,
+        hour: triggerDate.getHours(),
+        minute: triggerDate.getMinutes(),
+      };
+    } else {
+      trigger = {
+        type: Notifications.SchedulableTriggerInputTypes.DATE,
+        date: triggerDate,
+      };
+    }
 
     const notificationId = await Notifications.scheduleNotificationAsync({
       content: {
         title: "Maa42 Reminder",
         body: reminder.title,
-        sound: true,
+        sound: "default",
       },
       trigger,
     });
@@ -148,6 +195,7 @@ export default function ReminderScreen() {
 
   const cancelAlarm = async (notificationId?: string | null) => {
     if (!notificationId || Platform.OS === "web") return;
+
     await Notifications.cancelScheduledNotificationAsync(notificationId);
   };
 
@@ -180,6 +228,7 @@ export default function ReminderScreen() {
     } else {
       setCurrentMonth(currentMonth - 1);
     }
+
     setSelectedDate(1);
   };
 
@@ -190,6 +239,7 @@ export default function ReminderScreen() {
     } else {
       setCurrentMonth(currentMonth + 1);
     }
+
     setSelectedDate(1);
   };
 
@@ -233,6 +283,7 @@ export default function ReminderScreen() {
     try {
       if (editingId) {
         const oldReminder = reminders.find((item) => item.id === editingId);
+
         await cancelAlarm(oldReminder?.notificationId);
 
         const updatedReminder: Reminder = {
@@ -279,6 +330,7 @@ export default function ReminderScreen() {
       newReminder.notificationId = notificationId;
 
       const updated = [newReminder, ...reminders];
+
       await saveToStorage(updated);
       resetForm();
 
@@ -326,7 +378,11 @@ export default function ReminderScreen() {
         style: "destructive",
         onPress: async () => {
           await cancelAlarm(item.notificationId);
-          const updated = reminders.filter((reminder) => reminder.id !== item.id);
+
+          const updated = reminders.filter(
+            (reminder) => reminder.id !== item.id
+          );
+
           await saveToStorage(updated);
 
           if (editingId === item.id) resetForm();
@@ -351,6 +407,7 @@ export default function ReminderScreen() {
           <Pressable style={styles.backBtn} onPress={() => router.back()}>
             <Feather name="chevron-left" size={34} color="#263238" />
           </Pressable>
+
           <Text style={styles.headerTitle}>Reminder</Text>
         </View>
 
@@ -388,9 +445,7 @@ export default function ReminderScreen() {
                   disabled={item.muted}
                   onPress={() => setSelectedDate(item.day)}
                 >
-                  <View
-                    style={[styles.activeDay, active && styles.activeDayBg]}
-                  >
+                  <View style={[styles.activeDay, active && styles.activeDayBg]}>
                     <Text
                       style={[
                         styles.dayText,
@@ -418,6 +473,7 @@ export default function ReminderScreen() {
         <View style={styles.row}>
           <View style={styles.halfInput}>
             <Feather name="clock" size={22} color="#7A7F86" />
+
             <TextInput
               style={styles.timeInput}
               value={time}
@@ -429,14 +485,18 @@ export default function ReminderScreen() {
 
           <Pressable style={styles.halfInput} onPress={toggleRepeat}>
             <Feather name="refresh-cw" size={22} color="#7A7F86" />
+
             <Text style={styles.inputText}>{repeat}</Text>
+
             <Feather name="chevron-down" size={18} color="#7A7F86" />
           </Pressable>
         </View>
 
         <View style={styles.alarmBox}>
           <MaterialCommunityIcons name="alarm" size={26} color="#7A7F86" />
+
           <Text style={styles.alarmText}>Alarm</Text>
+
           <Switch
             value={alarm}
             onValueChange={setAlarm}
@@ -479,17 +539,21 @@ export default function ReminderScreen() {
           label="Health"
           onPress={() => router.push("/(health)/checkin" as any)}
         />
+
         <NavItem icon="bell-ring-outline" label="Reminder" active />
+
         <NavItem
           icon="home-outline"
           label="Home"
           onPress={() => router.push("/(home)" as any)}
         />
+
         <NavItem
           icon="chat-outline"
           label="Chat"
           onPress={() => router.push("/(chat)" as any)}
         />
+
         <NavItem
           icon="file-document-outline"
           label="Profile"
@@ -521,6 +585,7 @@ function ReminderItem({
 
       <View style={{ flex: 1 }}>
         <Text style={styles.reminderTitle}>{item.title}</Text>
+
         <Text style={styles.reminderSubtitle}>
           {item.date} • {item.time} • {item.repeat}
         </Text>
@@ -555,6 +620,7 @@ function NavItem({
         size={24}
         color={active ? "#2FA99A" : "#A7AFB3"}
       />
+
       <Text style={[styles.navLabel, active && { color: "#2FA99A" }]}>
         {label}
       </Text>
@@ -605,10 +671,7 @@ const styles = StyleSheet.create({
     fontWeight: "800",
     color: "#263238",
   },
-  weekRow: {
-    flexDirection: "row",
-    marginBottom: 8,
-  },
+  weekRow: { flexDirection: "row", marginBottom: 8 },
   weekText: {
     width: "14.28%",
     textAlign: "center",
@@ -750,9 +813,7 @@ const styles = StyleSheet.create({
     marginTop: 4,
     fontSize: 13,
   },
-  smallAction: {
-    padding: 8,
-  },
+  smallAction: { padding: 8 },
   bottomNav: {
     position: "absolute",
     left: 0,

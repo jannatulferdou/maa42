@@ -1,80 +1,176 @@
 import { Feather } from "@expo/vector-icons";
 import { router } from "expo-router";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { useEffect, useState } from "react";
+import {
+  ActivityIndicator,
+  Alert,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 
-const notifications = [
-  {
-    title: "AI health alert",
-    subtitle: "Mild headache pattern detected.",
-    time: "Yesterday",
-    icon: "alert-circle",
-    bg: "#FFECEF",
-    color: "#EF3340",
-    active: true,
-  },
-  {
-    title: "Upcoming checkup",
-    subtitle: "6-week postnatal visit at Ibn Sina.",
-    time: "Tomorrow • 9:00",
-    icon: "calendar",
-    bg: "#FFF1DF",
-    color: "#F5A623",
-    active: true,
-  },
-  {
-    title: "AI health alert",
-    subtitle: "Mild headache pattern detected.",
-    time: "Yesterday",
-    icon: "star",
-    bg: "#E1F7F3",
-    color: "#2FA99A",
-  },
-  {
-    title: "Emergency follow-up",
-    subtitle: "Mild headache pattern detected.",
-    time: "May 15",
-    icon: "phone",
-    bg: "#FFECEF",
-    color: "#EF3340",
-  },
-  {
-    title: "Reminder completed",
-    subtitle: "Iron supplement taken.",
-    time: "May 1",
-    icon: "check-square",
-    bg: "#E8F8EE",
-    color: "#35B66A",
-  },
-];
+const API_URL = process.env.EXPO_PUBLIC_API_URL;
+
+type NotificationItem = {
+  id: number;
+  userId: number;
+  title: string;
+  subtitle: string;
+  type?: string | null;
+  isRead: boolean;
+  createdAt: string;
+};
+
+const USER_ID = 1; // পরে logged in user id বসাবেন
 
 export default function NotificationsScreen() {
+  const [notifications, setNotifications] = useState<NotificationItem[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const getIcon = (type?: string | null) => {
+    if (type === "alert") return "alert-circle";
+    if (type === "checkup") return "calendar";
+    if (type === "emergency") return "phone";
+    if (type === "completed") return "check-square";
+    return "bell";
+  };
+
+  const getColor = (type?: string | null) => {
+    if (type === "alert") return { bg: "#FFECEF", color: "#EF3340" };
+    if (type === "checkup") return { bg: "#FFF1DF", color: "#F5A623" };
+    if (type === "emergency") return { bg: "#FFECEF", color: "#EF3340" };
+    if (type === "completed") return { bg: "#E8F8EE", color: "#35B66A" };
+    return { bg: "#E1F7F3", color: "#2FA99A" };
+  };
+
+  const fetchNotifications = async () => {
+    try {
+      setLoading(true);
+
+      const res = await fetch(`${API_URL}/notifications/${USER_ID}`);
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || "Failed to load notifications");
+      }
+
+      setNotifications(data.data || []);
+    } catch (error: any) {
+      Alert.alert("Error", error.message || "Something went wrong");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const markAsRead = async (id: number) => {
+    try {
+      await fetch(`${API_URL}/notifications/${id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ isRead: true }),
+      });
+
+      setNotifications((prev) =>
+        prev.map((item) =>
+          item.id === id ? { ...item, isRead: true } : item
+        )
+      );
+    } catch {
+      Alert.alert("Error", "Failed to update notification");
+    }
+  };
+
+  const deleteNotification = async (id: number) => {
+    try {
+      await fetch(`${API_URL}/notifications/${id}`, {
+        method: "DELETE",
+      });
+
+      setNotifications((prev) => prev.filter((item) => item.id !== id));
+    } catch {
+      Alert.alert("Error", "Failed to delete notification");
+    }
+  };
+
+  useEffect(() => {
+    fetchNotifications();
+  }, []);
+
   return (
     <View style={styles.screen}>
       <View style={styles.header}>
         <Pressable style={styles.backBtn} onPress={() => router.back()}>
           <Feather name="chevron-left" size={34} color="#263238" />
         </Pressable>
+
         <Text style={styles.headerTitle}>Notifications</Text>
       </View>
 
-      {notifications.map((item) => (
-        <View key={`${item.title}-${item.time}`} style={styles.wrapper}>
-          {item.active && <View style={styles.activeLine} />}
+      {loading ? (
+        <ActivityIndicator size="large" color="#32A99A" />
+      ) : (
+        <ScrollView showsVerticalScrollIndicator={false}>
+          {notifications.length === 0 ? (
+            <Text style={styles.emptyText}>No notifications found</Text>
+          ) : (
+            notifications.map((item) => {
+              const theme = getColor(item.type);
 
-          <View style={styles.card}>
-            <View style={[styles.iconBox, { backgroundColor: item.bg }]}>
-              <Feather name={item.icon as any} size={23} color={item.color} />
-            </View>
+              return (
+                <Pressable
+                  key={item.id}
+                  style={styles.wrapper}
+                  onPress={() => markAsRead(item.id)}
+                  onLongPress={() =>
+                    Alert.alert(
+                      "Delete notification?",
+                      "Are you sure you want to delete this notification?",
+                      [
+                        { text: "Cancel", style: "cancel" },
+                        {
+                          text: "Delete",
+                          style: "destructive",
+                          onPress: () => deleteNotification(item.id),
+                        },
+                      ]
+                    )
+                  }
+                >
+                  {!item.isRead && <View style={styles.activeLine} />}
 
-            <View style={styles.textBox}>
-              <Text style={styles.title}>{item.title}</Text>
-              <Text style={styles.subtitle}>{item.subtitle}</Text>
-            </View>
+                  <View style={styles.card}>
+                    <View
+                      style={[
+                        styles.iconBox,
+                        { backgroundColor: theme.bg },
+                      ]}
+                    >
+                      <Feather
+                        name={getIcon(item.type) as any}
+                        size={23}
+                        color={theme.color}
+                      />
+                    </View>
 
-            <Text style={styles.time}>{item.time}</Text>
-          </View>
-        </View>
-      ))}
+                    <View style={styles.textBox}>
+                      <Text style={styles.title}>{item.title}</Text>
+                      <Text style={styles.subtitle}>{item.subtitle}</Text>
+                    </View>
+
+                    <Text style={styles.time}>
+                      {new Date(item.createdAt).toLocaleDateString()}
+                    </Text>
+                  </View>
+                </Pressable>
+              );
+            })
+          )}
+        </ScrollView>
+      )}
     </View>
   );
 }
@@ -120,10 +216,11 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 10,
   },
   card: {
-    height: 72,
+    minHeight: 72,
     borderRadius: 10,
     backgroundColor: "#fff",
     paddingHorizontal: 13,
+    paddingVertical: 12,
     flexDirection: "row",
     alignItems: "center",
   },
@@ -151,7 +248,13 @@ const styles = StyleSheet.create({
   time: {
     color: "#6F747B",
     fontSize: 11,
-    alignSelf: "flex-start",
-    marginTop: 19,
+    marginLeft: 8,
+  },
+  emptyText: {
+    textAlign: "center",
+    marginTop: 40,
+    color: "#8A8F95",
+    fontSize: 15,
+    fontWeight: "600",
   },
 });
