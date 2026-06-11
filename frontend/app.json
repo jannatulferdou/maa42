@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Maa42",
-    "slug": "maa42",
+    "slug": "frontend",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/fllower.png",
