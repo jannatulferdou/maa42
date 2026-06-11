@@ -1,8 +1,185 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Feather } from "@expo/vector-icons";
 import { router } from "expo-router";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { deleteUser, sendPasswordResetEmail } from "firebase/auth";
+import { useEffect, useState } from "react";
+import {
+  Alert,
+  Pressable,
+  StyleSheet,
+  Switch,
+  Text,
+  View,
+} from "react-native";
+import Toast from "react-native-toast-message";
+
+import { auth } from "@/config/firebase.config";
+import useAuth from "@/hooks/useAuth";
+
+const LANGUAGE_KEY = "maa42_language";
+const NOTIFICATION_KEY = "maa42_notification_enabled";
+const OFFLINE_SYNC_KEY = "maa42_offline_sync_enabled";
 
 export default function SettingsScreen() {
+  const { user, logoutUser } = useAuth();
+
+  const [language, setLanguage] = useState<"en" | "bn">("en");
+  const [notificationEnabled, setNotificationEnabled] = useState(true);
+  const [offlineSyncEnabled, setOfflineSyncEnabled] = useState(true);
+
+  useEffect(() => {
+    loadSettings();
+  }, []);
+
+  const showToast = (
+    type: "success" | "error" | "info",
+    text1: string,
+    text2?: string
+  ) => {
+    Toast.show({
+      type,
+      text1,
+      text2,
+      position: "top",
+      visibilityTime: 2500,
+    });
+  };
+
+  const loadSettings = async () => {
+    const savedLanguage = await AsyncStorage.getItem(LANGUAGE_KEY);
+    const savedNotification = await AsyncStorage.getItem(NOTIFICATION_KEY);
+    const savedOffline = await AsyncStorage.getItem(OFFLINE_SYNC_KEY);
+
+    if (savedLanguage === "bn" || savedLanguage === "en") {
+      setLanguage(savedLanguage);
+    }
+
+    if (savedNotification !== null) {
+      setNotificationEnabled(savedNotification === "true");
+    }
+
+    if (savedOffline !== null) {
+      setOfflineSyncEnabled(savedOffline === "true");
+    }
+  };
+
+  const handleLanguageChange = async (lang: "en" | "bn") => {
+    setLanguage(lang);
+    await AsyncStorage.setItem(LANGUAGE_KEY, lang);
+
+    showToast(
+      "success",
+      "Language Updated",
+      lang === "en" ? "English selected." : "বাংলা সিলেক্ট করা হয়েছে।"
+    );
+  };
+
+  const handleNotificationToggle = async (value: boolean) => {
+    setNotificationEnabled(value);
+    await AsyncStorage.setItem(NOTIFICATION_KEY, String(value));
+
+    showToast(
+      "success",
+      "Notification Settings",
+      value ? "Notifications enabled." : "Notifications disabled."
+    );
+  };
+
+  const handleOfflineToggle = async (value: boolean) => {
+    setOfflineSyncEnabled(value);
+    await AsyncStorage.setItem(OFFLINE_SYNC_KEY, String(value));
+
+    showToast(
+      "success",
+      "Offline Sync",
+      value ? "Offline sync enabled." : "Offline sync disabled."
+    );
+  };
+
+  const handleChangePassword = async () => {
+    if (!user?.email) {
+      showToast("error", "No Email Found", "Please login again.");
+      return;
+    }
+
+    try {
+      await sendPasswordResetEmail(auth, user.email);
+
+      showToast(
+        "success",
+        "Reset Email Sent",
+        "Check your email to change password."
+      );
+    } catch (error: any) {
+      showToast(
+        "error",
+        "Password Reset Failed",
+        error.message || "Something went wrong."
+      );
+    }
+  };
+
+  const handleLogout = () => {
+    Alert.alert("Logout", "Are you sure you want to logout?", [
+      { text: "Cancel" },
+      {
+        text: "Logout",
+        style: "destructive",
+        onPress: async () => {
+          try {
+            await logoutUser();
+
+            showToast("success", "Logged Out", "You have been logged out.");
+
+            setTimeout(() => {
+              router.replace("/(auth)/login" as any);
+            }, 700);
+          } catch (error: any) {
+            showToast("error", "Logout Failed", error.message);
+          }
+        },
+      },
+    ]);
+  };
+
+  const handleDeleteAccount = () => {
+    Alert.alert(
+      "Delete Account",
+      "This will permanently delete your Firebase account. Are you sure?",
+      [
+        { text: "Cancel" },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: async () => {
+            try {
+              const currentUser = auth.currentUser;
+
+              if (!currentUser) {
+                showToast("error", "No User Found", "Please login again.");
+                return;
+              }
+
+              await deleteUser(currentUser);
+
+              showToast("success", "Account Deleted");
+
+              setTimeout(() => {
+                router.replace("/(auth)/register" as any);
+              }, 700);
+            } catch (error: any) {
+              showToast(
+                "error",
+                "Delete Failed",
+                "Please logout and login again before deleting account."
+              );
+            }
+          },
+        },
+      ]
+    );
+  };
+
   return (
     <View style={styles.screen}>
       <View style={styles.header}>
@@ -13,8 +190,18 @@ export default function SettingsScreen() {
       </View>
 
       <View style={styles.card}>
-        <SettingRow icon="user" label="Edit profile" />
-        <SettingRow icon="lock" label="Change password" last />
+        <SettingRow
+          icon="user"
+          label="Edit profile"
+          onPress={() => router.push("/(profile)/editProfile" as any)}
+        />
+
+        <SettingRow
+          icon="lock"
+          label="Change password"
+          onPress={handleChangePassword}
+          last
+        />
       </View>
 
       <View style={styles.card}>
@@ -24,29 +211,66 @@ export default function SettingsScreen() {
         </View>
 
         <View style={styles.langRow}>
-          <Pressable style={[styles.langBtn, styles.langActive]}>
-            <Text style={styles.langActiveText}>English</Text>
+          <Pressable
+            style={[styles.langBtn, language === "en" && styles.langActive]}
+            onPress={() => handleLanguageChange("en")}
+          >
+            <Text
+              style={
+                language === "en" ? styles.langActiveText : styles.langText
+              }
+            >
+              English
+            </Text>
           </Pressable>
 
-          <Pressable style={styles.langBtn}>
-            <Text style={styles.langText}>বাংলা</Text>
+          <Pressable
+            style={[styles.langBtn, language === "bn" && styles.langActive]}
+            onPress={() => handleLanguageChange("bn")}
+          >
+            <Text
+              style={
+                language === "bn" ? styles.langActiveText : styles.langText
+              }
+            >
+              বাংলা
+            </Text>
           </Pressable>
         </View>
       </View>
 
       <View style={styles.card}>
-        <SettingRow icon="bell" label="Notification settings" />
-        <SettingRow icon="shield" label="Privacy settings" />
-        <SettingRow icon="wifi" label="Offline sync settings" last />
+        <SettingSwitchRow
+          icon="bell"
+          label="Notification settings"
+          value={notificationEnabled}
+          onValueChange={handleNotificationToggle}
+        />
+
+        <SettingRow
+          icon="shield"
+          label="Privacy settings"
+          onPress={() =>
+            router.push("/(settings)/privacySettings" as any)
+          }
+        />
+
+        <SettingSwitchRow
+          icon="wifi"
+          label="Offline sync settings"
+          value={offlineSyncEnabled}
+          onValueChange={handleOfflineToggle}
+          last
+        />
       </View>
 
-      <Pressable style={styles.deleteCard}>
+      <Pressable style={styles.deleteCard} onPress={handleDeleteAccount}>
         <Feather name="trash-2" size={23} color="#EF3340" />
         <Text style={styles.deleteText}>Delete account</Text>
         <Feather name="chevron-right" size={25} color="#EF3340" />
       </Pressable>
 
-      <Pressable style={styles.logoutBtn}>
+      <Pressable style={styles.logoutBtn} onPress={handleLogout}>
         <Feather name="log-out" size={24} color="#EF3340" />
         <Text style={styles.logoutText}>Logout</Text>
       </Pressable>
@@ -58,17 +282,49 @@ function SettingRow({
   icon,
   label,
   last,
+  onPress,
 }: {
   icon: keyof typeof Feather.glyphMap;
   label: string;
   last?: boolean;
+  onPress?: () => void;
 }) {
   return (
-    <Pressable style={[styles.settingRow, last && styles.noBorder]}>
+    <Pressable
+      style={[styles.settingRow, last && styles.noBorder]}
+      onPress={onPress}
+    >
       <Feather name={icon} size={22} color="#111827" />
       <Text style={styles.settingText}>{label}</Text>
       <Feather name="chevron-right" size={25} color="#111827" />
     </Pressable>
+  );
+}
+
+function SettingSwitchRow({
+  icon,
+  label,
+  value,
+  last,
+  onValueChange,
+}: {
+  icon: keyof typeof Feather.glyphMap;
+  label: string;
+  value: boolean;
+  last?: boolean;
+  onValueChange: (value: boolean) => void;
+}) {
+  return (
+    <View style={[styles.settingRow, last && styles.noBorder]}>
+      <Feather name={icon} size={22} color="#111827" />
+      <Text style={styles.settingText}>{label}</Text>
+      <Switch
+        value={value}
+        onValueChange={onValueChange}
+        trackColor={{ false: "#D1D5DB", true: "#32A99A" }}
+        thumbColor="#fff"
+      />
+    </View>
   );
 }
 
@@ -106,7 +362,7 @@ const styles = StyleSheet.create({
     marginBottom: 25,
   },
   settingRow: {
-    height: 40,
+    height: 48,
     borderBottomWidth: 1,
     borderBottomColor: "#D8E0E0",
     flexDirection: "row",

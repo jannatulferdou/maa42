@@ -14,19 +14,7 @@ export default function RootLayout() {
   return (
     <AuthProvider>
       <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-        <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="(auth)" />
-          <Stack.Screen name="(home)" />
-          <Stack.Screen name="(tabs)" />
-          <Stack.Screen name="(chat)" />
-          <Stack.Screen name="(health)" />
-          <Stack.Screen name="(help)" />
-          <Stack.Screen name="(notifications)" />
-          <Stack.Screen name="(profile)" />
-          <Stack.Screen name="(reminder)" />
-          <Stack.Screen name="(settings)" />
-        </Stack>
-
+        <Stack screenOptions={{ headerShown: false }} />
         <StatusBar style="auto" />
         <Toast />
       </ThemeProvider>
