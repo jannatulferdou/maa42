@@ -47,6 +47,7 @@ model User {
   analyticsEnabled   Boolean @default(false)
 
   notifications Notification[]
+  healthCheckins HealthCheckin[]
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
 }
@@ -59,6 +60,23 @@ model Notification {
   subtitle String
   type     String?
   isRead   Boolean @default(false)
+
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model HealthCheckin {
+  id       Int @id @default(autoincrement())
+  userId   Int
+
+  symptoms String[]
+  severity String
+  notes    String?
+
+  risk      String
+  reason    String
+  nextSteps String[]
 
   createdAt DateTime @default(now())
 
