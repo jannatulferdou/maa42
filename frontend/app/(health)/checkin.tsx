@@ -1,22 +1,97 @@
 import { Feather, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { useState } from "react";
+import {
+  ActivityIndicator,
+  Alert,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
+
+const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
 const symptoms = [
-  { title: "Feeling well", icon: "emoticon-happy-outline", type: "mc", active: true, color: "#2FA99A", bg: "#E1F7F3" },
-  { title: "Fever", icon: "thermometer", type: "feather" },
-  { title: "Heavy bleeding", icon: "drop", type: "feather" },
-  { title: "Weakness", icon: "wind", type: "feather" },
-  { title: "Dizziness", icon: "zap", type: "feather", active: true, color: "#F5A623", bg: "#FFF1D8" },
-  { title: "Sadness", icon: "frown-outline", type: "ion" },
-  { title: "Swelling", icon: "wind", type: "feather" },
-  { title: "Pain", icon: "zap", type: "feather", active: true, color: "#EF3340", bg: "#FFE7E8" },
-  { title: "Headache", icon: "frown-outline", type: "ion" },
-  { title: "Infection signs", icon: "wind", type: "feather" },
-  { title: "Trouble feeding", icon: "zap", type: "feather" },
+  { title: "Feeling well", icon: "emoticon-happy-outline", type: "mc", color: "#2FA99A", bg: "#E1F7F3" },
+  { title: "Fever", icon: "thermometer", type: "feather", color: "#EF3340", bg: "#FFE7E8" },
+  { title: "Heavy bleeding", icon: "drop", type: "feather", color: "#EF3340", bg: "#FFE7E8" },
+  { title: "Weakness", icon: "wind", type: "feather", color: "#F5A623", bg: "#FFF1D8" },
+  { title: "Dizziness", icon: "zap", type: "feather", color: "#F5A623", bg: "#FFF1D8" },
+  { title: "Sadness", icon: "frown-outline", type: "ion", color: "#7A7F86", bg: "#F1F4F5" },
+  { title: "Swelling", icon: "wind", type: "feather", color: "#F5A623", bg: "#FFF1D8" },
+  { title: "Pain", icon: "zap", type: "feather", color: "#EF3340", bg: "#FFE7E8" },
+  { title: "Headache", icon: "frown-outline", type: "ion", color: "#F5A623", bg: "#FFF1D8" },
+  { title: "Infection signs", icon: "wind", type: "feather", color: "#EF3340", bg: "#FFE7E8" },
+  { title: "Trouble feeding", icon: "zap", type: "feather", color: "#F5A623", bg: "#FFF1D8" },
 ];
 
 export default function Checkin() {
+  const [selectedSymptoms, setSelectedSymptoms] = useState<string[]>([]);
+  const [severity, setSeverity] = useState("Mild");
+  const [notes, setNotes] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const userId = 1; // pore login user er database id boshaben
+
+  const toggleSymptom = (title: string) => {
+    setSelectedSymptoms((prev) =>
+      prev.includes(title)
+        ? prev.filter((item) => item !== title)
+        : [...prev, title]
+    );
+  };
+
+  const handleSubmit = async () => {
+    if (!API_URL) {
+      Alert.alert("Error", "EXPO_PUBLIC_API_URL missing in .env.local");
+      return;
+    }
+
+    if (selectedSymptoms.length === 0) {
+      Alert.alert("Required", "Please select at least one symptom.");
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      const res = await fetch(`${API_URL}/checkins`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId,
+          symptoms: selectedSymptoms,
+          severity,
+          notes,
+        }),
+      });
+
+      const result = await res.json();
+
+      if (!res.ok) {
+        throw new Error(result.message || "Checkin failed");
+      }
+
+      const data = result.data;
+
+      router.push({
+        pathname: "/(health)/summary",
+        params: {
+          risk: data.risk,
+          reason: data.reason,
+          nextSteps: JSON.stringify(data.nextSteps),
+        },
+      } as any);
+    } catch (error: any) {
+      Alert.alert("Error", error.message || "Something went wrong");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <View style={styles.screen}>
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
@@ -28,35 +103,58 @@ export default function Checkin() {
         </View>
 
         <View style={styles.grid}>
-          {symptoms.map((item) => (
-            <Pressable
-              key={item.title}
-              style={[
-                styles.symptomCard,
-                item.active && { backgroundColor: item.bg, borderColor: item.color },
-              ]}
-            >
-              {item.type === "mc" && <MaterialCommunityIcons name={item.icon as any} size={25} color={item.color || "#7A7F86"} />}
-              {item.type === "feather" && <Feather name={item.icon as any} size={25} color={item.color || "#7A7F86"} />}
-              {item.type === "ion" && <Ionicons name={item.icon as any} size={25} color={item.color || "#7A7F86"} />}
-              <Text style={[styles.symptomText, item.active && { color: item.color }]}>
-                {item.title}
-              </Text>
-            </Pressable>
-          ))}
+          {symptoms.map((item) => {
+            const active = selectedSymptoms.includes(item.title);
+
+            return (
+              <Pressable
+                key={item.title}
+                onPress={() => toggleSymptom(item.title)}
+                style={[
+                  styles.symptomCard,
+                  active && { backgroundColor: item.bg, borderColor: item.color },
+                ]}
+              >
+                {item.type === "mc" && (
+                  <MaterialCommunityIcons name={item.icon as any} size={25} color={active ? item.color : "#7A7F86"} />
+                )}
+                {item.type === "feather" && (
+                  <Feather name={item.icon as any} size={25} color={active ? item.color : "#7A7F86"} />
+                )}
+                {item.type === "ion" && (
+                  <Ionicons name={item.icon as any} size={25} color={active ? item.color : "#7A7F86"} />
+                )}
+
+                <Text style={[styles.symptomText, active && { color: item.color }]}>
+                  {item.title}
+                </Text>
+              </Pressable>
+            );
+          })}
         </View>
 
         <Text style={styles.label}>Severity</Text>
         <View style={styles.severityRow}>
-          <Pressable style={[styles.severityBtn, styles.activeSeverity]}>
-            <Text style={styles.activeSeverityText}>Mild</Text>
-          </Pressable>
-          <Pressable style={styles.severityBtn}>
-            <Text style={styles.severityText}>Moderate</Text>
-          </Pressable>
-          <Pressable style={styles.severityBtn}>
-            <Text style={styles.severityText}>Severe</Text>
-          </Pressable>
+          {["Mild", "Moderate", "Severe"].map((item) => (
+            <Pressable
+              key={item}
+              onPress={() => setSeverity(item)}
+              style={[
+                styles.severityBtn,
+                severity === item && styles.activeSeverity,
+              ]}
+            >
+              <Text
+                style={
+                  severity === item
+                    ? styles.activeSeverityText
+                    : styles.severityText
+                }
+              >
+                {item}
+              </Text>
+            </Pressable>
+          ))}
         </View>
 
         <Text style={styles.label}>Notes</Text>
@@ -64,11 +162,21 @@ export default function Checkin() {
           style={styles.notes}
           placeholder="Describe anything else..."
           multiline
+          value={notes}
+          onChangeText={setNotes}
           placeholderTextColor="#8A8F95"
         />
 
-        <Pressable style={styles.submitBtn} onPress={() => router.push("/(health)/summary" as any)}>
-          <Text style={styles.submitText}>Submit</Text>
+        <Pressable
+          style={[styles.submitBtn, loading && { opacity: 0.7 }]}
+          onPress={handleSubmit}
+          disabled={loading}
+        >
+          {loading ? (
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <Text style={styles.submitText}>Submit</Text>
+          )}
         </Pressable>
       </ScrollView>
 
@@ -80,24 +188,67 @@ export default function Checkin() {
 function BottomNav() {
   return (
     <View style={styles.bottomNav}>
-      <Nav icon={<MaterialCommunityIcons name="emoticon-happy-outline" size={24} color="#2FA99A" />} label="Health" active />
-      <Nav icon={<Feather name="bell" size={23} color="#A7AFB3" />} label="Reminder" />
-      <Nav icon={<Feather name="home" size={23} color="#A7AFB3" />} label="Home" />
-      <Nav icon={<Ionicons name="chatbubble-outline" size={23} color="#A7AFB3" />} label="Chat" />
-      <Nav icon={<Feather name="file-text" size={23} color="#A7AFB3" />} label="Profile" />
+      <NavItem
+        label="Health"
+        icon="emoticon-happy-outline"
+        active
+        onPress={() => router.push("/checkin" as any)}
+      />
+
+      <NavItem
+        label="Reminder"
+        featherIcon="bell"
+        onPress={() => router.push("/reminder" as any)}
+      />
+
+      <NavItem
+        label="Home"
+        featherIcon="home"
+        onPress={() => router.push("/" as any)}
+      />
+
+      <NavItem
+        label="Chat"
+        ionIcon="chatbubble-outline"
+        onPress={() => router.push("/(chat)" as any)}
+      />
+
+      <NavItem
+        label="Profile"
+        featherIcon="file-text"
+        onPress={() => router.push("/(profile)" as any)}
+      />
     </View>
   );
 }
 
-function Nav({ icon, label, active }: any) {
+function NavItem({
+  label,
+  icon,
+  featherIcon,
+  ionIcon,
+  active,
+  onPress,
+}: {
+  label: string;
+  icon?: any;
+  featherIcon?: any;
+  ionIcon?: any;
+  active?: boolean;
+  onPress?: () => void;
+}) {
+  const color = active ? "#2FA99A" : "#A7AFB3";
+
   return (
-    <View style={styles.navItem}>
-      {icon}
-      <Text style={[styles.navLabel, active && { color: "#2FA99A" }]}>{label}</Text>
-    </View>
+    <Pressable style={styles.navItem} onPress={onPress}>
+      {icon && <MaterialCommunityIcons name={icon} size={23} color={color} />}
+      {featherIcon && <Feather name={featherIcon} size={23} color={color} />}
+      {ionIcon && <Ionicons name={ionIcon} size={23} color={color} />}
+
+      <Text style={[styles.navLabel, { color }]}>{label}</Text>
+    </Pressable>
   );
 }
-
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: "#F5FAF9" },
   content: { paddingHorizontal: 27, paddingTop: 40, paddingBottom: 120 },

@@ -71,24 +71,67 @@ export default function AIChat() {
 function BottomNav() {
   return (
     <View style={styles.bottomNav}>
-      <Nav icon={<MaterialCommunityIcons name="emoticon-happy-outline" size={24} color="#A7AFB3" />} label="Health" />
-      <Nav icon={<Feather name="bell" size={23} color="#A7AFB3" />} label="Reminder" />
-      <Nav icon={<Feather name="home" size={23} color="#A7AFB3" />} label="Home" />
-      <Nav icon={<Ionicons name="chatbubble-outline" size={23} color="#2FA99A" />} label="Chat" active />
-      <Nav icon={<Feather name="file-text" size={23} color="#A7AFB3" />} label="Profile" />
+      <NavItem
+        label="Health"
+        icon="emoticon-happy-outline"
+        active
+        onPress={() => router.push("/checkin" as any)}
+      />
+
+      <NavItem
+        label="Reminder"
+        featherIcon="bell"
+        onPress={() => router.push("/reminder" as any)}
+      />
+
+      <NavItem
+        label="Home"
+        featherIcon="home"
+        onPress={() => router.push("/" as any)}
+      />
+
+      <NavItem
+        label="Chat"
+        ionIcon="chatbubble-outline"
+        onPress={() => router.push("/(chat)" as any)}
+      />
+
+      <NavItem
+        label="Profile"
+        featherIcon="file-text"
+        onPress={() => router.push("/(profile)" as any)}
+      />
     </View>
   );
 }
 
-function Nav({ icon, label, active }: any) {
+function NavItem({
+  label,
+  icon,
+  featherIcon,
+  ionIcon,
+  active,
+  onPress,
+}: {
+  label: string;
+  icon?: any;
+  featherIcon?: any;
+  ionIcon?: any;
+  active?: boolean;
+  onPress?: () => void;
+}) {
+  const color = active ? "#2FA99A" : "#A7AFB3";
+
   return (
-    <View style={styles.navItem}>
-      {icon}
-      <Text style={[styles.navLabel, active && { color: "#2FA99A" }]}>{label}</Text>
-    </View>
+    <Pressable style={styles.navItem} onPress={onPress}>
+      {icon && <MaterialCommunityIcons name={icon} size={23} color={color} />}
+      {featherIcon && <Feather name={featherIcon} size={23} color={color} />}
+      {ionIcon && <Ionicons name={ionIcon} size={23} color={color} />}
+
+      <Text style={[styles.navLabel, { color }]}>{label}</Text>
+    </Pressable>
   );
 }
-
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: "#F5FAF9", paddingTop: 42 },
   header: { flexDirection: "row", alignItems: "center", paddingHorizontal: 27 },
