@@ -1,5 +1,6 @@
 import { Feather, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
+import { fetch as expoFetch } from "expo/fetch";
 import { useEffect, useState } from "react";
 import {
   FlatList,
@@ -10,6 +11,7 @@ import {
   TextInput,
   View,
 } from "react-native";
+import useAuth from "@/hooks/useAuth";
 
 type Message = {
   id: string;
@@ -17,120 +19,158 @@ type Message = {
   text: string;
 };
 
+const API_URL = process.env.EXPO_PUBLIC_API_URL;
+
+const WELCOME: Message = {
+  id: "welcome",
+  role: "ai",
+  text: "Welcome to Maa42 🌸 I'm Sophia AI, your trusted maternal health companion. I can help monitor postpartum symptoms, assess potential risks, and guide you toward timely care. How are you feeling today?",
+};
+
 export default function AIChat() {
+  const { user } = useAuth();
+
   const [input, setInput] = useState("");
   const [thinking, setThinking] = useState(false);
-  const [thinkingText, setThinkingText] = useState(
-  "Sophia is thinking"
-);
-  const [questionCount, setQuestionCount] = useState(0);
+  const [sending, setSending] = useState(false);
+  const [thinkingText, setThinkingText] = useState("Sophia is thinking");
 
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: "1",
-      role: "ai",
-      text: "Welcome to Maa42 🌸 I'm Sophia AI, your trusted maternal health companion. I can help monitor postpartum symptoms, assess potential risks, and guide you toward timely care. How are you feeling today?",
-    },
-  ]);
+  const [messages, setMessages] = useState<Message[]>([WELCOME]);
 
-  const getAIResponse = (message: string) => {
-    const text = message.toLowerCase();
+  // Hydrate the current (still-active) session so reopening resumes the chat.
+  useEffect(() => {
+    if (!user?.uid || !API_URL) return;
 
-    if (text.includes("headache")) {
-      return "Headache can be common after childbirth, but if it is severe, persistent, or comes with blurred vision, swelling, or dizziness, please contact a healthcare provider.";
-    }
+    (async () => {
+      try {
+        const res = await fetch(`${API_URL}/chat/current/${user.uid}`);
+        const json = await res.json();
+        const history = json?.data?.messages ?? [];
+        if (history.length) {
+          setMessages(
+            history.map((m: { role: string; content: string }, i: number) => ({
+              id: `h-${i}`,
+              role: m.role === "assistant" ? "ai" : "user",
+              text: m.content,
+            }))
+          );
+        }
+      } catch {
+        // Keep the welcome message on failure.
+      }
+    })();
+  }, [user?.uid]);
 
-    if (text.includes("fever")) {
-      return "Fever may indicate an infection. Please monitor your temperature and contact a doctor or health worker if it continues.";
-    }
-
-    if (text.includes("bleeding")) {
-      return "Heavy bleeding is a maternal danger sign. Please seek urgent medical care or contact your emergency support immediately.";
-    }
-
-    if (text.includes("pain")) {
-      return "Pain can happen during recovery, but severe or increasing pain should be checked by a healthcare provider.";
-    }
-
-    if (text.includes("sad") || text.includes("cry")) {
-      return "Feeling emotional after childbirth can happen. If sadness continues or feels overwhelming, please talk to a trusted person or healthcare provider.";
-    }
-
-    return null;
+  const updateMessage = (id: string, text: string) => {
+    setMessages((prev) => prev.map((m) => (m.id === id ? { ...m, text } : m)));
   };
 
-  const handleSend = () => {
-    if (!input.trim() || thinking) return;
+  const handleSend = async () => {
+    if (!input.trim() || sending) return;
 
-    const userMessage = input.trim();
-
-    setMessages((prev) => [
-      ...prev,
-      {
-        id: Date.now().toString(),
-        role: "user",
-        text: userMessage,
-      },
-    ]);
-
-    setInput("");
-
-    const aiAnswer = getAIResponse(userMessage);
-
-    if (!aiAnswer) {
-      setThinking(true);
+    if (!API_URL || !user?.uid) {
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: `${Date.now()}-err`,
+          role: "ai",
+          text: "I can't reach the server right now. Please make sure you're logged in and try again.",
+        },
+      ]);
       return;
     }
 
-    const count = questionCount + 1;
-    setQuestionCount(count);
+    const userMessage = input.trim();
+    const aiId = `${Date.now()}-ai`;
 
-    const reply = {
-      id: `${Date.now()}-ai`,
-      role: "ai" as const,
-      text: aiAnswer,
-    };
+    setMessages((prev) => [
+      ...prev,
+      { id: Date.now().toString(), role: "user", text: userMessage },
+      { id: aiId, role: "ai", text: "" },
+    ]);
+    setInput("");
+    setSending(true);
+    setThinking(true);
 
-    if (count >= 3) {
-      setThinking(true);
+    let full = "";
+    try {
+      const res = await expoFetch(`${API_URL}/chat/message`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ uid: user.uid, message: userMessage }),
+      });
 
-      setTimeout(() => {
-        setThinking(false);
-        setMessages((prev) => [...prev, reply]);
-      }, 2000);
-    } else {
-      setMessages((prev) => [...prev, reply]);
+      if (!res.ok || !res.body) {
+        throw new Error("Network response was not ok");
+      }
+
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = "";
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split("\n");
+        buffer = lines.pop() ?? "";
+
+        for (const line of lines) {
+          const trimmed = line.trim();
+          if (!trimmed.startsWith("data:")) continue;
+
+          const data = trimmed.slice(5).trim();
+          if (data === "[DONE]") continue;
+
+          try {
+            const json = JSON.parse(data);
+            if (json.delta) {
+              setThinking(false);
+              full += json.delta;
+              updateMessage(aiId, full);
+            } else if (json.error) {
+              throw new Error(json.error);
+            }
+          } catch {
+            // Ignore non-JSON keep-alive lines.
+          }
+        }
+      }
+
+      if (!full.trim()) {
+        updateMessage(
+          aiId,
+          "Sorry, I couldn't generate a response. Please try again."
+        );
+      }
+    } catch {
+      updateMessage(
+        aiId,
+        "Something went wrong reaching Sophia. Please check your connection and try again."
+      );
+    } finally {
+      setThinking(false);
+      setSending(false);
     }
   };
+
   useEffect(() => {
-  if (!thinking) {
-    setThinkingText("Sophia is thinking");
-    return;
-  }
+    if (!thinking) {
+      setThinkingText("Sophia is thinking");
+      return;
+    }
 
-  let dots = 0;
+    let dots = 0;
+    const interval = setInterval(() => {
+      dots = (dots + 1) % 4;
+      setThinkingText("Sophia is thinking" + ".".repeat(dots));
+    }, 500);
 
-  const interval = setInterval(() => {
-    dots = (dots + 1) % 4;
+    return () => clearInterval(interval);
+  }, [thinking]);
 
-    setThinkingText(
-      "Sophia is thinking" + ".".repeat(dots)
-    );
-  }, 500);
-
-  return () => clearInterval(interval);
-}, [thinking]);
-
- const chatData = thinking
-  ? [
-      ...messages,
-      {
-        id: "thinking",
-        role: "ai" as const,
-        text: thinkingText,
-      },
-    ]
-  : messages;
+  const chatData = messages;
 
   return (
     <View style={styles.screen}>
@@ -170,7 +210,9 @@ export default function AIChat() {
               <Text
                 style={item.role === "ai" ? styles.bubbleText : styles.userText}
               >
-                {item.text}
+                {item.role === "ai" && item.text === ""
+                  ? thinkingText
+                  : item.text}
               </Text>
             </View>
           )}
