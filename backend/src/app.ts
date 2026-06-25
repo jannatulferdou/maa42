@@ -3,6 +3,7 @@ import cors from "cors";
 import { UserRoutes } from "./modules/users/users.route";
 import { NotificationRoutes } from "./modules/notifications/notification.route";
 import { CheckinRoutes } from "./modules/checkins/checkin.route";
+import { ChatRoutes } from "./modules/chat/chat.route";
 
 const app = express();
 
@@ -15,4 +16,5 @@ app.get("/", (req: Request, res: Response) => {
 app.use("/api/v1/users",UserRoutes);
 app.use("/api/v1/notifications", NotificationRoutes);
 app.use("/api/v1/checkins", CheckinRoutes);
+app.use("/api/v1/chat", ChatRoutes);
 export default app;
