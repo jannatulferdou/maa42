@@ -9,14 +9,16 @@ import {
   View,
 } from "react-native";
 import Toast from "react-native-toast-message";
+import { Feather } from "@expo/vector-icons";
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
 export default function Login() {
-  const { loginUser } = useAuth();
+  const { loginUser, resetPassword } = useAuth();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const showToast = (
     type: "success" | "error",
@@ -80,6 +82,33 @@ export default function Login() {
     }
   };
 
+  const handleForgotPassword = async () => {
+  if (!email.trim()) {
+    showToast(
+      "error",
+      "Email Required",
+      "Please enter your email first."
+    );
+    return;
+  }
+
+  try {
+    await resetPassword(email);
+
+    showToast(
+      "success",
+      "Reset Email Sent",
+      "Please check your inbox."
+    );
+  } catch (error: any) {
+    showToast(
+      "error",
+      "Reset Failed",
+      error.message
+    );
+  }
+};
+
   return (
     <View style={styles.container}>
       <Pressable style={styles.backBtn} onPress={() => router.back()}>
@@ -92,24 +121,41 @@ export default function Login() {
       <Text style={styles.label}>Email</Text>
       <TextInput
         style={styles.input}
-        placeholder="example@gmail.com"
+        placeholder="Email"
         value={email}
+        placeholderTextColor="#B0B8BC"
         onChangeText={setEmail}
         autoCapitalize="none"
         keyboardType="email-address"
       />
 
       <Text style={styles.label}>Password</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="••••••••••••"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-        autoCapitalize="none"
-      />
+      <View style={styles.passwordContainer}>
+    <TextInput
+    style={styles.passwordInput}
+    placeholder="Enter password"
+    placeholderTextColor="#B0B8BC"
+    value={password}
+    onChangeText={setPassword}
+    secureTextEntry={!showPassword}
+    autoCapitalize="none"
+    />
 
-      <Text style={styles.forgot}>Forgot password?</Text>
+  <Pressable
+    onPress={() => setShowPassword(!showPassword)}
+  >
+    <Feather
+      name={showPassword ? "eye-off" : "eye"}
+      size={22}
+      color="#8A8F95"
+    />
+  </Pressable>
+</View>
+
+
+      <Text style={styles.forgot} onPress={handleForgotPassword}>
+        Forgot password?
+      </Text>
 
       <Pressable style={styles.primaryBtn} onPress={handleLogin}>
         <Text style={styles.primaryText}>Continue</Text>
@@ -182,6 +228,23 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  passwordContainer: {
+  height: 54,
+  backgroundColor: "#fff",
+  borderWidth: 1,
+  borderColor: "#CFD8DC",
+  borderRadius: 12,
+  paddingHorizontal: 18,
+  marginBottom: 22,
+  flexDirection: "row",
+  alignItems: "center",
+  justifyContent: "space-between",
+},
+
+passwordInput: {
+  flex: 1,
+  fontSize: 16,
+},
   primaryText: { color: "#fff", fontSize: 17, fontWeight: "700" },
   or: { textAlign: "center", color: "#8A8F95", marginVertical: 24 },
   googleBtn: {

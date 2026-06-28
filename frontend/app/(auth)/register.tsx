@@ -1,4 +1,8 @@
 import useAuth from "@/hooks/useAuth";
+import { Feather } from "@expo/vector-icons";
+import DateTimePicker from "@react-native-community/datetimepicker";
+
+import Checkbox from "expo-checkbox";
 import { router } from "expo-router";
 import { useState } from "react";
 import {
@@ -8,6 +12,7 @@ import {
   Text,
   TextInput,
   View,
+  Platform,
 } from "react-native";
 import Toast from "react-native-toast-message";
 
@@ -24,6 +29,11 @@ export default function Register() {
   const [postpartumDay, setPostpartumDay] = useState("");
   const [emergencyContact, setEmergencyContact] = useState("");
   const [deliveryType, setDeliveryType] = useState("Normal");
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [consent, setConsent] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(new Date());
 
   const showToast = (
     type: "success" | "error",
@@ -58,8 +68,21 @@ export default function Register() {
       return;
     }
 
+    if (!consent) {
+      showToast(
+        "error",
+        "Consent Required",
+        "Please accept the consent policy."
+      );
+      return;
+    }
+
     if (!API_URL) {
-      showToast("error", "API Error", "EXPO_PUBLIC_API_URL is missing.");
+      showToast(
+        "error",
+        "API Error",
+        "EXPO_PUBLIC_API_URL is missing."
+      );
       return;
     }
 
@@ -71,7 +94,9 @@ export default function Register() {
         name: name.trim(),
         email: email.trim(),
         dateOfBirth,
-        postpartumDay: postpartumDay ? Number(postpartumDay) : null,
+        postpartumDay: postpartumDay
+          ? Number(postpartumDay)
+          : null,
         emergencyContact,
         deliveryType,
       };
@@ -87,25 +112,30 @@ export default function Register() {
       const data = await res.json().catch(() => null);
 
       if (!res.ok) {
-        throw new Error(data?.message || "Failed to save user profile.");
+        throw new Error(
+          data?.message || "Failed to save user profile."
+        );
       }
 
-      showToast("success", "Registration Successful", "Welcome to Maa42.");
+      showToast(
+        "success",
+        "Registration Successful",
+        "Welcome to Maa42"
+      );
 
       setTimeout(() => {
         router.push("/(home)" as any);
       }, 800);
-    }  catch (error: any) {
-  console.log("REGISTER ERROR CODE:", error?.code);
-  console.log("REGISTER ERROR MESSAGE:", error?.message);
+    } catch (error: any) {
+      console.log(error);
 
-  Toast.show({
-    type: "error",
-    text1: error?.code || "Registration Failed",
-    text2: error?.message || "Something went wrong",
-    position: "top",
-  });
-}
+      Toast.show({
+        type: "error",
+        text1: error?.code || "Registration Failed",
+        text2: error?.message || "Something went wrong",
+        position: "top",
+      });
+    }
   };
 
   return (
@@ -114,33 +144,84 @@ export default function Register() {
       contentContainerStyle={styles.scrollContent}
       showsVerticalScrollIndicator={false}
     >
-      <Pressable style={styles.backBtn} onPress={() => router.back()}>
+      <Pressable
+        style={styles.backBtn}
+        onPress={() => router.back()}
+      >
         <Text style={styles.backText}>‹</Text>
       </Pressable>
 
       <Text style={styles.title}>Create Account</Text>
-      <Text style={styles.subtitle}>A safe start for your 42-day journey</Text>
+      <Text style={styles.subtitle}>
+        A safe start for your 42-day journey
+      </Text>
 
-      <Text style={styles.label}>Full name</Text>
+      <Text style={styles.label}>Full Name</Text>
       <TextInput
         style={styles.input}
-        placeholder="Name"
+        placeholder="Enter your full name"
+        placeholderTextColor="#B0B8BC"
         value={name}
         onChangeText={setName}
       />
 
-      <Text style={styles.label}>Date of birth</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="mm/dd/yyyy"
-        value={dateOfBirth}
-        onChangeText={setDateOfBirth}
-      />
+      <Text style={styles.label}>Date of Birth</Text>
+
+<Pressable
+  style={styles.dateInput}
+  onPress={() => setShowDatePicker(true)}
+>
+  <Text
+    style={[
+      styles.dateText,
+      !dateOfBirth && { color: "#B0B8BC" },
+    ]}
+  >
+    {dateOfBirth || "Select your date of birth"}
+  </Text>
+
+  <Feather
+    name="calendar"
+    size={22}
+    color="#2FA99A"
+  />
+</Pressable>
+
+{showDatePicker && (
+  <DateTimePicker
+    value={selectedDate}
+    mode="date"
+    maximumDate={new Date()}
+    display={Platform.OS === "ios" ? "spinner" : "default"}
+    onChange={(event, date) => {
+      if (event.type === "dismissed") {
+        setShowDatePicker(false);
+        return;
+      }
+
+      if (date) {
+        setSelectedDate(date);
+
+        const formattedDate = `${date.getDate()}/${
+          date.getMonth() + 1
+        }/${date.getFullYear()}`;
+
+        setDateOfBirth(formattedDate);
+      }
+
+      if (Platform.OS === "android") {
+        setShowDatePicker(false);
+      }
+    }}
+  />
+)}
 
       <Text style={styles.label}>Email</Text>
+
       <TextInput
         style={styles.input}
-        placeholder="Enter Your Mail"
+        placeholder="Enter your email"
+        placeholderTextColor="#B0B8BC"
         value={email}
         onChangeText={setEmail}
         autoCapitalize="none"
@@ -148,64 +229,126 @@ export default function Register() {
       />
 
       <Text style={styles.label}>Password</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="password"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-        autoCapitalize="none"
-      />
 
-      <Text style={styles.label}>Days after childbirth</Text>
+      <View style={styles.passwordContainer}>
+        <TextInput
+          style={styles.passwordInput}
+          placeholder="Enter password"
+          placeholderTextColor="#B0B8BC"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry={!showPassword}
+        />
+
+        <Pressable
+          onPress={() =>
+            setShowPassword(!showPassword)
+          }
+        >
+          <Feather
+            name={showPassword ? "eye-off" : "eye"}
+            size={22}
+            color="#8A8F95"
+          />
+        </Pressable>
+      </View>
+
+      <Text style={styles.label}>
+        Days after childbirth
+      </Text>
+
       <TextInput
         style={styles.input}
-        placeholder="Days after childbirth"
+        placeholder="Enter days"
+        placeholderTextColor="#B0B8BC"
         value={postpartumDay}
         onChangeText={setPostpartumDay}
         keyboardType="numeric"
       />
 
-      <Text style={styles.label}>Emergency contact</Text>
+      <Text style={styles.label}>
+        Emergency Contact
+      </Text>
+
       <TextInput
         style={styles.input}
         placeholder="Caregiver phone number"
+        placeholderTextColor="#B0B8BC"
         value={emergencyContact}
         onChangeText={setEmergencyContact}
         keyboardType="phone-pad"
       />
 
-      <Text style={styles.label}>Delivery type</Text>
+      <Text style={styles.label}>Delivery Type</Text>
+
       <View style={styles.row}>
         <Pressable
           style={[
             styles.option,
-            deliveryType === "Normal" && styles.activeOption,
+            deliveryType === "Normal" &&
+              styles.activeOption,
           ]}
-          onPress={() => setDeliveryType("Normal")}
+          onPress={() =>
+            setDeliveryType("Normal")
+          }
         >
-          <Text style={styles.optionText}>Normal</Text>
+          <Text style={styles.optionText}>
+            Normal
+          </Text>
         </Pressable>
 
         <Pressable
           style={[
             styles.option,
-            deliveryType === "C-section" && styles.activeOption,
+            deliveryType === "C-section" &&
+              styles.activeOption,
           ]}
-          onPress={() => setDeliveryType("C-section")}
+          onPress={() =>
+            setDeliveryType("C-section")
+          }
         >
-          <Text style={styles.optionText}>C-section</Text>
+          <Text style={styles.optionText}>
+            C-section
+          </Text>
         </Pressable>
       </View>
 
       <View style={styles.notice}>
         <Text style={styles.noticeText}>
-          🛡 Your health data is protected and used only for care support.
+          🛡 Your health data is protected and
+          used only for care support.
         </Text>
       </View>
 
-      <Pressable style={styles.primaryBtn} onPress={handleRegister}>
-        <Text style={styles.primaryText}>Create Account</Text>
+      <View style={styles.consentContainer}>
+        <Checkbox
+          value={consent}
+          onValueChange={setConsent}
+          color={consent ? "#2FA99A" : undefined}
+        />
+
+        <Text style={styles.consentText}>
+          I agree to securely share my health
+          information for maternal healthcare
+          support and research purposes.
+        </Text>
+      </View>
+
+      <View style={styles.testingBox}>
+        <Text style={styles.testingText}>
+          ⚠️ This application is currently
+          under testing and should not replace
+          professional medical advice.
+        </Text>
+      </View>
+
+      <Pressable
+        style={styles.primaryBtn}
+        onPress={handleRegister}
+      >
+        <Text style={styles.primaryText}>
+          Create Account
+        </Text>
       </Pressable>
     </ScrollView>
   );
@@ -218,7 +361,28 @@ const styles = StyleSheet.create({
     padding: 27,
     paddingTop: 55,
   },
-  scrollContent: { paddingBottom: 80 },
+
+  scrollContent: {
+    paddingBottom: 80,
+  },
+  dateInput: {
+  height: 54,
+  backgroundColor: "#fff",
+  borderWidth: 1,
+  borderColor: "#CFD8DC",
+  borderRadius: 12,
+  paddingHorizontal: 18,
+  marginBottom: 18,
+  flexDirection: "row",
+  justifyContent: "space-between",
+  alignItems: "center",
+},
+
+dateText: {
+  fontSize: 16,
+  color: "#263238",
+},
+
   backBtn: {
     width: 52,
     height: 52,
@@ -227,15 +391,31 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  backText: { fontSize: 38, color: "#263238" },
+
+  backText: {
+    fontSize: 38,
+    color: "#263238",
+  },
+
   title: {
     fontSize: 22,
     fontWeight: "700",
     color: "#263238",
     marginTop: 8,
   },
-  subtitle: { color: "#7B8288", marginTop: 4, marginBottom: 28 },
-  label: { fontWeight: "600", color: "#263238", marginBottom: 8 },
+
+  subtitle: {
+    color: "#7B8288",
+    marginTop: 4,
+    marginBottom: 28,
+  },
+
+  label: {
+    fontWeight: "600",
+    color: "#263238",
+    marginBottom: 8,
+  },
+
   input: {
     height: 54,
     backgroundColor: "#fff",
@@ -246,7 +426,31 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: 18,
   },
-  row: { flexDirection: "row", gap: 10, marginBottom: 20 },
+
+  passwordContainer: {
+    height: 54,
+    backgroundColor: "#fff",
+    borderWidth: 1,
+    borderColor: "#CFD8DC",
+    borderRadius: 12,
+    paddingHorizontal: 18,
+    marginBottom: 18,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+
+  passwordInput: {
+    flex: 1,
+    fontSize: 16,
+  },
+
+  row: {
+    flexDirection: "row",
+    gap: 10,
+    marginBottom: 20,
+  },
+
   option: {
     flex: 1,
     height: 48,
@@ -257,15 +461,56 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: "#fff",
   },
-  activeOption: { backgroundColor: "#DDF5F1", borderColor: "#2FA99A" },
-  optionText: { fontWeight: "700", color: "#263238" },
+
+  activeOption: {
+    backgroundColor: "#DDF5F1",
+    borderColor: "#2FA99A",
+  },
+
+  optionText: {
+    fontWeight: "700",
+    color: "#263238",
+  },
+
   notice: {
     backgroundColor: "#DDF5F1",
     padding: 14,
     borderRadius: 12,
+    marginBottom: 20,
+  },
+
+  noticeText: {
+    color: "#6B777B",
+    lineHeight: 20,
+  },
+
+  consentContainer: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    marginBottom: 20,
+  },
+
+  consentText: {
+    flex: 1,
+    marginLeft: 10,
+    color: "#6B777B",
+    lineHeight: 20,
+    fontSize: 13,
+  },
+
+  testingBox: {
+    backgroundColor: "#FFF7E6",
+    padding: 14,
+    borderRadius: 12,
     marginBottom: 24,
   },
-  noticeText: { color: "#6B777B", lineHeight: 20 },
+
+  testingText: {
+    color: "#A86B00",
+    lineHeight: 20,
+    fontSize: 13,
+  },
+
   primaryBtn: {
     height: 56,
     backgroundColor: "#32A99A",
@@ -274,5 +519,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginBottom: 30,
   },
-  primaryText: { color: "#fff", fontSize: 17, fontWeight: "700" },
+
+  primaryText: {
+    color: "#fff",
+    fontSize: 17,
+    fontWeight: "700",
+  },
 });

@@ -36,7 +36,7 @@ type Profile = {
 };
 
 export default function ProfileScreen() {
-  const { user, loading } = useAuth();
+  const { user, loading, logoutUser } = useAuth();
 
   const [profile, setProfile] = useState<Profile | null>(null);
   const [profileLoading, setProfileLoading] = useState(true);
@@ -69,10 +69,29 @@ export default function ProfileScreen() {
         type: "error",
         text1: "Profile Error",
         text2: error.message || "Could not load profile",
-        position: "top",
       });
     } finally {
       setProfileLoading(false);
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await logoutUser();
+
+      Toast.show({
+        type: "success",
+        text1: "Logout Successful",
+        text2: "See you again!",
+      });
+
+      router.replace("/(auth)/login" as any);
+    } catch (error: any) {
+      Toast.show({
+        type: "error",
+        text1: "Logout Failed",
+        text2: error.message || "Something went wrong",
+      });
     }
   };
 
@@ -93,7 +112,8 @@ export default function ProfileScreen() {
     ["Delivery Type", profile?.deliveryType || "Not added"],
     [
       "Days after childbirth",
-      profile?.postpartumDay !== null && profile?.postpartumDay !== undefined
+      profile?.postpartumDay !== null &&
+      profile?.postpartumDay !== undefined
         ? String(profile.postpartumDay)
         : "Not added",
     ],
@@ -150,7 +170,9 @@ export default function ProfileScreen() {
               key={label}
               style={[
                 styles.row,
-                index === profileData.length - 1 && { borderBottomWidth: 0 },
+                index === profileData.length - 1 && {
+                  borderBottomWidth: 0,
+                },
               ]}
             >
               <Text style={styles.label}>{label}</Text>
@@ -173,6 +195,15 @@ export default function ProfileScreen() {
         >
           <Feather name="settings" size={25} color="#2FA99A" />
           <Text style={styles.settingsText}>Settings</Text>
+        </Pressable>
+
+        {/* Logout Button */}
+        <Pressable
+          style={[styles.settingsBtn, styles.logoutBtn]}
+          onPress={handleLogout}
+        >
+          <Feather name="log-out" size={24} color="#EF4444" />
+          <Text style={styles.logoutText}>Logout</Text>
         </Pressable>
       </ScrollView>
 
@@ -273,11 +304,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: 6,
   },
-  label: {
-    flex: 1,
-    fontSize: 15,
-    color: "#7A7F86",
-  },
+  label: { flex: 1, fontSize: 15, color: "#7A7F86" },
   value: {
     flex: 1,
     fontSize: 15,
@@ -298,6 +325,15 @@ const styles = StyleSheet.create({
   },
   settingsText: {
     color: "#2FA99A",
+    fontSize: 17,
+    fontWeight: "800",
+  },
+  logoutBtn: {
+    marginTop: 12,
+    borderColor: "#FECACA",
+  },
+  logoutText: {
+    color: "#EF4444",
     fontSize: 17,
     fontWeight: "800",
   },
