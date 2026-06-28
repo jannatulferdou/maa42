@@ -281,7 +281,7 @@ function BottomNav() {
       <NavItem
         label="Profile"
         featherIcon="file-text"
-        onPress={() => router.push("/(profile)" as any)}
+        onPress={() => router.push("/(profile)/medicalProfile" as any)}
       />
     </View>
   );
