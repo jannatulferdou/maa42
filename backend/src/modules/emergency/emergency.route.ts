@@ -1,9 +1,12 @@
+
 import express from "express";
+
 import {
   createContact,
-  getContacts,
-  updateContact,
   deleteContact,
+  getContacts,
+  toggleFavorite,
+  updateContact,
 } from "./emergency.controller";
 
 const router = express.Router();
@@ -16,4 +19,10 @@ router.patch("/:id", updateContact);
 
 router.delete("/:id", deleteContact);
 
+router.patch(
+  "/favorite/:id",
+  toggleFavorite
+);
+
 export default router;
+

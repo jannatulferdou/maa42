@@ -1,14 +1,38 @@
+
 import prisma from "../../lib/prisma";
 
 const createContact = async (payload: any) => {
+  const user = await prisma.user.findUnique({
+    where: {
+      uid: payload.uid,
+    },
+  });
+
+  if (!user) {
+    throw new Error("User not found");
+  }
+
   return prisma.emergencyContact.create({
-    data: payload,
+    data: {
+      userId: user.id,
+      name: payload.name,
+      relation: payload.relation,
+      phone: payload.phone,
+    },
   });
 };
 
-const getContacts = async (userId: number) => {
+const getContacts = async (uid: string) => {
+  const user = await prisma.user.findUnique({
+    where: { uid },
+  });
+
+  if (!user) return [];
+
   return prisma.emergencyContact.findMany({
-    where: { userId },
+    where: {
+      userId: user.id,
+    },
     orderBy: [
       { isFavorite: "desc" },
       { createdAt: "desc" },
@@ -22,7 +46,11 @@ const updateContact = async (
 ) => {
   return prisma.emergencyContact.update({
     where: { id },
-    data: payload,
+    data: {
+      name: payload.name,
+      relation: payload.relation,
+      phone: payload.phone,
+    },
   });
 };
 
@@ -32,9 +60,29 @@ const deleteContact = async (id: number) => {
   });
 };
 
+const toggleFavorite = async (id: number) => {
+  const contact =
+    await prisma.emergencyContact.findUnique({
+      where: { id },
+    });
+
+  if (!contact) {
+    throw new Error("Contact not found");
+  }
+
+  return prisma.emergencyContact.update({
+    where: { id },
+    data: {
+      isFavorite: !contact.isFavorite,
+    },
+  });
+};
+
 export const EmergencyServices = {
   createContact,
   getContacts,
   updateContact,
   deleteContact,
+  toggleFavorite,
 };
+
