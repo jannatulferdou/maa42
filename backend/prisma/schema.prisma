@@ -51,9 +51,11 @@ model User {
   notifications Notification[]
   healthCheckins HealthCheckin[]
   chatSessions  ChatSession[]
+  emergencyContacts EmergencyContact[]
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
 }
+
 
 model Notification {
   id     Int @id @default(autoincrement())
@@ -86,6 +88,23 @@ model HealthCheckin {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
+model EmergencyContact {
+  id Int @id @default(autoincrement())
+
+  userId Int
+
+  name String
+  relation String
+  phone String
+
+  isFavorite Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
 model ChatSession {
   id            Int       @id @default(autoincrement())
   userId        Int
@@ -109,3 +128,4 @@ model ChatMessage {
 
   session ChatSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
 }
+
