@@ -26,6 +26,12 @@ model User {
   gender       String?
   bloodGroup   String?
 
+    // Pregnancy / Postpartum
+  careStage            String? // "pregnant" | "postpartum"
+  expectedDeliveryDate String?
+  pregnancyWeek        Int?
+
+
   childbirthDate String?
   deliveryType   String?
   postpartumDay  Int?
