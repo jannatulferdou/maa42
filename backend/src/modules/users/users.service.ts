@@ -9,10 +9,21 @@ const createUser = async (payload: any) => {
     profileImage: payload.profileImage || null,
 
     dateOfBirth: payload.dateOfBirth || null,
-    age: payload.age || null,
+    age:
+      payload.age === "" ||
+      payload.age === undefined ||
+      payload.age === null
+        ? null
+        : Number(payload.age),
+
     gender: payload.gender || null,
     bloodGroup: payload.bloodGroup || null,
 
+    // User type / role
+    // mother | doctor
+    role: payload.role || "mother",
+
+    // Pregnancy / Postpartum
     childbirthDate: payload.childbirthDate || null,
     deliveryType: payload.deliveryType || null,
 
@@ -32,30 +43,47 @@ const createUser = async (payload: any) => {
     currentMedicines:
       payload.currentMedicines || null,
 
+    // Doctor information
     doctor: payload.doctor || null,
     clinic: payload.clinic || null,
 
     emergencyContact:
       payload.emergencyContact || null,
-    shareWithDoctor: payload.shareWithDoctor ?? true,
-    emergencyAccess: payload.emergencyAccess ?? true,
-    offlineSync: payload.offlineSync ?? true,
-    chatHistoryEnabled: payload.chatHistoryEnabled ?? true,
-    analyticsEnabled: payload.analyticsEnabled ?? false,
+
+    // Privacy settings
+    shareWithDoctor:
+      payload.shareWithDoctor ?? true,
+
+    emergencyAccess:
+      payload.emergencyAccess ?? true,
+
+    offlineSync:
+      payload.offlineSync ?? true,
+
+    chatHistoryEnabled:
+      payload.chatHistoryEnabled ?? true,
+
+    analyticsEnabled:
+      payload.analyticsEnabled ?? false,
   };
 
   return prisma.user.upsert({
     where: {
       uid: payload.uid,
     },
+
     update: userData,
+
     create: userData,
   });
 };
 
+
 const getUserByUid = async (uid: string) => {
   const user = await prisma.user.findUnique({
-    where: { uid },
+    where: {
+      uid,
+    },
   });
 
   if (!user) {
@@ -65,6 +93,7 @@ const getUserByUid = async (uid: string) => {
   return user;
 };
 
+
 const updateUser = async (
   uid: string,
   payload: any
@@ -73,75 +102,85 @@ const updateUser = async (
     where: {
       uid,
     },
+
     data: {
       profileImage:
-        payload.profileImage || null,
+        payload.profileImage ?? undefined,
 
-      name: payload.name || null,
+      name:
+        payload.name ?? undefined,
+
       dateOfBirth:
-        payload.dateOfBirth || null,
+        payload.dateOfBirth ?? undefined,
 
       age:
         payload.age === "" ||
-        payload.age === undefined
+        payload.age === undefined ||
+        payload.age === null
           ? null
           : Number(payload.age),
 
-      gender: payload.gender || null,
+      gender:
+        payload.gender ?? undefined,
 
       bloodGroup:
-        payload.bloodGroup || null,
+        payload.bloodGroup ?? undefined,
 
+      // User role
+      role:
+        payload.role ?? undefined,
+
+      // Pregnancy / Postpartum
       childbirthDate:
-        payload.childbirthDate || null,
+        payload.childbirthDate ?? undefined,
 
       deliveryType:
-        payload.deliveryType || null,
+        payload.deliveryType ?? undefined,
 
       postpartumDay:
         payload.postpartumDay === "" ||
-        payload.postpartumDay === undefined
+        payload.postpartumDay === undefined ||
+        payload.postpartumDay === null
           ? null
           : Number(payload.postpartumDay),
 
       previousComplications:
-        payload.previousComplications ||
-        null,
+        payload.previousComplications ?? undefined,
 
       existingHealthConditions:
-        payload.existingHealthConditions ||
-        null,
+        payload.existingHealthConditions ?? undefined,
 
       currentMedicines:
-        payload.currentMedicines ||
-        null,
+        payload.currentMedicines ?? undefined,
 
       doctor:
-        payload.doctor || null,
+        payload.doctor ?? undefined,
 
       clinic:
-        payload.clinic || null,
+        payload.clinic ?? undefined,
 
       emergencyContact:
-        payload.emergencyContact || null,
+        payload.emergencyContact ?? undefined,
 
+      // Privacy settings
       shareWithDoctor:
-        payload.shareWithDoctor,
+        payload.shareWithDoctor ?? undefined,
 
       emergencyAccess:
-        payload.emergencyAccess,
+        payload.emergencyAccess ?? undefined,
 
       offlineSync:
-        payload.offlineSync,
+        payload.offlineSync ?? undefined,
 
       chatHistoryEnabled:
-        payload.chatHistoryEnabled,
+        payload.chatHistoryEnabled ?? undefined,
 
       analyticsEnabled:
-        payload.analyticsEnabled,
+        payload.analyticsEnabled ?? undefined,
     },
   });
 };
+
 
 export const UserService = {
   createUser,

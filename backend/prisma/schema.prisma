@@ -32,6 +32,12 @@ model User {
   pregnancyWeek        Int?
 
 
+  // Doctor Information
+  specialization      String?
+  medicalRegistration String?
+  hospitalClinic      String?
+  experienceYears     Int?
+
   childbirthDate String?
   deliveryType   String?
   postpartumDay  Int?
@@ -45,7 +51,7 @@ model User {
   emergencyContact String?
 
   role String @default("mother")
-
+  maternalStatus String?
   shareWithDoctor    Boolean @default(true)
   emergencyAccess     Boolean @default(true)
   offlineSync        Boolean @default(true)
