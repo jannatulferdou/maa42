@@ -9,6 +9,7 @@ const createUser = async (payload: any) => {
     profileImage: payload.profileImage || null,
 
     dateOfBirth: payload.dateOfBirth || null,
+
     age:
       payload.age === "" ||
       payload.age === undefined ||
@@ -19,18 +20,32 @@ const createUser = async (payload: any) => {
     gender: payload.gender || null,
     bloodGroup: payload.bloodGroup || null,
 
-    // User type / role
-    // mother | doctor
     role: payload.role || "mother",
 
-    // Pregnancy / Postpartum
-    childbirthDate: payload.childbirthDate || null,
-    deliveryType: payload.deliveryType || null,
+    careStage: payload.careStage || null,
+
+    maternalStatus: payload.maternalStatus || null,
+
+    expectedDeliveryDate:
+      payload.expectedDeliveryDate || null,
+
+    pregnancyWeek:
+      payload.pregnancyWeek === "" ||
+      payload.pregnancyWeek === undefined ||
+      payload.pregnancyWeek === null
+        ? null
+        : Number(payload.pregnancyWeek),
+
+    childbirthDate:
+      payload.childbirthDate || null,
+
+    deliveryType:
+      payload.deliveryType || null,
 
     postpartumDay:
-      payload.postpartumDay === null ||
+      payload.postpartumDay === "" ||
       payload.postpartumDay === undefined ||
-      payload.postpartumDay === ""
+      payload.postpartumDay === null
         ? null
         : Number(payload.postpartumDay),
 
@@ -43,14 +58,32 @@ const createUser = async (payload: any) => {
     currentMedicines:
       payload.currentMedicines || null,
 
-    // Doctor information
-    doctor: payload.doctor || null,
-    clinic: payload.clinic || null,
+    specialization:
+      payload.specialization || null,
+
+    medicalRegistration:
+      payload.medicalRegistration || null,
+
+    hospitalClinic:
+      payload.hospitalClinic || null,
+
+    experienceYears:
+      payload.experienceYears === "" ||
+      payload.experienceYears === undefined ||
+      payload.experienceYears === null
+        ? null
+        : Number(payload.experienceYears),
+
+    doctor:
+      payload.doctor || null,
+
+    clinic:
+      payload.clinic || null,
 
     emergencyContact:
       payload.emergencyContact || null,
 
-    // Privacy settings
+
     shareWithDoctor:
       payload.shareWithDoctor ?? true,
 
@@ -104,6 +137,7 @@ const updateUser = async (
     },
 
     data: {
+
       profileImage:
         payload.profileImage ?? undefined,
 
@@ -126,11 +160,25 @@ const updateUser = async (
       bloodGroup:
         payload.bloodGroup ?? undefined,
 
-      // User role
       role:
         payload.role ?? undefined,
 
-      // Pregnancy / Postpartum
+      careStage:
+        payload.careStage ?? undefined,
+
+      maternalStatus:
+        payload.maternalStatus ?? undefined,
+
+      expectedDeliveryDate:
+        payload.expectedDeliveryDate ?? undefined,
+
+      pregnancyWeek:
+        payload.pregnancyWeek === "" ||
+        payload.pregnancyWeek === undefined ||
+        payload.pregnancyWeek === null
+          ? null
+          : Number(payload.pregnancyWeek),
+
       childbirthDate:
         payload.childbirthDate ?? undefined,
 
@@ -153,6 +201,22 @@ const updateUser = async (
       currentMedicines:
         payload.currentMedicines ?? undefined,
 
+      specialization:
+        payload.specialization ?? undefined,
+
+      medicalRegistration:
+        payload.medicalRegistration ?? undefined,
+
+      hospitalClinic:
+        payload.hospitalClinic ?? undefined,
+
+      experienceYears:
+        payload.experienceYears === "" ||
+        payload.experienceYears === undefined ||
+        payload.experienceYears === null
+          ? null
+          : Number(payload.experienceYears),
+
       doctor:
         payload.doctor ?? undefined,
 
@@ -162,7 +226,6 @@ const updateUser = async (
       emergencyContact:
         payload.emergencyContact ?? undefined,
 
-      // Privacy settings
       shareWithDoctor:
         payload.shareWithDoctor ?? undefined,
 

@@ -1,251 +1,95 @@
-import prisma from "../../lib/prisma";
+import { Request, Response } from "express";
+import { UserService } from "./users.service";
 
-const createUser = async (payload: any) => {
-  const userData = {
-    uid: payload.uid,
-    name: payload.name,
-    email: payload.email,
+const createUser = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+    console.log("REQ BODY:", req.body);
 
-    profileImage: payload.profileImage || null,
+    const result =
+      await UserService.createUser(req.body);
 
-    dateOfBirth: payload.dateOfBirth || null,
+    res.status(201).json({
+      success: true,
+      message: "User saved successfully",
+      data: result,
+    });
+  } catch (error: any) {
+    console.log(
+      "User creation error:",
+      error
+    );
 
-    age:
-      payload.age === "" ||
-      payload.age === undefined ||
-      payload.age === null
-        ? null
-        : Number(payload.age),
-
-    gender: payload.gender || null,
-    bloodGroup: payload.bloodGroup || null,
-
-    role: payload.role || "mother",
-
-    careStage: payload.careStage || null,
-
-    maternalStatus: payload.maternalStatus || null,
-
-    expectedDeliveryDate:
-      payload.expectedDeliveryDate || null,
-
-    pregnancyWeek:
-      payload.pregnancyWeek === "" ||
-      payload.pregnancyWeek === undefined ||
-      payload.pregnancyWeek === null
-        ? null
-        : Number(payload.pregnancyWeek),
-
-    childbirthDate:
-      payload.childbirthDate || null,
-
-    deliveryType:
-      payload.deliveryType || null,
-
-    postpartumDay:
-      payload.postpartumDay === "" ||
-      payload.postpartumDay === undefined ||
-      payload.postpartumDay === null
-        ? null
-        : Number(payload.postpartumDay),
-
-    previousComplications:
-      payload.previousComplications || null,
-
-    existingHealthConditions:
-      payload.existingHealthConditions || null,
-
-    currentMedicines:
-      payload.currentMedicines || null,
-
-    specialization:
-      payload.specialization || null,
-
-    medicalRegistration:
-      payload.medicalRegistration || null,
-
-    hospitalClinic:
-      payload.hospitalClinic || null,
-
-    experienceYears:
-      payload.experienceYears === "" ||
-      payload.experienceYears === undefined ||
-      payload.experienceYears === null
-        ? null
-        : Number(payload.experienceYears),
-
-    doctor:
-      payload.doctor || null,
-
-    clinic:
-      payload.clinic || null,
-
-    emergencyContact:
-      payload.emergencyContact || null,
-
-
-    shareWithDoctor:
-      payload.shareWithDoctor ?? true,
-
-    emergencyAccess:
-      payload.emergencyAccess ?? true,
-
-    offlineSync:
-      payload.offlineSync ?? true,
-
-    chatHistoryEnabled:
-      payload.chatHistoryEnabled ?? true,
-
-    analyticsEnabled:
-      payload.analyticsEnabled ?? false,
-  };
-
-  return prisma.user.upsert({
-    where: {
-      uid: payload.uid,
-    },
-
-    update: userData,
-
-    create: userData,
-  });
+    res.status(500).json({
+      success: false,
+      message:
+        error.message ||
+        "User creation failed",
+      code: error.code,
+      meta: error.meta,
+    });
+  }
 };
 
 
-const getUserByUid = async (uid: string) => {
-  const user = await prisma.user.findUnique({
-    where: {
-      uid,
-    },
-  });
+const getUserByUid = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+    const result =
+      await UserService.getUserByUid(
+        req.params.uid as string
+      );
 
-  if (!user) {
-    throw new Error("User not found");
+    res.status(200).json({
+      success: true,
+      message:
+        "User fetched successfully",
+      data: result,
+    });
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      message:
+        error.message ||
+        "User fetch failed",
+    });
   }
-
-  return user;
 };
 
 
 const updateUser = async (
-  uid: string,
-  payload: any
+  req: Request,
+  res: Response
 ) => {
-  return prisma.user.update({
-    where: {
-      uid,
-    },
+  try {
+    const result =
+      await UserService.updateUser(
+        req.params.uid as string,
+        req.body
+      );
 
-    data: {
-
-      profileImage:
-        payload.profileImage ?? undefined,
-
-      name:
-        payload.name ?? undefined,
-
-      dateOfBirth:
-        payload.dateOfBirth ?? undefined,
-
-      age:
-        payload.age === "" ||
-        payload.age === undefined ||
-        payload.age === null
-          ? null
-          : Number(payload.age),
-
-      gender:
-        payload.gender ?? undefined,
-
-      bloodGroup:
-        payload.bloodGroup ?? undefined,
-
-      role:
-        payload.role ?? undefined,
-
-      careStage:
-        payload.careStage ?? undefined,
-
-      maternalStatus:
-        payload.maternalStatus ?? undefined,
-
-      expectedDeliveryDate:
-        payload.expectedDeliveryDate ?? undefined,
-
-      pregnancyWeek:
-        payload.pregnancyWeek === "" ||
-        payload.pregnancyWeek === undefined ||
-        payload.pregnancyWeek === null
-          ? null
-          : Number(payload.pregnancyWeek),
-
-      childbirthDate:
-        payload.childbirthDate ?? undefined,
-
-      deliveryType:
-        payload.deliveryType ?? undefined,
-
-      postpartumDay:
-        payload.postpartumDay === "" ||
-        payload.postpartumDay === undefined ||
-        payload.postpartumDay === null
-          ? null
-          : Number(payload.postpartumDay),
-
-      previousComplications:
-        payload.previousComplications ?? undefined,
-
-      existingHealthConditions:
-        payload.existingHealthConditions ?? undefined,
-
-      currentMedicines:
-        payload.currentMedicines ?? undefined,
-
-      specialization:
-        payload.specialization ?? undefined,
-
-      medicalRegistration:
-        payload.medicalRegistration ?? undefined,
-
-      hospitalClinic:
-        payload.hospitalClinic ?? undefined,
-
-      experienceYears:
-        payload.experienceYears === "" ||
-        payload.experienceYears === undefined ||
-        payload.experienceYears === null
-          ? null
-          : Number(payload.experienceYears),
-
-      doctor:
-        payload.doctor ?? undefined,
-
-      clinic:
-        payload.clinic ?? undefined,
-
-      emergencyContact:
-        payload.emergencyContact ?? undefined,
-
-      shareWithDoctor:
-        payload.shareWithDoctor ?? undefined,
-
-      emergencyAccess:
-        payload.emergencyAccess ?? undefined,
-
-      offlineSync:
-        payload.offlineSync ?? undefined,
-
-      chatHistoryEnabled:
-        payload.chatHistoryEnabled ?? undefined,
-
-      analyticsEnabled:
-        payload.analyticsEnabled ?? undefined,
-    },
-  });
+    res.status(200).json({
+      success: true,
+      message:
+        "User updated successfully",
+      data: result,
+    });
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      message:
+        error.message ||
+        "User update failed",
+    });
+  }
 };
 
 
-export const UserService = {
+export const UserController = {
   createUser,
   getUserByUid,
   updateUser,
