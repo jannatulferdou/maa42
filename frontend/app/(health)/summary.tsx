@@ -1,8 +1,12 @@
+import useAuth from "@/hooks/useAuth";
 import { Feather, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import PostpartumFooter from "../(footer)/PostpartumFooter";
+import PregnantFooter from "../(footer)/PregnantFooter";
 
 export default function Summary() {
+  const { user } = useAuth();
   const params = useLocalSearchParams();
 
   const risk = String(params.risk || "Low Risk");
@@ -63,7 +67,11 @@ export default function Summary() {
         </Pressable>
       </ScrollView>
 
-      <BottomNav />
+          {user?.careStage === "pregnant" ? (
+        <PregnantFooter activeTab="health" />
+      ) : (
+        <PostpartumFooter activeTab="health" />
+      )}
     </View>
   );
 }
@@ -80,70 +88,6 @@ function Step({ icon, title, active, badge }: any) {
   );
 }
 
-function BottomNav() {
-  return (
-    <View style={styles.bottomNav}>
-      <NavItem
-        label="Health"
-        icon="emoticon-happy-outline"
-        active
-        onPress={() => router.push("/checkin" as any)}
-      />
-
-      <NavItem
-        label="Reminder"
-        featherIcon="bell"
-        onPress={() => router.push("/reminder" as any)}
-      />
-
-      <NavItem
-        label="Home"
-        featherIcon="home"
-        onPress={() => router.push("/" as any)}
-      />
-
-      <NavItem
-        label="Chat"
-        ionIcon="chatbubble-outline"
-        onPress={() => router.push("/(chat)" as any)}
-      />
-
-      <NavItem
-        label="Profile"
-        featherIcon="file-text"
-        onPress={() => router.push("/(profile)" as any)}
-      />
-    </View>
-  );
-}
-
-function NavItem({
-  label,
-  icon,
-  featherIcon,
-  ionIcon,
-  active,
-  onPress,
-}: {
-  label: string;
-  icon?: any;
-  featherIcon?: any;
-  ionIcon?: any;
-  active?: boolean;
-  onPress?: () => void;
-}) {
-  const color = active ? "#2FA99A" : "#A7AFB3";
-
-  return (
-    <Pressable style={styles.navItem} onPress={onPress}>
-      {icon && <MaterialCommunityIcons name={icon} size={23} color={color} />}
-      {featherIcon && <Feather name={featherIcon} size={23} color={color} />}
-      {ionIcon && <Ionicons name={ionIcon} size={23} color={color} />}
-
-      <Text style={[styles.navLabel, { color }]}>{label}</Text>
-    </Pressable>
-  );
-}
 
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: "#F5FAF9" },
@@ -167,7 +111,5 @@ const styles = StyleSheet.create({
   badge: { color: "#159B8D", fontSize: 12, fontWeight: "800" },
   aiBtn: { height: 58, borderRadius: 10, backgroundColor: "#32A99A", flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 10, marginTop: 24 },
   aiText: { color: "#fff", fontSize: 18, fontWeight: "800" },
-  bottomNav: { position: "absolute", left: 0, right: 0, bottom: 0, height: 72, backgroundColor: "#fff", borderTopLeftRadius: 20, borderTopRightRadius: 20, borderTopWidth: 1, borderColor: "#E0E7E7", flexDirection: "row", justifyContent: "space-around", alignItems: "center", paddingBottom: 7 },
-  navItem: { alignItems: "center" },
-  navLabel: { fontSize: 11, fontWeight: "700", color: "#A7AFB3", marginTop: 3 },
+
 });
