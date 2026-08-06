@@ -15,6 +15,9 @@ import {
   View,
 } from "react-native";
 import Toast from "react-native-toast-message";
+import PregnantFooter from "../(footer)/PregnantFooter";
+import PostpartumFooter from "../(footer)/PostpartumFooter";
+import useAuth from "@/hooks/useAuth";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -66,7 +69,7 @@ export default function ReminderScreen() {
   const [alarm, setAlarm] = useState(true);
   const [reminders, setReminders] = useState<Reminder[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
-
+ const { user } = useAuth();
   const selectedFullDate = `${currentYear}-${String(currentMonth + 1).padStart(
     2,
     "0"
@@ -533,33 +536,11 @@ export default function ReminderScreen() {
         )}
       </ScrollView>
 
-      <View style={styles.bottomNav}>
-        <NavItem
-          icon="emoticon-happy-outline"
-          label="Health"
-          onPress={() => router.push("/(health)/checkin" as any)}
-        />
-
-        <NavItem icon="bell-ring-outline" label="Reminder" active />
-
-        <NavItem
-          icon="home-outline"
-          label="Home"
-          onPress={() => router.push("/(home)" as any)}
-        />
-
-        <NavItem
-          icon="chat-outline"
-          label="Chat"
-          onPress={() => router.push("/(chat)" as any)}
-        />
-
-        <NavItem
-          icon="file-document-outline"
-          label="Profile"
-          onPress={() => router.push("/(profile)/medicalProfile" as any)}
-        />
-      </View>
+      {user?.careStage === "pregnant" ? (
+        <PregnantFooter activeTab="appointments" />
+      ) : (
+        <PostpartumFooter activeTab="reminder" />
+      )}
     </View>
   );
 }
@@ -602,31 +583,6 @@ function ReminderItem({
   );
 }
 
-function NavItem({
-  icon,
-  label,
-  active,
-  onPress,
-}: {
-  icon: any;
-  label: string;
-  active?: boolean;
-  onPress?: () => void;
-}) {
-  return (
-    <Pressable style={styles.navItem} onPress={onPress}>
-      <MaterialCommunityIcons
-        name={icon}
-        size={24}
-        color={active ? "#2FA99A" : "#A7AFB3"}
-      />
-
-      <Text style={[styles.navLabel, active && { color: "#2FA99A" }]}>
-        {label}
-      </Text>
-    </Pressable>
-  );
-}
 
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: "#F5FAF9" },
@@ -814,27 +770,6 @@ const styles = StyleSheet.create({
     fontSize: 13,
   },
   smallAction: { padding: 8 },
-  bottomNav: {
-    position: "absolute",
-    left: 0,
-    right: 0,
-    bottom: 0,
-    height: 72,
-    backgroundColor: "#fff",
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    borderTopWidth: 1,
-    borderColor: "#E0E7E7",
-    flexDirection: "row",
-    justifyContent: "space-around",
-    alignItems: "center",
-    paddingBottom: 7,
-  },
-  navItem: { alignItems: "center" },
-  navLabel: {
-    fontSize: 11,
-    fontWeight: "700",
-    color: "#A7AFB3",
-    marginTop: 3,
-  },
+
+
 });

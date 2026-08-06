@@ -12,6 +12,8 @@ import {
   View,
 } from "react-native";
 import useAuth from "@/hooks/useAuth";
+import PostpartumFooter from "../(footer)/PostpartumFooter";
+import PregnantFooter from "../(footer)/PregnantFooter";
 
 type Message = {
   id: string;
@@ -244,76 +246,18 @@ export default function AIChat() {
           <Feather name="send" size={22} color="#fff" />
         </Pressable>
       </View>
-
-      <BottomNav />
+      {user?.careStage === "pregnant" ? (
+      <PregnantFooter activeTab="chat" />
+       ) : (
+  <PostpartumFooter activeTab="chat" />
+)}
+     
     </View>
   );
 }
 
-function BottomNav() {
-  return (
-    <View style={styles.bottomNav}>
-      <NavItem
-        label="Health"
-        icon="emoticon-happy-outline"
-        onPress={() => router.push("/checkin" as any)}
-      />
 
-      <NavItem
-        label="Reminder"
-        featherIcon="bell"
-        onPress={() => router.push("/reminder" as any)}
-      />
 
-      <NavItem
-        label="Home"
-        featherIcon="home"
-        onPress={() => router.push("/" as any)}
-      />
-
-      <NavItem
-        label="Chat"
-        ionIcon="chatbubble-outline"
-        active
-        onPress={() => router.push("/(chat)" as any)}
-      />
-
-      <NavItem
-        label="Profile"
-        featherIcon="file-text"
-        onPress={() => router.push("/(profile)/medicalProfile" as any)}
-      />
-    </View>
-  );
-}
-
-function NavItem({
-  label,
-  icon,
-  featherIcon,
-  ionIcon,
-  active,
-  onPress,
-}: {
-  label: string;
-  icon?: any;
-  featherIcon?: any;
-  ionIcon?: any;
-  active?: boolean;
-  onPress?: () => void;
-}) {
-  const color = active ? "#2FA99A" : "#A7AFB3";
-
-  return (
-    <Pressable style={styles.navItem} onPress={onPress}>
-      {icon && <MaterialCommunityIcons name={icon} size={23} color={color} />}
-      {featherIcon && <Feather name={featherIcon} size={23} color={color} />}
-      {ionIcon && <Ionicons name={ionIcon} size={23} color={color} />}
-
-      <Text style={[styles.navLabel, { color }]}>{label}</Text>
-    </Pressable>
-  );
-}
 
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: "#F5FAF9", paddingTop: 42 },
@@ -423,24 +367,5 @@ const styles = StyleSheet.create({
     backgroundColor: "#32A99A",
     alignItems: "center",
     justifyContent: "center",
-  },
-  bottomNav: {
-    height: 72,
-    backgroundColor: "#fff",
-    borderTopWidth: 1,
-    borderColor: "#E0E7E7",
-    flexDirection: "row",
-    justifyContent: "space-around",
-    alignItems: "center",
-    paddingBottom: 7,
-  },
-  navItem: {
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  navLabel: {
-    fontSize: 11,
-    fontWeight: "700",
-    marginTop: 3,
   },
 });

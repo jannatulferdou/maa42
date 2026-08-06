@@ -34,53 +34,58 @@ export default function Login() {
     });
   };
 
-  const handleLogin = async () => {
-    if (!email.trim() || !password.trim()) {
-      showToast("error", "Missing Info", "Please enter email and password.");
-      return;
+const handleLogin = async () => {
+  if (!email.trim() || !password.trim()) {
+    showToast("error", "Missing Info", "Please enter email and password.");
+    return;
+  }
+
+  if (!API_URL) {
+    showToast("error", "API Error", "EXPO_PUBLIC_API_URL is missing.");
+    return;
+  }
+
+  try {
+    const credential = await loginUser(email.trim(), password);
+    const uid = credential.user.uid;
+
+    console.log("Login successful, fetching user profile...");
+
+    const res = await fetch(`${API_URL}/users/${uid}`);
+    const data = await res.json();
+
+    console.log("LOGIN USER PROFILE:", data);
+
+    if (!res.ok || !data?.success) {
+      throw new Error(data?.message || "User profile not found in backend.");
     }
 
-    if (!API_URL) {
-      showToast("error", "API Error", "EXPO_PUBLIC_API_URL is missing.");
-      return;
+    showToast("success", "Login Successful", `Welcome back, ${data.data.name}`);
+
+    console.log("Login complete, will redirect to home in 1 second");
+
+    setTimeout(() => {
+      console.log("Redirecting to home now");
+      router.replace("/(home)" as any);
+    }, 1000);
+  } catch (error: any) {
+    let message = error.message || "Login failed.";
+
+    if (
+      error.code === "auth/invalid-credential" ||
+      error.code === "auth/wrong-password" ||
+      error.code === "auth/user-not-found"
+    ) {
+      message = "Email or password is incorrect.";
     }
 
-    try {
-      const credential = await loginUser(email.trim(), password);
-      const uid = credential.user.uid;
-
-      const res = await fetch(`${API_URL}/users/${uid}`);
-      const data = await res.json();
-
-      console.log("LOGIN USER PROFILE:", data);
-
-      if (!res.ok || !data?.success) {
-        throw new Error(data?.message || "User profile not found in backend.");
-      }
-
-      showToast("success", "Login Successful", `Welcome back, ${data.data.name}`);
-
-      setTimeout(() => {
-        router.replace("/(home)" as any);
-      }, 800);
-    } catch (error: any) {
-      let message = error.message || "Login failed.";
-
-      if (
-        error.code === "auth/invalid-credential" ||
-        error.code === "auth/wrong-password" ||
-        error.code === "auth/user-not-found"
-      ) {
-        message = "Email or password is incorrect.";
-      }
-
-      if (error.code === "auth/invalid-email") {
-        message = "Please enter a valid email.";
-      }
-
-      showToast("error", "Login Failed", message);
+    if (error.code === "auth/invalid-email") {
+      message = "Please enter a valid email.";
     }
-  };
+
+    showToast("error", "Login Failed", message);
+  }
+};
 
   const handleForgotPassword = async () => {
   if (!email.trim()) {
