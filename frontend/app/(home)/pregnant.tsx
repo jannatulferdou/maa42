@@ -353,6 +353,40 @@ export default function PregnantHome() {
               )
             }
           />
+          <ToolCard
+            title="Pregnancy Calender"
+            bg="#9FC5DF"
+            iconBg="#C9E0EF"
+            icon={
+              <Feather
+                name="file-text"
+                size={26}
+                color="#263238"
+              />
+            }
+            onPress={() =>
+              router.push(
+                "/(calender)/pregencyCalender" as any
+              )
+            }
+          />
+          <ToolCard
+            title="Pregnancy Calender"
+            bg="#9FC5DF"
+            iconBg="#C9E0EF"
+            icon={
+              <Feather
+                name="file-text"
+                size={26}
+                color="#263238"
+              />
+            }
+            onPress={() =>
+              router.push(
+                "/(nutrition)/pregnantNutrition" as any
+              )
+            }
+          />
         </View>
       </ScrollView>
 
