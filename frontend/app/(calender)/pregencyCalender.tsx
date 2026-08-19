@@ -236,7 +236,7 @@ const getDefaultWeekData = (week: number) => ({
   weightGain: `${(week * 0.3).toFixed(0)}-${(week * 0.4).toFixed(0)} kg`,
   tips: ["Regular checkups important", "Stay active with walking", "Get enough rest"],
   watchOuts: "Monitor your health. Report any concerns.",
-  babyImage: require("../../assets/images/baby-default.png"),
+  babyImage: require("../../assets/images/week 28.jpg"),
   babyColor: "#FFD4D4",
   babySizePercent: Math.min((week / 40) * 100, 100),
 });

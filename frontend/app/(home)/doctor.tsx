@@ -97,7 +97,7 @@ export default function DoctorHome() {
 
         <View style={styles.header}>
           <Image
-            source={require("../../assets/images/icon.png")}
+            source={require("../../assets/images/maa42-logo.png")}
             style={styles.avatar}
           />
 

@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
     color: "#2FA99A",
   },
   orange: {
-    color: "#F5A623",
+    color: "#f58523",
   },
   healthcare: {
     fontSize: 40,

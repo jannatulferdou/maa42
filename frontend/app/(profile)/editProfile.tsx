@@ -216,7 +216,7 @@ export default function EditProfileScreen() {
           source={
             profileImage
               ? { uri: profileImage }
-              : require("../../assets/images/icon.png")
+              : require("../../assets/images/maa42-logo.png")
           }
           style={styles.avatar}
         />

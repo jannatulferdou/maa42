@@ -12,6 +12,8 @@ import {
   View,
 } from "react-native";
 import Toast from "react-native-toast-message";
+import PostpartumFooter from "../(footer)/PostpartumFooter";
+import PregnantFooter from "../(footer)/PregnantFooter";
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
@@ -136,7 +138,7 @@ export default function ProfileScreen() {
             source={
               profile?.profileImage
                 ? { uri: profile.profileImage }
-                : require("../../assets/images/icon.png")
+                : require("../../assets/images/maa42-logo.png")
             }
             style={styles.avatar}
           />
@@ -207,57 +209,16 @@ export default function ProfileScreen() {
         </Pressable>
       </ScrollView>
 
-      <View style={styles.bottomNav}>
-        <NavItem
-          icon="emoticon-happy-outline"
-          label="Health"
-          onPress={() => router.push("/(health)/checkin" as any)}
-        />
-        <NavItem
-          icon="bell-ring-outline"
-          label="Reminder"
-          onPress={() => router.push("/(reminder)/reminder" as any)}
-        />
-        <NavItem
-          icon="home-outline"
-          label="Home"
-          onPress={() => router.push("/(home)/index" as any)}
-        />
-        <NavItem
-          icon="chat-outline"
-          label="Chat"
-          onPress={() => router.push("/(chat)/index" as any)}
-        />
-        <NavItem icon="file-document-outline" label="Profile" active />
-      </View>
+      {user?.careStage === "pregnant" ? (
+        <PregnantFooter activeTab="profile" />
+      ) : (
+        <PostpartumFooter activeTab="profile" />
+      )}
     </View>
   );
 }
 
-function NavItem({
-  icon,
-  label,
-  active,
-  onPress,
-}: {
-  icon: any;
-  label: string;
-  active?: boolean;
-  onPress?: () => void;
-}) {
-  return (
-    <Pressable style={styles.navItem} onPress={onPress}>
-      <MaterialCommunityIcons
-        name={icon}
-        size={24}
-        color={active ? "#2FA99A" : "#A7AFB3"}
-      />
-      <Text style={[styles.navLabel, active && { color: "#2FA99A" }]}>
-        {label}
-      </Text>
-    </Pressable>
-  );
-}
+
 
 const styles = StyleSheet.create({
   loader: {
@@ -337,27 +298,5 @@ const styles = StyleSheet.create({
     fontSize: 17,
     fontWeight: "800",
   },
-  bottomNav: {
-    position: "absolute",
-    left: 0,
-    right: 0,
-    bottom: 0,
-    height: 72,
-    backgroundColor: "#fff",
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    borderTopWidth: 1,
-    borderColor: "#E0E7E7",
-    flexDirection: "row",
-    justifyContent: "space-around",
-    alignItems: "center",
-    paddingBottom: 7,
-  },
-  navItem: { alignItems: "center" },
-  navLabel: {
-    fontSize: 11,
-    fontWeight: "700",
-    color: "#A7AFB3",
-    marginTop: 3,
-  },
+
 });
