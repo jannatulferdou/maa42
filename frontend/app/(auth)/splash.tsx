@@ -14,7 +14,7 @@ export default function SplashScreen() {
   return (
     <View style={styles.container}>
       <Image
-        source={require("../../assets/images/Medsophia Logo.png")}
+        source={require("../../assets/images/maa42-logo.png")}
         style={styles.logo}
       />
 

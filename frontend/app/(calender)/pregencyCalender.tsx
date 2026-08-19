@@ -8,6 +8,7 @@ import {
   Dimensions,
   Platform,
   Animated,
+  Image,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import {
@@ -20,6 +21,7 @@ import useAuth from "@/hooks/useAuth";
 const { width } = Dimensions.get("window");
 const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
+// Week-based baby illustration data
 const WEEKLY_DATA: Record<number, {
   trimester: string;
   babySize: string;
@@ -34,6 +36,9 @@ const WEEKLY_DATA: Record<number, {
   weightGain: string;
   tips: string[];
   watchOuts: string;
+  babyImage: any; // Image source
+  babyColor: string;
+  babySizePercent: number;
 }> = {
   4: {
     trimester: "First Trimester",
@@ -47,12 +52,11 @@ const WEEKLY_DATA: Record<number, {
     waterGoal: 2.5,
     sleepNeeded: "9-10 hrs",
     weightGain: "0.5-1 kg",
-    tips: [
-      "Start prenatal vitamins daily",
-      "Eat small frequent meals",
-      "Avoid caffeine and alcohol",
-    ],
+    tips: ["Start prenatal vitamins daily", "Eat small frequent meals", "Avoid caffeine and alcohol"],
     watchOuts: "Avoid heavy lifting. Watch for severe nausea.",
+    babyImage: require("../../assets/images/week4.png"),
+    babyColor: "#FFE8E8",
+    babySizePercent: 5,
   },
   8: {
     trimester: "First Trimester",
@@ -66,12 +70,11 @@ const WEEKLY_DATA: Record<number, {
     waterGoal: 2.8,
     sleepNeeded: "9 hrs",
     weightGain: "1-2 kg",
-    tips: [
-      "Schedule first prenatal visit",
-      "Gentle walking daily",
-      "Stay hydrated always",
-    ],
+    tips: ["Schedule first prenatal visit", "Gentle walking daily", "Stay hydrated always"],
     watchOuts: "Avoid raw meat. No smoking or alcohol.",
+    babyImage: require("../../assets/images/week8.jpg"),
+    babyColor: "#FFD4D4",
+    babySizePercent: 10,
   },
   12: {
     trimester: "First Trimester",
@@ -85,12 +88,11 @@ const WEEKLY_DATA: Record<number, {
     waterGoal: 3.0,
     sleepNeeded: "8-9 hrs",
     weightGain: "2-3 kg",
-    tips: [
-      "Start Kegel exercises",
-      "Buy maternity clothes",
-      "Take progress photos",
-    ],
+    tips: ["Start Kegel exercises", "Buy maternity clothes", "Take progress photos"],
     watchOuts: "Avoid stress. Monitor blood pressure.",
+    babyImage: require("../../assets/images/week12.webp"),
+    babyColor: "#FFC8C8",
+    babySizePercent: 15,
   },
   16: {
     trimester: "Second Trimester",
@@ -104,12 +106,11 @@ const WEEKLY_DATA: Record<number, {
     waterGoal: 3.0,
     sleepNeeded: "8 hrs",
     weightGain: "3-5 kg",
-    tips: [
-      "Talk and sing to baby",
-      "Start prenatal yoga",
-      "Book anomaly scan",
-    ],
+    tips: ["Talk and sing to baby", "Start prenatal yoga", "Book anomaly scan"],
     watchOuts: "Watch for swelling. Regular checkups important.",
+    babyImage: require("../../assets/images/week16.png"),
+    babyColor: "#FFB8B8",
+    babySizePercent: 25,
   },
   20: {
     trimester: "Second Trimester",
@@ -123,12 +124,11 @@ const WEEKLY_DATA: Record<number, {
     waterGoal: 3.2,
     sleepNeeded: "8 hrs",
     weightGain: "5-7 kg",
-    tips: [
-      "Sleep on left side",
-      "Use pregnancy belt",
-      "Count baby kicks daily",
-    ],
+    tips: ["Sleep on left side", "Use pregnancy belt", "Count baby kicks daily"],
     watchOuts: "Avoid standing too long. Rest frequently.",
+    babyImage: require("../../assets/images/week20.jpg"),
+    babyColor: "#FFA8A8",
+    babySizePercent: 35,
   },
   24: {
     trimester: "Second Trimester",
@@ -142,12 +142,11 @@ const WEEKLY_DATA: Record<number, {
     waterGoal: 3.2,
     sleepNeeded: "8-9 hrs",
     weightGain: "7-9 kg",
-    tips: [
-      "Moisturize belly daily",
-      "Glucose test this week",
-      "Practice breathing exercises",
-    ],
+    tips: ["Moisturize belly daily", "Glucose test this week", "Practice breathing exercises"],
     watchOuts: "Monitor fetal movements. Report any concerns.",
+    babyImage: require("../../assets/images/week-24.webp"),
+    babyColor: "#FF9898",
+    babySizePercent: 45,
   },
   28: {
     trimester: "Third Trimester",
@@ -161,12 +160,11 @@ const WEEKLY_DATA: Record<number, {
     waterGoal: 3.5,
     sleepNeeded: "8 hrs",
     weightGain: "9-11 kg",
-    tips: [
-      "Pack hospital bag",
-      "Tour delivery room",
-      "TDAP vaccine if needed",
-    ],
+    tips: ["Pack hospital bag", "Tour delivery room", "TDAP vaccine if needed"],
     watchOuts: "Watch for preterm labor signs. Rest well.",
+    babyImage: require("../../assets/images/week 28.jpg"),
+    babyColor: "#FF8888",
+    babySizePercent: 55,
   },
   32: {
     trimester: "Third Trimester",
@@ -180,12 +178,11 @@ const WEEKLY_DATA: Record<number, {
     waterGoal: 3.5,
     sleepNeeded: "7-8 hrs",
     weightGain: "11-13 kg",
-    tips: [
-      "Finalize birth plan",
-      "Pelvic floor exercises",
-      "Install car seat",
-    ],
+    tips: ["Finalize birth plan", "Pelvic floor exercises", "Install car seat"],
     watchOuts: "Avoid heavy lifting. Check baby position.",
+    babyImage: require("../../assets/images/week 28.jpg"),
+    babyColor: "#FF7878",
+    babySizePercent: 65,
   },
   36: {
     trimester: "Third Trimester",
@@ -199,12 +196,11 @@ const WEEKLY_DATA: Record<number, {
     waterGoal: 3.5,
     sleepNeeded: "7-8 hrs",
     weightGain: "13-15 kg",
-    tips: [
-      "Weekly doctor visits",
-      "Perineal massage",
-      "Keep phone charged always",
-    ],
+    tips: ["Weekly doctor visits", "Perineal massage", "Keep phone charged always"],
     watchOuts: "Monitor contractions. Hospital bag ready.",
+    babyImage: require("../../assets/images/week 28.jpg"),
+    babyColor: "#FF6868",
+    babySizePercent: 80,
   },
   40: {
     trimester: "Due Date!",
@@ -218,12 +214,11 @@ const WEEKLY_DATA: Record<number, {
     waterGoal: 3.5,
     sleepNeeded: "Rest when possible",
     weightGain: "11-16 kg",
-    tips: [
-      "Trust your body",
-      "Breathe and relax",
-      "Contact doctor when ready",
-    ],
+    tips: ["Trust your body", "Breathe and relax", "Contact doctor when ready"],
     watchOuts: "Track contractions. Water breaking signs.",
+    babyImage: require("../../assets/images/week 28.jpg"),
+    babyColor: "#FF5050",
+    babySizePercent: 100,
   },
 };
 
@@ -239,12 +234,11 @@ const getDefaultWeekData = (week: number) => ({
   waterGoal: 3.0,
   sleepNeeded: "8 hrs",
   weightGain: `${(week * 0.3).toFixed(0)}-${(week * 0.4).toFixed(0)} kg`,
-  tips: [
-    "Regular checkups important",
-    "Stay active with walking",
-    "Get enough rest",
-  ],
+  tips: ["Regular checkups important", "Stay active with walking", "Get enough rest"],
   watchOuts: "Monitor your health. Report any concerns.",
+  babyImage: require("../../assets/images/baby-default.png"),
+  babyColor: "#FFD4D4",
+  babySizePercent: Math.min((week / 40) * 100, 100),
 });
 
 const getWeekData = (week: number) => {
@@ -259,6 +253,84 @@ const getWeekData = (week: number) => {
   return { ...WEEKLY_DATA[nearest], ...getDefaultWeekData(week) };
 };
 
+// Baby Image Component with animation
+function BabyImageComponent({ week, weekData }: { week: number; weekData: any }) {
+  const scaleAnim = useRef(new Animated.Value(0.3)).current;
+  const opacityAnim = useRef(new Animated.Value(0)).current;
+  const floatAnim = useRef(new Animated.Value(0)).current;
+
+  const maxSize = width * 0.5;
+  const minSize = 60;
+  const babySize = minSize + (maxSize - minSize) * (weekData.babySizePercent / 100);
+
+  useEffect(() => {
+    opacityAnim.setValue(0);
+    scaleAnim.setValue(0.3);
+
+    Animated.parallel([
+      Animated.spring(scaleAnim, {
+        toValue: 1,
+        friction: 4,
+        tension: 30,
+        useNativeDriver: true,
+      }),
+      Animated.timing(opacityAnim, {
+        toValue: 1,
+        duration: 800,
+        useNativeDriver: true,
+      }),
+    ]).start();
+
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(floatAnim, {
+          toValue: -8,
+          duration: 2000,
+          useNativeDriver: true,
+        }),
+        Animated.timing(floatAnim, {
+          toValue: 8,
+          duration: 2000,
+          useNativeDriver: true,
+        }),
+      ])
+    ).start();
+
+    return () => {
+      floatAnim.stopAnimation();
+    };
+  }, [week]);
+
+  return (
+    <Animated.View
+      style={[
+        styles.babyImageContainer,
+        {
+          width: babySize,
+          height: babySize,
+          borderRadius: babySize / 2,
+          backgroundColor: weekData.babyColor,
+          transform: [
+            { scale: scaleAnim },
+            { translateY: floatAnim },
+          ],
+          opacity: opacityAnim,
+        },
+      ]}
+    >
+      <Image
+        source={weekData.babyImage}
+        style={{
+          width: babySize * 0.85,
+          height: babySize * 0.85,
+          borderRadius: babySize / 2,
+        }}
+        resizeMode="contain"
+      />
+    </Animated.View>
+  );
+}
+
 export default function PregnantHomeScreen() {
   const { user } = useAuth();
   const [currentWeek, setCurrentWeek] = useState(4);
@@ -267,28 +339,10 @@ export default function PregnantHomeScreen() {
   const [dueDate, setDueDate] = useState("Not set");
   const [waterCurrent, setWaterCurrent] = useState(1.5);
   const [loading, setLoading] = useState(true);
-  
-  const babyScale = useRef(new Animated.Value(0.8)).current;
-  const babyOpacity = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     fetchProfile();
   }, [user]);
-
-  useEffect(() => {
-    Animated.parallel([
-      Animated.spring(babyScale, {
-        toValue: 1,
-        friction: 3,
-        useNativeDriver: true,
-      }),
-      Animated.timing(babyOpacity, {
-        toValue: 1,
-        duration: 600,
-        useNativeDriver: true,
-      }),
-    ]).start();
-  }, [currentWeek]);
 
   const fetchProfile = async () => {
     try {
@@ -296,16 +350,12 @@ export default function PregnantHomeScreen() {
         setLoading(false);
         return;
       }
-      
       const res = await fetch(`${API_URL}/users/${user.uid}`);
       const data = await res.json();
-      
       if (data?.success && data.data) {
         const week = data.data.pregnancyWeek || 4;
         const edd = data.data.expectedDeliveryDate;
-        
         setCurrentWeek(week);
-        
         if (edd) {
           setDueDate(edd);
           calculateDaysLeft(edd);
@@ -329,7 +379,6 @@ export default function PregnantHomeScreen() {
 
   const weekData = getWeekData(currentWeek);
   const currentDay = 280 - daysLeft;
-  const babySizePercent = Math.min((currentWeek / 40) * 100, 100);
 
   if (loading) {
     return (
@@ -341,15 +390,9 @@ export default function PregnantHomeScreen() {
 
   return (
     <View style={styles.container}>
-      <LinearGradient
-        colors={["#F5FAF9", "#E8F5F1", "#F5FAF9"]}
-        style={styles.backgroundGradient}
-      />
+      <LinearGradient colors={["#F5FAF9", "#E8F5F1", "#F5FAF9"]} style={styles.backgroundGradient} />
 
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 100 }}
-      >
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 100 }}>
         <View style={styles.topBar}>
           <Text style={styles.smallLabel}>TODAY</Text>
           <Text style={styles.weekLabel}>Week {currentWeek}</Text>
@@ -358,57 +401,19 @@ export default function PregnantHomeScreen() {
         <View style={styles.weekSelector}>
           {["M", "T", "W", "T", "F", "S", "S"].map((day, index) => {
             const isToday = index === new Date().getDay() - 1 || index === 5;
-            const date = 1 + index;
             return (
-              <View
-                key={index}
-                style={[styles.weekDayBox, isToday && styles.weekDayBoxActive]}
-              >
-                <Text
-                  style={[
-                    styles.weekDayText,
-                    isToday && styles.weekDayTextActive,
-                  ]}
-                >
-                  {date}
-                </Text>
-                <Text
-                  style={[
-                    styles.weekDayLabel,
-                    isToday && styles.weekDayLabelActive,
-                  ]}
-                >
-                  {day}
-                </Text>
+              <View key={index} style={[styles.weekDayBox, isToday && styles.weekDayBoxActive]}>
+                <Text style={[styles.weekDayText, isToday && styles.weekDayTextActive]}>{1 + index}</Text>
+                <Text style={[styles.weekDayLabel, isToday && styles.weekDayLabelActive]}>{day}</Text>
                 {isToday && <View style={styles.currentDayDot} />}
               </View>
             );
           })}
         </View>
 
+        {/* BABY IMAGE SECTION */}
         <View style={styles.babyHeroContainer}>
-          <Animated.View 
-            style={[
-              styles.babyHeroBg,
-              {
-                transform: [{ scale: babyScale }],
-                opacity: babyOpacity,
-              }
-            ]}
-          >
-            <View style={styles.fetusIllustrationContainer}>
-              <MaterialCommunityIcons
-                name={weekData.babyIcon}
-                size={80 + babySizePercent * 0.5}
-                color="#FFFFFF"
-                style={{ opacity: 0.9 }}
-              />
-              <LinearGradient
-                colors={["transparent", "rgba(255,255,255,0.2)"]}
-                style={styles.innerGlow}
-              />
-            </View>
-          </Animated.View>
+          <BabyImageComponent week={currentWeek} weekData={weekData} />
 
           <View style={styles.heroInfo}>
             <Text style={styles.heroWeekText}>{currentWeek} Weeks</Text>
@@ -416,33 +421,20 @@ export default function PregnantHomeScreen() {
             <Text style={styles.heroSubText}>
               Size: {weekData.babySize} ({weekData.fruit})
             </Text>
+            <Text style={styles.trimesterBadge}>{weekData.trimester}</Text>
           </View>
-
-          <Pressable style={styles.detailsBtn}>
-            <Text style={styles.detailsBtnText}>Details</Text>
-          </Pressable>
         </View>
 
         <Text style={styles.sectionTitle}>My daily insights · Today</Text>
 
         <View style={styles.insightGrid}>
-          <LinearGradient
-            colors={["#A8DCAD", "#CDEFD0"]}
-            style={styles.insightCard}
-          >
+          <LinearGradient colors={["#A8DCAD", "#CDEFD0"]} style={styles.insightCard}>
             <Text style={styles.insightLabel}>Pregnancy day</Text>
-            <Text style={styles.insightBigNumber}>
-              {currentDay}
-            </Text>
-            <Text style={styles.insightSubText}>
-              of {totalDays} days
-            </Text>
+            <Text style={styles.insightBigNumber}>{currentDay}</Text>
+            <Text style={styles.insightSubText}>of {totalDays} days</Text>
           </LinearGradient>
 
-          <LinearGradient
-            colors={["#E7C7DC", "#F2DBEA"]}
-            style={styles.insightCard}
-          >
+          <LinearGradient colors={["#E7C7DC", "#F2DBEA"]} style={styles.insightCard}>
             <View style={styles.cardHeaderRow}>
               <Text style={styles.insightLabel}>Week {currentWeek}</Text>
             </View>
@@ -450,19 +442,12 @@ export default function PregnantHomeScreen() {
               <MaterialCommunityIcons name="baby" size={24} color="#2FA99A" />
             </View>
             <Text style={styles.insightTitle}>Your baby</Text>
-            <Text style={{ fontSize: 10, color: "#2FA99A", marginTop: 2 }}>
-              {weekData.babyWeight}
-            </Text>
+            <Text style={{ fontSize: 10, color: "#2FA99A", marginTop: 2 }}>{weekData.babyWeight}</Text>
           </LinearGradient>
 
-          <LinearGradient
-            colors={["#F4E8A6", "#FFF4C8"]}
-            style={[styles.insightCard, { width: "100%", marginTop: 0 }]}
-          >
+          <LinearGradient colors={["#F4E8A6", "#FFF4C8"]} style={[styles.insightCard, { width: "100%", marginTop: 0 }]}>
             <Text style={styles.insightLabel}>Watch-outs</Text>
-            <Text style={[styles.insightTitle, { fontSize: 14 }]}>
-              {weekData.watchOuts}
-            </Text>
+            <Text style={[styles.insightTitle, { fontSize: 14 }]}>{weekData.watchOuts}</Text>
           </LinearGradient>
         </View>
 
@@ -475,24 +460,12 @@ export default function PregnantHomeScreen() {
                 <Feather name="droplet" size={22} color="#32A99A" />
               </View>
               <Text style={styles.trackerLabel}>Water Intake</Text>
-              <Text style={styles.trackerValue}>
-                {waterCurrent}L / {weekData.waterGoal}L
-              </Text>
+              <Text style={styles.trackerValue}>{waterCurrent}L / {weekData.waterGoal}L</Text>
             </View>
             <View style={styles.progressBar}>
-              <View
-                style={[
-                  styles.progressFill,
-                  {
-                    width: `${Math.min((waterCurrent / weekData.waterGoal) * 100, 100)}%`,
-                    backgroundColor: "#32A99A",
-                  },
-                ]}
-              />
+              <View style={[styles.progressFill, { width: `${Math.min((waterCurrent / weekData.waterGoal) * 100, 100)}%`, backgroundColor: "#32A99A" }]} />
             </View>
-            <Text style={styles.trackerHint}>
-              Aim for {Math.round(weekData.waterGoal * 4)} glasses today! 💧
-            </Text>
+            <Text style={styles.trackerHint}>Aim for {Math.round(weekData.waterGoal * 4)} glasses today! 💧</Text>
           </View>
 
           <View style={styles.rowTrackerContainer}>
@@ -527,9 +500,7 @@ export default function PregnantHomeScreen() {
               <Text style={styles.trackerLabel}>Todays Focus Diet</Text>
             </View>
             {weekData.diet.map((food, idx) => (
-              <Text key={idx} style={styles.dietText}>
-                🥗 {food}
-              </Text>
+              <Text key={idx} style={styles.dietText}>🥗 {food}</Text>
             ))}
           </View>
 
@@ -557,15 +528,9 @@ export default function PregnantHomeScreen() {
 
             <View style={{ marginTop: 12, paddingTop: 12, borderTopWidth: 1, borderTopColor: "#E0E7E7" }}>
               <Text style={[styles.tipsTitle, { marginBottom: 8 }]}>Quick Info</Text>
-              <Text style={styles.tipText}>
-                📅 Trimester: {weekData.trimester}
-              </Text>
-              <Text style={styles.tipText}>
-                📆 Due Date: {dueDate}
-              </Text>
-              <Text style={styles.tipText}>
-                ⏰ {daysLeft} days remaining
-              </Text>
+              <Text style={styles.tipText}>📅 Trimester: {weekData.trimester}</Text>
+              <Text style={styles.tipText}>📆 Due Date: {dueDate}</Text>
+              <Text style={styles.tipText}>⏰ {daysLeft} days remaining</Text>
             </View>
           </View>
         </View>
@@ -575,204 +540,66 @@ export default function PregnantHomeScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#F5FAF9",
-    paddingTop: Platform.OS === "ios" ? 50 : 40,
-  },
-  backgroundGradient: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    height: 500,
-  },
-  topBar: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingHorizontal: 27,
-    marginBottom: 20,
-  },
+  container: { flex: 1, backgroundColor: "#F5FAF9", paddingTop: Platform.OS === "ios" ? 50 : 40 },
+  backgroundGradient: { position: "absolute", top: 0, left: 0, right: 0, height: 500 },
+  topBar: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", paddingHorizontal: 27, marginBottom: 20 },
   smallLabel: { fontSize: 12, color: "#8A8F95", fontWeight: "600", letterSpacing: 1 },
   weekLabel: { fontSize: 16, fontWeight: "800", color: "#263238" },
-  weekSelector: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    paddingHorizontal: 27,
-    marginBottom: 30,
-  },
-  weekDayBox: {
-    alignItems: "center",
-    justifyContent: "center",
-    width: 40,
-    height: 60,
-    borderRadius: 20,
-  },
-  weekDayBoxActive: {
-    backgroundColor: "#FFFFFF",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.05,
-    shadowRadius: 10,
-    elevation: 3,
-  },
+  weekSelector: { flexDirection: "row", justifyContent: "space-between", paddingHorizontal: 27, marginBottom: 30 },
+  weekDayBox: { alignItems: "center", justifyContent: "center", width: 40, height: 60, borderRadius: 20 },
+  weekDayBoxActive: { backgroundColor: "#FFFFFF", shadowColor: "#000", shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.05, shadowRadius: 10, elevation: 3 },
   weekDayText: { fontSize: 16, fontWeight: "700", color: "#8A8F95" },
   weekDayTextActive: { color: "#263238" },
   weekDayLabel: { fontSize: 10, color: "#8A8F95", marginTop: 4, fontWeight: "600" },
   weekDayLabelActive: { color: "#32A99A" },
-  currentDayDot: {
-    width: 5,
-    height: 5,
-    borderRadius: 3,
-    backgroundColor: "#32A99A",
-    marginTop: 6,
-  },
-  babyHeroContainer: {
-    alignItems: "center",
-    marginBottom: 30,
-    position: "relative",
-  },
-  babyHeroBg: {
-    width: width * 0.7,
-    height: width * 0.7,
-    borderRadius: width * 0.35,
-    backgroundColor: "#DDF5F1",
+  currentDayDot: { width: 5, height: 5, borderRadius: 3, backgroundColor: "#32A99A", marginTop: 6 },
+  babyHeroContainer: { alignItems: "center", marginBottom: 30 },
+  babyImageContainer: {
     justifyContent: "center",
     alignItems: "center",
-    overflow: "hidden",
-    shadowColor: "#2FA99A",
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.2,
+    shadowOpacity: 0.15,
     shadowRadius: 30,
-    elevation: 5,
+    elevation: 8,
   },
-  fetusIllustrationContainer: {
-    width: "100%",
-    height: "100%",
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#CDEFD0",
-  },
-  innerGlow: {
-    ...StyleSheet.absoluteFillObject,
-    zIndex: 1,
-    borderRadius: width * 0.35,
-  },
-  heroInfo: {
-    marginTop: 20,
-    alignItems: "center",
-  },
+  heroInfo: { marginTop: 24, alignItems: "center" },
   heroWeekText: { fontSize: 28, fontWeight: "800", color: "#263238" },
   heroDaysText: { fontSize: 16, color: "#7B8288", marginTop: 4 },
   heroSubText: { fontSize: 14, color: "#32A99A", fontWeight: "600", marginTop: 4 },
-  detailsBtn: {
-    marginTop: 16,
-    backgroundColor: "#FFFFFF",
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 30,
-    borderWidth: 1,
-    borderColor: "#32A99A",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.05,
-    shadowRadius: 10,
-    elevation: 3,
+  trimesterBadge: {
+    marginTop: 8,
+    fontSize: 12,
+    fontWeight: "700",
+    color: "#32A99A",
+    backgroundColor: "#DDF5F1",
+    paddingHorizontal: 16,
+    paddingVertical: 6,
+    borderRadius: 20,
   },
-  detailsBtnText: { fontSize: 14, fontWeight: "700", color: "#32A99A" },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: "800",
-    color: "#263238",
-    paddingHorizontal: 27,
-    marginBottom: 16,
-  },
-  insightGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "space-between",
-    paddingHorizontal: 27,
-    gap: 10,
-  },
-  insightCard: {
-    width: "48%",
-    padding: 16,
-    borderRadius: 16,
-    minHeight: 110,
-    justifyContent: "space-between",
-  },
+  sectionTitle: { fontSize: 18, fontWeight: "800", color: "#263238", paddingHorizontal: 27, marginBottom: 16 },
+  insightGrid: { flexDirection: "row", flexWrap: "wrap", justifyContent: "space-between", paddingHorizontal: 27, gap: 10 },
+  insightCard: { width: "48%", padding: 16, borderRadius: 16, minHeight: 110, justifyContent: "space-between" },
   insightLabel: { fontSize: 12, color: "#7B8288", fontWeight: "600" },
   insightBigNumber: { fontSize: 28, fontWeight: "800", color: "#263238" },
   insightSubText: { fontSize: 12, color: "#8A8F95", marginTop: -4 },
   cardHeaderRow: { flexDirection: "row", justifyContent: "space-between" },
-  cardIconCircle: {
-    width: 40,
-    height: 40,
-    borderRadius: 12,
-    backgroundColor: "#FFFFFF",
-    alignItems: "center",
-    justifyContent: "center",
-    alignSelf: "flex-start",
-    marginTop: 8,
-  },
-  insightTitle: {
-    fontSize: 16,
-    fontWeight: "700",
-    color: "#263238",
-    marginTop: 6,
-  },
+  cardIconCircle: { width: 40, height: 40, borderRadius: 12, backgroundColor: "#FFFFFF", alignItems: "center", justifyContent: "center", alignSelf: "flex-start", marginTop: 8 },
+  insightTitle: { fontSize: 16, fontWeight: "700", color: "#263238", marginTop: 6 },
   trackerContainer: { paddingHorizontal: 27, marginTop: 20 },
   trackerTitle: { fontSize: 18, fontWeight: "700", color: "#263238", marginBottom: 16 },
-  trackerCard: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 16,
-    padding: 16,
-    marginBottom: 12,
-    borderWidth: 1,
-    borderColor: "#E0E7E7",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.04,
-    shadowRadius: 10,
-    elevation: 2,
-  },
+  trackerCard: { backgroundColor: "#FFFFFF", borderRadius: 16, padding: 16, marginBottom: 12, borderWidth: 1, borderColor: "#E0E7E7" },
   trackerHeader: { flexDirection: "row", alignItems: "center", marginBottom: 12 },
-  trackerIconBox: {
-    width: 40,
-    height: 40,
-    borderRadius: 12,
-    backgroundColor: "#DDF5F1",
-    alignItems: "center",
-    justifyContent: "center",
-    marginRight: 10,
-  },
+  trackerIconBox: { width: 40, height: 40, borderRadius: 12, backgroundColor: "#DDF5F1", alignItems: "center", justifyContent: "center", marginRight: 10 },
   trackerLabel: { flex: 1, fontSize: 14, fontWeight: "600", color: "#263238" },
   trackerValue: { fontSize: 14, fontWeight: "700", color: "#32A99A" },
   trackerBigValue: { fontSize: 24, fontWeight: "800", color: "#263238" },
-  progressBar: {
-    height: 8,
-    backgroundColor: "#E0E7E7",
-    borderRadius: 4,
-    overflow: "hidden",
-    marginBottom: 6,
-  },
+  progressBar: { height: 8, backgroundColor: "#E0E7E7", borderRadius: 4, overflow: "hidden", marginBottom: 6 },
   progressFill: { height: "100%", borderRadius: 4 },
   trackerHint: { fontSize: 12, color: "#8A8F95", marginTop: 4 },
   rowTrackerContainer: { flexDirection: "row", marginBottom: 12 },
   dietText: { fontSize: 14, color: "#7B8288", lineHeight: 22, marginBottom: 4 },
-  tipsContainer: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 16,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: "#E0E7E7",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.04,
-    shadowRadius: 10,
-    elevation: 2,
-  },
+  tipsContainer: { backgroundColor: "#FFFFFF", borderRadius: 16, padding: 16, borderWidth: 1, borderColor: "#E0E7E7" },
   tipsHeader: { flexDirection: "row", alignItems: "center", marginBottom: 12 },
   tipsTitle: { fontSize: 14, fontWeight: "700", color: "#263238", marginLeft: 8 },
   tipRow: { flexDirection: "row", marginBottom: 8 },
