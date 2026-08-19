@@ -16,7 +16,7 @@ export default function Onboarding() {
     <View style={styles.container}>
       <View style={styles.imageBox}>
         <Image
-          source={require("../../assets/images/Medsophia Logo.png")}
+          source={require("../../assets/images/maa42-logo.png")}
           style={styles.logo}
         />
       </View>

@@ -68,7 +68,7 @@ export default function PregnantHome() {
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
         {/* HEADER */}
         <View style={styles.header}>
-          <Image source={require("../../assets/images/icon.png")} style={styles.avatar} />
+          <Image source={require("../../assets/images/maa42-logo.png")} style={styles.avatar} />
           <View style={styles.userBox}>
             <Text style={styles.welcome}>Welcome back,</Text>
             <Text style={styles.name}>{name}</Text>
