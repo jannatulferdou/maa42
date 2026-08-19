@@ -26,6 +26,18 @@ model User {
   gender       String?
   bloodGroup   String?
 
+    // Pregnancy / Postpartum
+  careStage            String? // "pregnant" | "postpartum"
+  expectedDeliveryDate String?
+  pregnancyWeek        Int?
+
+
+  // Doctor Information
+  specialization      String?
+  medicalRegistration String?
+  hospitalClinic      String?
+  experienceYears     Int?
+
   childbirthDate String?
   deliveryType   String?
   postpartumDay  Int?
@@ -39,17 +51,23 @@ model User {
   emergencyContact String?
 
   role String @default("mother")
-
+  maternalStatus String?
   shareWithDoctor    Boolean @default(true)
   emergencyAccess     Boolean @default(true)
   offlineSync        Boolean @default(true)
   chatHistoryEnabled Boolean @default(true)
   analyticsEnabled   Boolean @default(false)
 
+  chatSummary String?
+
   notifications Notification[]
+  healthCheckins HealthCheckin[]
+  chatSessions  ChatSession[]
+  emergencyContacts EmergencyContact[]
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
 }
+
 
 model Notification {
   id     Int @id @default(autoincrement())
@@ -64,3 +82,62 @@ model Notification {
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
+
+model HealthCheckin {
+  id       Int @id @default(autoincrement())
+  userId   Int
+
+  symptoms String[]
+  severity String
+  notes    String?
+
+  risk      String
+  reason    String
+  nextSteps String[]
+
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model EmergencyContact {
+  id Int @id @default(autoincrement())
+
+  userId Int
+
+  name String
+  relation String
+  phone String
+
+  isFavorite Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model ChatSession {
+  id            Int       @id @default(autoincrement())
+  userId        Int
+  title         String?
+  endedAt       DateTime?
+  lastMessageAt DateTime  @default(now())
+  createdAt     DateTime  @default(now())
+
+  messages ChatMessage[]
+  user     User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model ChatMessage {
+  id        Int      @id @default(autoincrement())
+  sessionId Int
+
+  role    String
+  content String
+
+  createdAt DateTime @default(now())
+
+  session ChatSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+}
+

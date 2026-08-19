@@ -1,22 +1,101 @@
+import useAuth from "@/hooks/useAuth";
 import { Feather, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { useState } from "react";
+import {
+  ActivityIndicator,
+  Alert,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
+import PostpartumFooter from "../(footer)/PostpartumFooter";
+import PregnantFooter from "../(footer)/PregnantFooter";
+
+const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
 const symptoms = [
-  { title: "Feeling well", icon: "emoticon-happy-outline", type: "mc", active: true, color: "#2FA99A", bg: "#E1F7F3" },
-  { title: "Fever", icon: "thermometer", type: "feather" },
-  { title: "Heavy bleeding", icon: "drop", type: "feather" },
-  { title: "Weakness", icon: "wind", type: "feather" },
-  { title: "Dizziness", icon: "zap", type: "feather", active: true, color: "#F5A623", bg: "#FFF1D8" },
-  { title: "Sadness", icon: "frown-outline", type: "ion" },
-  { title: "Swelling", icon: "wind", type: "feather" },
-  { title: "Pain", icon: "zap", type: "feather", active: true, color: "#EF3340", bg: "#FFE7E8" },
-  { title: "Headache", icon: "frown-outline", type: "ion" },
-  { title: "Infection signs", icon: "wind", type: "feather" },
-  { title: "Trouble feeding", icon: "zap", type: "feather" },
+  { title: "Feeling well", icon: "emoticon-happy-outline", type: "mc", color: "#2FA99A", bg: "#E1F7F3" },
+  { title: "Fever", icon: "thermometer", type: "feather", color: "#EF3340", bg: "#FFE7E8" },
+  { title: "Heavy bleeding", icon: "drop", type: "feather", color: "#EF3340", bg: "#FFE7E8" },
+  { title: "Weakness", icon: "wind", type: "feather", color: "#F5A623", bg: "#FFF1D8" },
+  { title: "Dizziness", icon: "zap", type: "feather", color: "#F5A623", bg: "#FFF1D8" },
+  { title: "Sadness", icon: "frown-outline", type: "ion", color: "#7A7F86", bg: "#F1F4F5" },
+  { title: "Swelling", icon: "wind", type: "feather", color: "#F5A623", bg: "#FFF1D8" },
+  { title: "Pain", icon: "zap", type: "feather", color: "#EF3340", bg: "#FFE7E8" },
+  { title: "Headache", icon: "frown-outline", type: "ion", color: "#F5A623", bg: "#FFF1D8" },
+  { title: "Infection signs", icon: "wind", type: "feather", color: "#EF3340", bg: "#FFE7E8" },
+  { title: "Trouble feeding", icon: "zap", type: "feather", color: "#F5A623", bg: "#FFF1D8" },
 ];
 
 export default function Checkin() {
+  const { user } = useAuth();
+  const [selectedSymptoms, setSelectedSymptoms] = useState<string[]>([]);
+  const [severity, setSeverity] = useState("Mild");
+  const [notes, setNotes] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const userId = 1; // pore login user er database id boshaben
+
+  const toggleSymptom = (title: string) => {
+    setSelectedSymptoms((prev) =>
+      prev.includes(title)
+        ? prev.filter((item) => item !== title)
+        : [...prev, title]
+    );
+  };
+
+  const handleSubmit = async () => {
+    if (!API_URL) {
+      Alert.alert("Error", "EXPO_PUBLIC_API_URL missing in .env.local");
+      return;
+    }
+
+    if (selectedSymptoms.length === 0) {
+      Alert.alert("Required", "Please select at least one symptom.");
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      const res = await fetch(`${API_URL}/checkins`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId,
+          symptoms: selectedSymptoms,
+          severity,
+          notes,
+        }),
+      });
+
+      const result = await res.json();
+
+      if (!res.ok) {
+        throw new Error(result.message || "Checkin failed");
+      }
+
+      const data = result.data;
+
+      router.push({
+        pathname: "/(health)/summary",
+        params: {
+          risk: data.risk,
+          reason: data.reason,
+          nextSteps: JSON.stringify(data.nextSteps),
+        },
+      } as any);
+    } catch (error: any) {
+      Alert.alert("Error", error.message || "Something went wrong");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <View style={styles.screen}>
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
@@ -28,35 +107,58 @@ export default function Checkin() {
         </View>
 
         <View style={styles.grid}>
-          {symptoms.map((item) => (
-            <Pressable
-              key={item.title}
-              style={[
-                styles.symptomCard,
-                item.active && { backgroundColor: item.bg, borderColor: item.color },
-              ]}
-            >
-              {item.type === "mc" && <MaterialCommunityIcons name={item.icon as any} size={25} color={item.color || "#7A7F86"} />}
-              {item.type === "feather" && <Feather name={item.icon as any} size={25} color={item.color || "#7A7F86"} />}
-              {item.type === "ion" && <Ionicons name={item.icon as any} size={25} color={item.color || "#7A7F86"} />}
-              <Text style={[styles.symptomText, item.active && { color: item.color }]}>
-                {item.title}
-              </Text>
-            </Pressable>
-          ))}
+          {symptoms.map((item) => {
+            const active = selectedSymptoms.includes(item.title);
+
+            return (
+              <Pressable
+                key={item.title}
+                onPress={() => toggleSymptom(item.title)}
+                style={[
+                  styles.symptomCard,
+                  active && { backgroundColor: item.bg, borderColor: item.color },
+                ]}
+              >
+                {item.type === "mc" && (
+                  <MaterialCommunityIcons name={item.icon as any} size={25} color={active ? item.color : "#7A7F86"} />
+                )}
+                {item.type === "feather" && (
+                  <Feather name={item.icon as any} size={25} color={active ? item.color : "#7A7F86"} />
+                )}
+                {item.type === "ion" && (
+                  <Ionicons name={item.icon as any} size={25} color={active ? item.color : "#7A7F86"} />
+                )}
+
+                <Text style={[styles.symptomText, active && { color: item.color }]}>
+                  {item.title}
+                </Text>
+              </Pressable>
+            );
+          })}
         </View>
 
         <Text style={styles.label}>Severity</Text>
         <View style={styles.severityRow}>
-          <Pressable style={[styles.severityBtn, styles.activeSeverity]}>
-            <Text style={styles.activeSeverityText}>Mild</Text>
-          </Pressable>
-          <Pressable style={styles.severityBtn}>
-            <Text style={styles.severityText}>Moderate</Text>
-          </Pressable>
-          <Pressable style={styles.severityBtn}>
-            <Text style={styles.severityText}>Severe</Text>
-          </Pressable>
+          {["Mild", "Moderate", "Severe"].map((item) => (
+            <Pressable
+              key={item}
+              onPress={() => setSeverity(item)}
+              style={[
+                styles.severityBtn,
+                severity === item && styles.activeSeverity,
+              ]}
+            >
+              <Text
+                style={
+                  severity === item
+                    ? styles.activeSeverityText
+                    : styles.severityText
+                }
+              >
+                {item}
+              </Text>
+            </Pressable>
+          ))}
         </View>
 
         <Text style={styles.label}>Notes</Text>
@@ -64,39 +166,33 @@ export default function Checkin() {
           style={styles.notes}
           placeholder="Describe anything else..."
           multiline
+          value={notes}
+          onChangeText={setNotes}
           placeholderTextColor="#8A8F95"
         />
 
-        <Pressable style={styles.submitBtn} onPress={() => router.push("/(health)/summary" as any)}>
-          <Text style={styles.submitText}>Submit</Text>
+        <Pressable
+          style={[styles.submitBtn, loading && { opacity: 0.7 }]}
+          onPress={handleSubmit}
+          disabled={loading}
+        >
+          {loading ? (
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <Text style={styles.submitText}>Submit</Text>
+          )}
         </Pressable>
       </ScrollView>
 
-      <BottomNav />
+            {user?.careStage === "pregnant" ? (
+        <PregnantFooter activeTab="health" />
+      ) : (
+        <PostpartumFooter activeTab="health" />
+      )}
     </View>
   );
 }
 
-function BottomNav() {
-  return (
-    <View style={styles.bottomNav}>
-      <Nav icon={<MaterialCommunityIcons name="emoticon-happy-outline" size={24} color="#2FA99A" />} label="Health" active />
-      <Nav icon={<Feather name="bell" size={23} color="#A7AFB3" />} label="Reminder" />
-      <Nav icon={<Feather name="home" size={23} color="#A7AFB3" />} label="Home" />
-      <Nav icon={<Ionicons name="chatbubble-outline" size={23} color="#A7AFB3" />} label="Chat" />
-      <Nav icon={<Feather name="file-text" size={23} color="#A7AFB3" />} label="Profile" />
-    </View>
-  );
-}
-
-function Nav({ icon, label, active }: any) {
-  return (
-    <View style={styles.navItem}>
-      {icon}
-      <Text style={[styles.navLabel, active && { color: "#2FA99A" }]}>{label}</Text>
-    </View>
-  );
-}
 
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: "#F5FAF9" },
@@ -116,7 +212,5 @@ const styles = StyleSheet.create({
   notes: { height: 90, backgroundColor: "#fff", borderRadius: 12, borderWidth: 1, borderColor: "#CED9DD", padding: 18, fontSize: 15, textAlignVertical: "top", marginBottom: 24 },
   submitBtn: { height: 56, borderRadius: 11, backgroundColor: "#32A99A", alignItems: "center", justifyContent: "center" },
   submitText: { color: "#fff", fontSize: 17, fontWeight: "800" },
-  bottomNav: { position: "absolute", left: 0, right: 0, bottom: 0, height: 72, backgroundColor: "#fff", borderTopLeftRadius: 20, borderTopRightRadius: 20, borderTopWidth: 1, borderColor: "#E0E7E7", flexDirection: "row", justifyContent: "space-around", alignItems: "center", paddingBottom: 7 },
-  navItem: { alignItems: "center" },
-  navLabel: { fontSize: 11, fontWeight: "700", color: "#A7AFB3", marginTop: 3 },
+
 });

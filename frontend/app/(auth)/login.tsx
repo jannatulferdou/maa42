@@ -9,14 +9,16 @@ import {
   View,
 } from "react-native";
 import Toast from "react-native-toast-message";
+import { Feather } from "@expo/vector-icons";
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
 export default function Login() {
-  const { loginUser } = useAuth();
+  const { loginUser, resetPassword } = useAuth();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const showToast = (
     type: "success" | "error",
@@ -32,53 +34,85 @@ export default function Login() {
     });
   };
 
-  const handleLogin = async () => {
-    if (!email.trim() || !password.trim()) {
-      showToast("error", "Missing Info", "Please enter email and password.");
-      return;
+const handleLogin = async () => {
+  if (!email.trim() || !password.trim()) {
+    showToast("error", "Missing Info", "Please enter email and password.");
+    return;
+  }
+
+  if (!API_URL) {
+    showToast("error", "API Error", "EXPO_PUBLIC_API_URL is missing.");
+    return;
+  }
+
+  try {
+    const credential = await loginUser(email.trim(), password);
+    const uid = credential.user.uid;
+
+    console.log("Login successful, fetching user profile...");
+
+    const res = await fetch(`${API_URL}/users/${uid}`);
+    const data = await res.json();
+
+    console.log("LOGIN USER PROFILE:", data);
+
+    if (!res.ok || !data?.success) {
+      throw new Error(data?.message || "User profile not found in backend.");
     }
 
-    if (!API_URL) {
-      showToast("error", "API Error", "EXPO_PUBLIC_API_URL is missing.");
-      return;
+    showToast("success", "Login Successful", `Welcome back, ${data.data.name}`);
+
+    console.log("Login complete, will redirect to home in 1 second");
+
+    setTimeout(() => {
+      console.log("Redirecting to home now");
+      router.replace("/(home)" as any);
+    }, 1000);
+  } catch (error: any) {
+    let message = error.message || "Login failed.";
+
+    if (
+      error.code === "auth/invalid-credential" ||
+      error.code === "auth/wrong-password" ||
+      error.code === "auth/user-not-found"
+    ) {
+      message = "Email or password is incorrect.";
     }
 
-    try {
-      const credential = await loginUser(email.trim(), password);
-      const uid = credential.user.uid;
-
-      const res = await fetch(`${API_URL}/users/${uid}`);
-      const data = await res.json();
-
-      console.log("LOGIN USER PROFILE:", data);
-
-      if (!res.ok || !data?.success) {
-        throw new Error(data?.message || "User profile not found in backend.");
-      }
-
-      showToast("success", "Login Successful", `Welcome back, ${data.data.name}`);
-
-      setTimeout(() => {
-        router.replace("/(home)" as any);
-      }, 800);
-    } catch (error: any) {
-      let message = error.message || "Login failed.";
-
-      if (
-        error.code === "auth/invalid-credential" ||
-        error.code === "auth/wrong-password" ||
-        error.code === "auth/user-not-found"
-      ) {
-        message = "Email or password is incorrect.";
-      }
-
-      if (error.code === "auth/invalid-email") {
-        message = "Please enter a valid email.";
-      }
-
-      showToast("error", "Login Failed", message);
+    if (error.code === "auth/invalid-email") {
+      message = "Please enter a valid email.";
     }
-  };
+
+    showToast("error", "Login Failed", message);
+  }
+};
+
+  const handleForgotPassword = async () => {
+  if (!email.trim()) {
+    showToast(
+      "error",
+      "Email Required",
+      "Please enter your email first."
+    );
+    return;
+  }
+
+  try {
+    await resetPassword(email);
+
+    showToast(
+      "success",
+      "Reset Email Sent",
+      "Please check your inbox."
+    );
+  } catch (error: any) {
+    showToast(
+      "error",
+      "Reset Failed",
+      error.message
+    );
+  }
+};
 
   return (
     <View style={styles.container}>
@@ -92,24 +126,41 @@ export default function Login() {
       <Text style={styles.label}>Email</Text>
       <TextInput
         style={styles.input}
-        placeholder="example@gmail.com"
+        placeholder="Email"
         value={email}
+        placeholderTextColor="#B0B8BC"
         onChangeText={setEmail}
         autoCapitalize="none"
         keyboardType="email-address"
       />
 
       <Text style={styles.label}>Password</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="••••••••••••"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-        autoCapitalize="none"
-      />
+      <View style={styles.passwordContainer}>
+    <TextInput
+    style={styles.passwordInput}
+    placeholder="Enter password"
+    placeholderTextColor="#B0B8BC"
+    value={password}
+    onChangeText={setPassword}
+    secureTextEntry={!showPassword}
+    autoCapitalize="none"
+    />
 
-      <Text style={styles.forgot}>Forgot password?</Text>
+  <Pressable
+    onPress={() => setShowPassword(!showPassword)}
+  >
+    <Feather
+      name={showPassword ? "eye-off" : "eye"}
+      size={22}
+      color="#8A8F95"
+    />
+  </Pressable>
+</View>
+
+
+      <Text style={styles.forgot} onPress={handleForgotPassword}>
+        Forgot password?
+      </Text>
 
       <Pressable style={styles.primaryBtn} onPress={handleLogin}>
         <Text style={styles.primaryText}>Continue</Text>
@@ -182,6 +233,23 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  passwordContainer: {
+  height: 54,
+  backgroundColor: "#fff",
+  borderWidth: 1,
+  borderColor: "#CFD8DC",
+  borderRadius: 12,
+  paddingHorizontal: 18,
+  marginBottom: 22,
+  flexDirection: "row",
+  alignItems: "center",
+  justifyContent: "space-between",
+},
+
+passwordInput: {
+  flex: 1,
+  fontSize: 16,
+},
   primaryText: { color: "#fff", fontSize: 17, fontWeight: "700" },
   or: { textAlign: "center", color: "#8A8F95", marginVertical: 24 },
   googleBtn: {

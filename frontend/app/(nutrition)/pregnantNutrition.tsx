@@ -1,0 +1,509 @@
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  Pressable,
+  Platform,
+  Alert,
+} from "react-native";
+import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import PregnantFooter from "../(footer)/PregnantFooter";
+
+
+const STORAGE_KEY = "maa42_nutrition_pregnant";
+
+type MealPlan = {
+  id: string;
+  meal: string;
+  time: string;
+  foods: string[];
+  calories: string;
+  benefits: string;
+  budget: string;
+};
+
+type NutritionData = {
+  allergies: string[];
+  conditions: string[];
+  restrictions: string[];
+  dietType: string;
+  budget: string;
+  mealPlan: MealPlan[];
+  budgetMealPlan: MealPlan[];
+  savedAt: string | null;
+};
+
+const allergiesList = [
+  "Milk/Dairy", "Eggs", "Peanuts", "Tree nuts", "Soy",
+  "Wheat/Gluten", "Fish", "Shellfish", "Sesame", "No allergies",
+];
+
+const conditionsList = [
+  "Gestational Diabetes", "High Blood Pressure", "Anemia",
+  "Thyroid issues", "Nausea/Vomiting", "Constipation",
+  "Heartburn/Acidity", "No health conditions",
+];
+
+const restrictionsList = [
+  "Raw/Undercooked meat", "Raw fish/Sushi", "Unpasteurized dairy",
+  "Raw eggs", "Excess caffeine", "Alcohol", "High-mercury fish",
+  "Street food", "Too spicy food", "No restrictions",
+];
+
+const generateMealPlan = (
+  allergies: string[],
+  conditions: string[],
+  restrictions: string[],
+  dietType: string,
+): { mealPlan: MealPlan[]; budgetMealPlan: MealPlan[] } => {
+  
+  const hasAllergy = (food: string) => allergies.includes(food);
+  const hasCondition = (condition: string) => conditions.includes(condition);
+  const hasRestriction = (restriction: string) => restrictions.includes(restriction);
+
+  let mealPlan: MealPlan[] = [];
+  let budgetMealPlan: MealPlan[] = [];
+
+  if (dietType === "vegetarian") {
+    mealPlan = [
+      {
+        id: "1", meal: "Breakfast", time: "7:00 - 8:00 AM",
+        foods: hasAllergy("Milk/Dairy") 
+          ? ["Vegetable poha", "Coconut water", "Soaked almonds"]
+          : ["Milk with turmeric", "Vegetable paratha", "Curd"],
+        calories: "350-400 kcal",
+        benefits: "Rich in calcium, iron, and folate for baby's neural development",
+        budget: "৳40-60",
+      },
+      {
+        id: "2", meal: "Morning Snack", time: "10:00 - 10:30 AM",
+        foods: ["Fresh seasonal fruits", "Coconut water", "Roasted makhana"],
+        calories: "150-200 kcal",
+        benefits: "Natural sugars, hydration, and essential vitamins",
+        budget: "৳25-40",
+      },
+      {
+        id: "3", meal: "Lunch", time: "12:30 - 1:30 PM",
+        foods: hasCondition("Gestational Diabetes")
+          ? ["Brown rice", "Dal", "Bitter gourd", "Cucumber salad"]
+          : ["Rice/Roti", "Dal/Chickpeas", "Seasonal vegetables", "Raita"],
+        calories: "500-600 kcal",
+        benefits: "Complete protein, complex carbs, and folic acid for baby growth",
+        budget: "৳50-80",
+      },
+      {
+        id: "4", meal: "Evening Snack", time: "4:00 - 5:00 PM",
+        foods: hasAllergy("Milk/Dairy")
+          ? ["Fruit chaat", "Herbal tea", "Roasted chickpeas"]
+          : ["Milk with badam", "Sprouts chaat", "Whole wheat sandwich"],
+        calories: "150-200 kcal",
+        benefits: "Protein and calcium for baby's bone development",
+        budget: "৳20-35",
+      },
+      {
+        id: "5", meal: "Dinner", time: "7:00 - 8:00 PM",
+        foods: hasCondition("Heartburn/Acidity")
+          ? ["Khichdi", "Steamed vegetables", "Mint chutney"]
+          : ["Roti", "Paneer curry", "Green vegetables", "Dal"],
+        calories: "400-500 kcal",
+        benefits: "Light yet nutritious, easy to digest for better sleep",
+        budget: "৳50-70",
+      },
+      {
+        id: "6", meal: "Bedtime", time: "9:30 - 10:00 PM",
+        foods: hasAllergy("Milk/Dairy")
+          ? ["Warm water with lemon", "2 dates", "Soaked chia seeds"]
+          : ["Warm milk with nutmeg", "2 dates"],
+        calories: "80-100 kcal",
+        benefits: "Iron-rich dates and calcium for restful sleep",
+        budget: "৳15-25",
+      },
+    ];
+
+    budgetMealPlan = [
+      {
+        id: "1", meal: "Breakfast", time: "7:00 - 8:00 AM",
+        foods: ["Ruti with mashed potato", "Banana", "Lemon water"],
+        calories: "300-350 kcal",
+        benefits: "Affordable carbs with potassium for morning energy",
+        budget: "৳15-25",
+      },
+      {
+        id: "2", meal: "Lunch", time: "12:00 - 1:00 PM",
+        foods: ["Rice", "Dal", "Seasonal green vegetable", "Lemon"],
+        calories: "450-550 kcal",
+        benefits: "Complete nutrition from local affordable ingredients",
+        budget: "৳25-35",
+      },
+      {
+        id: "3", meal: "Dinner", time: "7:00 - 8:00 PM",
+        foods: ["Khichdi with vegetables", "Curd", "Cucumber"],
+        calories: "350-400 kcal",
+        benefits: "Protein and probiotic-rich, easy to digest",
+        budget: "৳20-30",
+      },
+    ];
+  } else {
+    mealPlan = [
+      {
+        id: "1", meal: "Breakfast", time: "7:00 - 8:00 AM",
+        foods: hasAllergy("Eggs")
+          ? ["Chicken keema paratha", "Curd", "Fresh juice"]
+          : ["Egg paratha/omelette", "Milk", "Banana"],
+        calories: "400-450 kcal",
+        benefits: "High protein for baby's tissue development",
+        budget: "৳50-80",
+      },
+      {
+        id: "2", meal: "Morning Snack", time: "10:00 AM",
+        foods: ["Apple/Pomegranate", "Mixed nuts", "Coconut water"],
+        calories: "150-200 kcal",
+        benefits: "Iron-rich pomegranate and healthy fats for brain development",
+        budget: "৳30-50",
+      },
+      {
+        id: "3", meal: "Lunch", time: "12:30 - 1:30 PM",
+        foods: hasRestriction("Too spicy food")
+          ? ["Rice", "Mild fish curry", "Spinach", "Dal"]
+          : ["Rice", "Chicken/Fish curry", "Mixed vegetables", "Dal", "Salad"],
+        calories: "550-650 kcal",
+        benefits: "Omega-3 from fish for baby's brain and eye development",
+        budget: "৳80-120",
+      },
+      {
+        id: "4", meal: "Evening Snack", time: "4:00 PM",
+        foods: hasAllergy("Eggs")
+          ? ["Vegetable soup", "Whole grain toast", "Fruit"]
+          : ["Boiled egg", "Puffed rice with peanuts", "Herbal tea"],
+        calories: "150-200 kcal",
+        benefits: "Protein boost for baby's growth spurt",
+        budget: "৳20-40",
+      },
+      {
+        id: "5", meal: "Dinner", time: "7:00 - 8:00 PM",
+        foods: ["Chapati", "Chicken soup", "Steamed broccoli", "Dal"],
+        calories: "350-450 kcal",
+        benefits: "Light protein for overnight baby development",
+        budget: "৳60-90",
+      },
+      {
+        id: "6", meal: "Bedtime", time: "9:30 PM",
+        foods: hasAllergy("Milk/Dairy")
+          ? ["Warm water", "Dates (3 pieces)", "Almonds"]
+          : ["Warm milk with turmeric", "Dates (3 pieces)"],
+        calories: "100-120 kcal",
+        benefits: "Anti-inflammatory turmeric, iron from dates for blood health",
+        budget: "৳20-30",
+      },
+    ];
+
+    budgetMealPlan = [
+      {
+        id: "1", meal: "Breakfast", time: "7:00 - 8:00 AM",
+        foods: ["Ruti", "Egg bhurji", "Banana", "Tea"],
+        calories: "350-400 kcal",
+        benefits: "Affordable protein and energy to start the day",
+        budget: "৳20-30",
+      },
+      {
+        id: "2", meal: "Lunch", time: "12:00 - 1:00 PM",
+        foods: ["Rice", "Small fish curry", "Spinach bhaji", "Lemon"],
+        calories: "500-600 kcal",
+        benefits: "Iron, calcium, and omega-3 from local fish and greens",
+        budget: "৳35-50",
+      },
+      {
+        id: "3", meal: "Dinner", time: "7:00 - 8:00 PM",
+        foods: ["Ruti", "Egg curry", "Mixed vegetable", "Dal"],
+        calories: "400-450 kcal",
+        benefits: "Protein-packed meal for fetal development",
+        budget: "৳25-40",
+      },
+    ];
+  }
+
+  if (hasCondition("Anemia")) {
+    mealPlan = mealPlan.map(m => ({
+      ...m,
+      foods: [...m.foods, "🍎 Iron-rich: dates/spinach/beetroot"],
+    }));
+  }
+  if (hasCondition("Constipation")) {
+    mealPlan = mealPlan.map(m => ({
+      ...m,
+      foods: [...m.foods, "🥬 Fiber-rich: papaya/prunes"],
+    }));
+  }
+  if (hasCondition("Nausea/Vomiting")) {
+    mealPlan = mealPlan.map(m => ({
+      ...m,
+      foods: [...m.foods, "🍋 Ginger/lemon/peppermint"],
+    }));
+  }
+
+  return { mealPlan, budgetMealPlan };
+};
+
+export default function PregnantNutritionScreen() {
+  const [step, setStep] = useState(1);
+  const [selectedAllergies, setSelectedAllergies] = useState<string[]>([]);
+  const [selectedConditions, setSelectedConditions] = useState<string[]>([]);
+  const [selectedRestrictions, setSelectedRestrictions] = useState<string[]>([]);
+  const [dietType, setDietType] = useState("non-vegetarian");
+  const [budget, setBudget] = useState("medium");
+  const [mealPlan, setMealPlan] = useState<MealPlan[]>([]);
+  const [budgetMealPlan, setBudgetMealPlan] = useState<MealPlan[]>([]);
+  const [saved, setSaved] = useState(false);
+  const [hasExistingData, setHasExistingData] = useState(false);
+
+  useEffect(() => { loadSavedData(); }, []);
+
+  const loadSavedData = async () => {
+    try {
+      const stored = await AsyncStorage.getItem(STORAGE_KEY);
+      if (stored) {
+        const data: NutritionData = JSON.parse(stored);
+        setSelectedAllergies(data.allergies);
+        setSelectedConditions(data.conditions);
+        setSelectedRestrictions(data.restrictions);
+        setDietType(data.dietType);
+        setBudget(data.budget);
+        setMealPlan(data.mealPlan);
+        setBudgetMealPlan(data.budgetMealPlan);
+        setHasExistingData(true);
+      }
+    } catch (error) {}
+  };
+
+  const toggleItem = (item: string, selected: string[], setSelected: (val: string[]) => void) => {
+    if (item === "No allergies" || item === "No health conditions" || item === "No restrictions") {
+      setSelected(selected.includes(item) ? [] : [item]);
+    } else {
+      const filtered = selected.filter(i => i !== "No allergies" && i !== "No health conditions" && i !== "No restrictions");
+      setSelected(filtered.includes(item) ? filtered.filter(i => i !== item) : [...filtered, item]);
+    }
+  };
+
+  const generatePlan = () => {
+    const { mealPlan: plan, budgetMealPlan: budgetPlan } = generateMealPlan(
+      selectedAllergies, selectedConditions, selectedRestrictions, dietType
+    );
+    setMealPlan(plan);
+    setBudgetMealPlan(budgetPlan);
+    setStep(3);
+  };
+
+  const savePlan = async () => {
+    const data: NutritionData = {
+      allergies: selectedAllergies, conditions: selectedConditions,
+      restrictions: selectedRestrictions, dietType, budget,
+      mealPlan, budgetMealPlan, savedAt: new Date().toISOString(),
+    };
+    await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    setSaved(true);
+    Alert.alert("Saved!", "Your pregnancy nutrition plan has been saved.");
+  };
+
+  const renderChips = (items: string[], selected: string[], setSelected: (val: string[]) => void) => (
+    <View style={styles.optionsGrid}>
+      {items.map(item => (
+        <Pressable
+          key={item}
+          style={[styles.optionChip, selected.includes(item) && styles.optionChipActive]}
+          onPress={() => toggleItem(item, selected, setSelected)}
+        >
+          <Text style={[styles.optionText, selected.includes(item) && styles.optionTextActive]}>{item}</Text>
+        </Pressable>
+      ))}
+    </View>
+  );
+
+  if (hasExistingData && step === 1) {
+    return (
+      <View style={styles.container}>
+        <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+          <Text style={styles.mainTitle}>🤰 Pregnancy Nutrition</Text>
+          <Text style={styles.subtitle}>You have a saved nutrition plan</Text>
+          <Pressable style={styles.viewBtn} onPress={() => setStep(3)}>
+            <Feather name="eye" size={22} color="#fff" />
+            <Text style={styles.viewBtnText}>View Saved Plan</Text>
+          </Pressable>
+          <Pressable style={styles.editBtn} onPress={() => { setStep(1); setSaved(false); }}>
+            <Feather name="edit-2" size={22} color="#32A99A" />
+            <Text style={styles.editBtnText}>Create New Plan</Text>
+          </Pressable>
+        </ScrollView>
+        <PregnantFooter />
+      </View>
+    );
+  }
+
+  return (
+    <View style={styles.container}>
+      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+        {step === 1 && (
+          <>
+            <Text style={styles.mainTitle}>🤰 Pregnancy Nutrition</Text>
+            <Text style={styles.subtitle}>Lets create your personalized pregnancy meal plan</Text>
+            <Text style={styles.questionTitle}>Do you have any food allergies?</Text>
+            {renderChips(allergiesList, selectedAllergies, setSelectedAllergies)}
+            <Pressable style={styles.nextBtn} onPress={() => setStep(2)}>
+              <Text style={styles.nextBtnText}>Next</Text>
+              <Feather name="arrow-right" size={20} color="#fff" />
+            </Pressable>
+          </>
+        )}
+
+        {step === 2 && (
+          <>
+            <Text style={styles.mainTitle}>Health & Preferences</Text>
+            <Text style={styles.questionTitle}>Any health conditions?</Text>
+            {renderChips(conditionsList, selectedConditions, setSelectedConditions)}
+            <Text style={styles.questionTitle}>Doctors restrictions?</Text>
+            {renderChips(restrictionsList, selectedRestrictions, setSelectedRestrictions)}
+            <Text style={styles.questionTitle}>Diet preference</Text>
+            <View style={styles.dietRow}>
+              {["vegetarian", "non-vegetarian"].map(d => (
+                <Pressable
+                  key={d}
+                  style={[styles.dietOption, dietType === d && styles.dietOptionActive]}
+                  onPress={() => setDietType(d)}
+                >
+                  <MaterialCommunityIcons name={d === "vegetarian" ? "leaf" : "food-drumstick"} size={22} color={dietType === d ? "#fff" : "#32A99A"} />
+                  <Text style={[styles.dietText, dietType === d && styles.dietTextActive]}>{d === "vegetarian" ? "Vegetarian" : "Non-Veg"}</Text>
+                </Pressable>
+              ))}
+            </View>
+            <View style={styles.stepButtons}>
+              <Pressable style={styles.backBtn} onPress={() => setStep(1)}>
+                <Feather name="arrow-left" size={20} color="#32A99A" />
+                <Text style={styles.backBtnText}>Back</Text>
+              </Pressable>
+              <Pressable style={styles.nextBtn} onPress={generatePlan}>
+                <Text style={styles.nextBtnText}>Generate Plan</Text>
+                <Feather name="check" size={20} color="#fff" />
+              </Pressable>
+            </View>
+          </>
+        )}
+
+        {step === 3 && (
+          <>
+            <View style={styles.planHeader}>
+              <Text style={styles.mainTitle}>Your Pregnancy Meal Plan</Text>
+              <Pressable style={styles.saveBtn} onPress={savePlan}>
+                <Feather name="download" size={20} color="#fff" />
+                <Text style={styles.saveBtnText}>{saved ? "Saved!" : "Save"}</Text>
+              </Pressable>
+            </View>
+            {mealPlan.map(meal => (
+              <View key={meal.id} style={styles.mealCard}>
+                <View style={styles.mealHeader}>
+                  <View>
+                    <Text style={styles.mealTitle}>{meal.meal}</Text>
+                    <Text style={styles.mealTime}>{meal.time}</Text>
+                  </View>
+                  <View style={styles.calorieBadge}><Text style={styles.calorieText}>{meal.calories}</Text></View>
+                </View>
+                <View style={styles.foodList}>
+                  {meal.foods.map((food, idx) => (
+                    <View key={idx} style={styles.foodItem}>
+                      <Feather name="check-circle" size={16} color="#32A99A" />
+                      <Text style={styles.foodText}>{food}</Text>
+                    </View>
+                  ))}
+                </View>
+                <View style={styles.mealFooter}>
+                  <Feather name="info" size={14} color="#8A8F95" />
+                  <Text style={styles.benefitsText}>{meal.benefits}</Text>
+                </View>
+                <View style={styles.budgetTag}><Text style={styles.budgetTagText}>💰 {meal.budget}</Text></View>
+              </View>
+            ))}
+            <Text style={styles.sectionTitle}>Budget-Friendly Option</Text>
+            {budgetMealPlan.map(meal => (
+              <View key={meal.id} style={[styles.mealCard, styles.budgetCard]}>
+                <View style={styles.mealHeader}>
+                  <View>
+                    <Text style={styles.mealTitle}>{meal.meal}</Text>
+                    <Text style={styles.mealTime}>{meal.time}</Text>
+                  </View>
+                  <View style={styles.budgetBadge}><Text style={styles.budgetBadgeText}>{meal.budget}</Text></View>
+                </View>
+                <View style={styles.foodList}>
+                  {meal.foods.map((food, idx) => (
+                    <View key={idx} style={styles.foodItem}>
+                      <Feather name="check-circle" size={16} color="#F5A623" />
+                      <Text style={styles.foodText}>{food}</Text>
+                    </View>
+                  ))}
+                </View>
+                <View style={styles.mealFooter}>
+                  <Feather name="info" size={14} color="#8A8F95" />
+                  <Text style={styles.benefitsText}>{meal.benefits}</Text>
+                </View>
+              </View>
+            ))}
+            <Pressable style={styles.editPlanBtn} onPress={() => { setStep(1); setSaved(false); }}>
+              <Feather name="edit-2" size={20} color="#32A99A" />
+              <Text style={styles.editPlanBtnText}>Edit Preferences</Text>
+            </Pressable>
+          </>
+        )}
+      </ScrollView>
+      <PregnantFooter />
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: "#F5FAF9" },
+  content: { paddingHorizontal: 27, paddingTop: Platform.OS === "ios" ? 50 : 40, paddingBottom: 120 },
+  mainTitle: { fontSize: 24, fontWeight: "800", color: "#263238", marginBottom: 8 },
+  subtitle: { fontSize: 14, color: "#8A8F95", marginBottom: 24 },
+  questionTitle: { fontSize: 16, fontWeight: "700", color: "#263238", marginBottom: 4, marginTop: 20 },
+  optionsGrid: { flexDirection: "row", flexWrap: "wrap", gap: 8, marginBottom: 16 },
+  optionChip: { paddingHorizontal: 16, paddingVertical: 10, borderRadius: 20, backgroundColor: "#FFFFFF", borderWidth: 1, borderColor: "#E0E7E7" },
+  optionChipActive: { backgroundColor: "#32A99A", borderColor: "#32A99A" },
+  optionText: { fontSize: 13, fontWeight: "600", color: "#7B8288" },
+  optionTextActive: { color: "#FFFFFF" },
+  nextBtn: { flexDirection: "row", alignItems: "center", justifyContent: "center", backgroundColor: "#32A99A", paddingVertical: 14, borderRadius: 12, gap: 8, marginTop: 20, flex: 1 },
+  nextBtnText: { color: "#fff", fontSize: 16, fontWeight: "700" },
+  backBtn: { flexDirection: "row", alignItems: "center", justifyContent: "center", paddingVertical: 14, borderRadius: 12, gap: 8, flex: 1, borderWidth: 1, borderColor: "#32A99A" },
+  backBtnText: { color: "#32A99A", fontSize: 16, fontWeight: "700" },
+  stepButtons: { flexDirection: "row", gap: 12, marginTop: 20 },
+  dietRow: { flexDirection: "row", gap: 12, marginBottom: 16 },
+  dietOption: { flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center", paddingVertical: 14, borderRadius: 12, borderWidth: 1, borderColor: "#E0E7E7", backgroundColor: "#FFFFFF", gap: 8 },
+  dietOptionActive: { backgroundColor: "#32A99A", borderColor: "#32A99A" },
+  dietText: { fontSize: 14, fontWeight: "700", color: "#32A99A" },
+  dietTextActive: { color: "#FFFFFF" },
+  planHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 20 },
+  saveBtn: { flexDirection: "row", alignItems: "center", backgroundColor: "#32A99A", paddingHorizontal: 16, paddingVertical: 10, borderRadius: 10, gap: 6 },
+  saveBtnText: { color: "#fff", fontSize: 13, fontWeight: "700" },
+  mealCard: { backgroundColor: "#FFFFFF", borderRadius: 16, padding: 16, marginBottom: 12, borderWidth: 1, borderColor: "#E0E7E7" },
+  budgetCard: { borderColor: "#F5A623", borderWidth: 2 },
+  mealHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 },
+  mealTitle: { fontSize: 16, fontWeight: "800", color: "#263238" },
+  mealTime: { fontSize: 12, color: "#8A8F95", marginTop: 2 },
+  calorieBadge: { backgroundColor: "#DDF5F1", paddingHorizontal: 12, paddingVertical: 6, borderRadius: 8 },
+  calorieText: { fontSize: 12, fontWeight: "700", color: "#32A99A" },
+  budgetBadge: { backgroundColor: "#FFF3E0", paddingHorizontal: 12, paddingVertical: 6, borderRadius: 8 },
+  budgetBadgeText: { fontSize: 12, fontWeight: "700", color: "#F5A623" },
+  foodList: { marginBottom: 12 },
+  foodItem: { flexDirection: "row", alignItems: "center", marginBottom: 6, gap: 8 },
+  foodText: { fontSize: 14, color: "#37474F", flex: 1 },
+  mealFooter: { flexDirection: "row", alignItems: "flex-start", gap: 6, marginBottom: 8 },
+  benefitsText: { fontSize: 12, color: "#8A8F95", flex: 1, lineHeight: 16 },
+  budgetTag: { backgroundColor: "#FFF3E0", paddingVertical: 6, paddingHorizontal: 12, borderRadius: 8, alignSelf: "flex-start" },
+  budgetTagText: { fontSize: 12, fontWeight: "700", color: "#F5A623" },
+  sectionTitle: { fontSize: 18, fontWeight: "800", color: "#263238", marginTop: 24, marginBottom: 12 },
+  editPlanBtn: { flexDirection: "row", alignItems: "center", justifyContent: "center", paddingVertical: 14, borderRadius: 12, gap: 8, marginTop: 20, borderWidth: 1, borderColor: "#32A99A" },
+  editPlanBtnText: { color: "#32A99A", fontSize: 15, fontWeight: "700" },
+  viewBtn: { flexDirection: "row", alignItems: "center", justifyContent: "center", backgroundColor: "#32A99A", paddingVertical: 16, borderRadius: 12, gap: 10, marginBottom: 12 },
+  viewBtnText: { color: "#fff", fontSize: 16, fontWeight: "700" },
+  editBtn: { flexDirection: "row", alignItems: "center", justifyContent: "center", paddingVertical: 16, borderRadius: 12, gap: 10, borderWidth: 1, borderColor: "#32A99A" },
+  editBtnText: { color: "#32A99A", fontSize: 16, fontWeight: "700" },
+});
