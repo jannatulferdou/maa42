@@ -1,3 +1,4 @@
+import { Colors } from "@/constants/theme";
 import React, { useState, useEffect, useRef } from "react";
 import {
   View,
@@ -66,8 +67,8 @@ const pregnantExercises: Exercise[] = [
     repetitions: "10-15 breaths",
     safetyTips: ["Don't hold your breath forcefully", "Stop if feeling lightheaded or dizzy"],
     icon: "air",
-    color: "#32A99A",
-    bg: "#DDF5F1",
+    color: Colors.light.primary,
+    bg: Colors.light.primaryLight,
     recommendedFor: "All pregnancy stages",
     videoUrl: "https://www.youtube.com/watch?v=LCqxcKNImYw",
   },
@@ -88,8 +89,8 @@ const pregnantExercises: Exercise[] = [
     repetitions: "10 rounds",
     safetyTips: ["Keep wrists directly under shoulders", "Don't arch your lower back too deeply"],
     icon: "cat",
-    color: "#F5A623",
-    bg: "#FFF3E0",
+    color: Colors.light.accent,
+    bg: Colors.light.accentLight,
     recommendedFor: "Week 12 onwards",
     videoUrl: "https://www.youtube.com/watch?v=LympZqVz14s",
   },
@@ -131,8 +132,8 @@ const pregnantExercises: Exercise[] = [
     repetitions: "20-30 minutes daily",
     safetyTips: ["Walk on flat, even surfaces", "Avoid walking in hot or humid conditions"],
     icon: "walk",
-    color: "#2FA99A",
-    bg: "#DDF5F1",
+    color: Colors.light.primary,
+    bg: Colors.light.primaryLight,
     recommendedFor: "All pregnancy stages",
     videoUrl: "https://www.youtube.com/watch?v=zmUJWKM98hM",
   },
@@ -173,8 +174,8 @@ const pregnantExercises: Exercise[] = [
     repetitions: "5-10 repetitions per movement",
     safetyTips: ["Keep movements slow and gentle", "Never force a stretch beyond comfort"],
     icon: "back-brace",
-    color: "#F5A623",
-    bg: "#FFF3E0",
+    color: Colors.light.accent,
+    bg: Colors.light.accentLight,
     recommendedFor: "Week 20 onwards",
     videoUrl: "https://www.youtube.com/watch?v=4q1mbbOytuQ",
   },
@@ -344,25 +345,25 @@ export default function PregnantExerciseScreen() {
   if (selectedExercise && timerSeconds > 0) {
     return (
       <View style={styles.timerContainer}>
-        <LinearGradient colors={["#32A99A", "#159B8D"]} style={styles.timerGradient}>
-          <MaterialCommunityIcons name={selectedExercise.icon} size={60} color="#fff" />
+        <LinearGradient colors={[Colors.light.primary, Colors.light.primaryDark]} style={styles.timerGradient}>
+          <MaterialCommunityIcons name={selectedExercise.icon} size={60} color={Colors.light.white} />
           <Text style={styles.timerTitle}>{selectedExercise.name}</Text>
           <Text style={styles.timerText}>{formatTime(timerSeconds)}</Text>
           <Text style={styles.timerSubtext}>{selectedExercise.category}</Text>
           <View style={styles.timerControls}>
             {!isTimerRunning ? (
               <Pressable style={styles.timerBtn} onPress={() => startTimer(timerSeconds / 60)}>
-                <Feather name="play" size={28} color="#fff" />
+                <Feather name="play" size={28} color={Colors.light.white} />
                 <Text style={styles.timerBtnText}>Resume</Text>
               </Pressable>
             ) : (
               <Pressable style={styles.timerBtn} onPress={pauseTimer}>
-                <Feather name="pause" size={28} color="#fff" />
+                <Feather name="pause" size={28} color={Colors.light.white} />
                 <Text style={styles.timerBtnText}>Pause</Text>
               </Pressable>
             )}
             <Pressable style={[styles.timerBtn, styles.resetBtn]} onPress={resetTimer}>
-              <Feather name="x" size={28} color="#fff" />
+              <Feather name="x" size={28} color={Colors.light.white} />
               <Text style={styles.timerBtnText}>End</Text>
             </Pressable>
           </View>
@@ -377,7 +378,7 @@ export default function PregnantExerciseScreen() {
       <View style={styles.container}>
         <ScrollView contentContainerStyle={styles.detailContent} showsVerticalScrollIndicator={false}>
           <Pressable style={styles.backBtn} onPress={() => setSelectedExercise(null)}>
-            <Feather name="chevron-left" size={34} color="#263238" />
+            <Feather name="chevron-left" size={34} color={Colors.light.text} />
           </Pressable>
 
 
@@ -387,15 +388,15 @@ export default function PregnantExerciseScreen() {
 
           <View style={styles.infoRow}>
             <View style={styles.infoItem}>
-              <Feather name="clock" size={18} color="#32A99A" />
+              <Feather name="clock" size={18} color={Colors.light.primary} />
               <Text style={styles.infoText}>{selectedExercise.duration} min</Text>
             </View>
             <View style={styles.infoItem}>
-              <Feather name="bar-chart-2" size={18} color="#32A99A" />
+              <Feather name="bar-chart-2" size={18} color={Colors.light.primary} />
               <Text style={styles.infoText}>{selectedExercise.difficulty}</Text>
             </View>
             <View style={styles.infoItem}>
-              <Feather name="users" size={18} color="#32A99A" />
+              <Feather name="users" size={18} color={Colors.light.primary} />
               <Text style={styles.infoText}>{selectedExercise.recommendedFor}</Text>
             </View>
           </View>
@@ -407,11 +408,11 @@ export default function PregnantExerciseScreen() {
             onPress={() => openVideoTutorial(selectedExercise.videoUrl)}
           >
             <View style={styles.videoThumbnailContainer}>
-              <LinearGradient colors={["#263238", "#37474F"]} style={styles.videoGradient}>
+              <LinearGradient colors={[Colors.light.text, "#37474F"]} style={styles.videoGradient}>
                 <MaterialCommunityIcons name="youtube" size={48} color="#FF0000" />
                 <Text style={styles.videoPlayText}>Watch Demonstration</Text>
                 <View style={styles.playBadge}>
-                  <Feather name="play" size={16} color="#FFFFFF" />
+                  <Feather name="play" size={16} color={Colors.light.white} />
                   <Text style={styles.playBadgeText}>Play Video</Text>
                 </View>
               </LinearGradient>
@@ -435,13 +436,13 @@ export default function PregnantExerciseScreen() {
           <Text style={styles.sectionTitle}>Safety Instructions</Text>
           {selectedExercise.safetyTips.map((tip, idx) => (
             <View key={idx} style={styles.safetyRow}>
-              <Feather name="alert-triangle" size={16} color="#F5A623" />
+              <Feather name="alert-triangle" size={16} color={Colors.light.accent} />
               <Text style={styles.safetyText}>{tip}</Text>
             </View>
           ))}
 
           <Pressable style={styles.startBtn} onPress={() => startTimer(selectedExercise.duration)}>
-            <Feather name="play" size={24} color="#fff" />
+            <Feather name="play" size={24} color={Colors.light.white} />
             <Text style={styles.startBtnText}>Start Exercise</Text>
           </Pressable>
         </ScrollView>
@@ -458,22 +459,22 @@ export default function PregnantExerciseScreen() {
 
         <View style={styles.statsRow}>
           <View style={styles.statCard}>
-            <Feather name="clock" size={20} color="#32A99A" />
+            <Feather name="clock" size={20} color={Colors.light.primary} />
             <Text style={styles.statNumber}>{todayMinutes}</Text>
             <Text style={styles.statLabel}>Today (min)</Text>
           </View>
           <View style={styles.statCard}>
-            <Feather name="calendar" size={20} color="#32A99A" />
+            <Feather name="calendar" size={20} color={Colors.light.primary} />
             <Text style={styles.statNumber}>{weeklyMinutes}</Text>
             <Text style={styles.statLabel}>Weekly</Text>
           </View>
           <View style={styles.statCard}>
-            <Feather name="zap" size={20} color="#F5A623" />
+            <Feather name="zap" size={20} color={Colors.light.accent} />
             <Text style={styles.statNumber}>{streak}</Text>
             <Text style={styles.statLabel}>Streak</Text>
           </View>
           <View style={styles.statCard}>
-            <Feather name="check-circle" size={20} color="#2FA99A" />
+            <Feather name="check-circle" size={20} color={Colors.light.primary} />
             <Text style={styles.statNumber}>{completedCount}</Text>
             <Text style={styles.statLabel}>Completed</Text>
           </View>
@@ -504,12 +505,12 @@ export default function PregnantExerciseScreen() {
               <Text style={styles.exerciseMeta}>{exercise.category} • {exercise.duration} min</Text>
               <Text style={[styles.difficultyText, { color: exercise.color }]}>{exercise.difficulty}</Text>
             </View>
-            <Feather name="chevron-right" size={22} color="#8A8F95" />
+            <Feather name="chevron-right" size={22} color={Colors.light.textMuted} />
           </Pressable>
         ))}
 
         <View style={styles.warningCard}>
-          <Feather name="alert-triangle" size={22} color="#F5A623" />
+          <Feather name="alert-triangle" size={22} color={Colors.light.accent} />
           <Text style={styles.warningTitle}>Safety First!</Text>
           <Text style={styles.warningText}>
             Stop immediately if you experience:
@@ -526,7 +527,7 @@ export default function PregnantExerciseScreen() {
             <Text style={styles.sectionTitle}>Exercise History</Text>
             {history.slice(0, 10).map(item => (
               <View key={item.id} style={styles.historyRow}>
-                <Feather name="check-circle" size={18} color="#2FA99A" />
+                <Feather name="check-circle" size={18} color={Colors.light.primary} />
                 <View style={{ flex: 1, marginLeft: 8 }}>
                   <Text style={styles.historyText}>{item.exerciseName}</Text>
                   <Text style={styles.historyDate}>
@@ -545,73 +546,73 @@ export default function PregnantExerciseScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#F5FAF9" },
+  container: { flex: 1, backgroundColor: Colors.light.background },
   content: { paddingHorizontal: 27, paddingTop: Platform.OS === "ios" ? 50 : 40, paddingBottom: 120 },
-  mainTitle: { fontSize: 24, fontWeight: "800", color: "#263238", marginBottom: 8 },
-  subtitle: { fontSize: 14, color: "#8A8F95", marginBottom: 24 },
+  mainTitle: { fontSize: 24, fontWeight: "800", color: Colors.light.text, marginBottom: 8 },
+  subtitle: { fontSize: 14, color: Colors.light.textMuted, marginBottom: 24 },
   statsRow: { flexDirection: "row", justifyContent: "space-between", marginBottom: 24 },
-  statCard: { width: "23%", backgroundColor: "#FFFFFF", borderRadius: 12, padding: 12, alignItems: "center", borderWidth: 1, borderColor: "#E0E7E7" },
-  statNumber: { fontSize: 20, fontWeight: "800", color: "#263238", marginTop: 6 },
-  statLabel: { fontSize: 10, color: "#8A8F95", marginTop: 2, textAlign: "center" },
-  sectionTitle: { fontSize: 16, fontWeight: "800", color: "#263238", marginBottom: 12, marginTop: 16 },
-  planCard: { backgroundColor: "#FFFFFF", borderRadius: 16, padding: 16, marginBottom: 16, borderWidth: 1, borderColor: "#E0E7E7" },
+  statCard: { width: "23%", backgroundColor: Colors.light.white, borderRadius: 12, padding: 12, alignItems: "center", borderWidth: 1, borderColor: Colors.light.border },
+  statNumber: { fontSize: 20, fontWeight: "800", color: Colors.light.text, marginTop: 6 },
+  statLabel: { fontSize: 10, color: Colors.light.textMuted, marginTop: 2, textAlign: "center" },
+  sectionTitle: { fontSize: 16, fontWeight: "800", color: Colors.light.text, marginBottom: 12, marginTop: 16 },
+  planCard: { backgroundColor: Colors.light.white, borderRadius: 16, padding: 16, marginBottom: 16, borderWidth: 1, borderColor: Colors.light.border },
   planRow: { flexDirection: "row", alignItems: "center", marginBottom: 12 },
-  planDot: { width: 28, height: 28, borderRadius: 14, backgroundColor: "#32A99A", alignItems: "center", justifyContent: "center" },
-  planDotDone: { backgroundColor: "#2FA99A" },
-  planDotText: { color: "#fff", fontWeight: "800", fontSize: 13 },
+  planDot: { width: 28, height: 28, borderRadius: 14, backgroundColor: Colors.light.primary, alignItems: "center", justifyContent: "center" },
+  planDotDone: { backgroundColor: Colors.light.primary },
+  planDotText: { color: Colors.light.white, fontWeight: "800", fontSize: 13 },
   planInfo: { flex: 1, marginLeft: 12 },
-  planName: { fontSize: 14, fontWeight: "700", color: "#263238" },
-  planNameDone: { textDecorationLine: "line-through", color: "#8A8F95" },
-  planDuration: { fontSize: 12, color: "#8A8F95", marginTop: 2 },
+  planName: { fontSize: 14, fontWeight: "700", color: Colors.light.text },
+  planNameDone: { textDecorationLine: "line-through", color: Colors.light.textMuted },
+  planDuration: { fontSize: 12, color: Colors.light.textMuted, marginTop: 2 },
   categoryScroll: { marginBottom: 16 },
-  categoryChip: { paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20, backgroundColor: "#FFFFFF", borderWidth: 1, borderColor: "#E0E7E7", marginRight: 8 },
-  categoryChipActive: { backgroundColor: "#32A99A", borderColor: "#32A99A" },
-  categoryText: { fontSize: 13, fontWeight: "600", color: "#7B8288" },
-  categoryTextActive: { color: "#FFFFFF" },
-  exerciseCard: { flexDirection: "row", alignItems: "center", backgroundColor: "#FFFFFF", borderRadius: 16, padding: 14, marginBottom: 10, borderWidth: 1, borderColor: "#E0E7E7" },
+  categoryChip: { paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20, backgroundColor: Colors.light.white, borderWidth: 1, borderColor: Colors.light.border, marginRight: 8 },
+  categoryChipActive: { backgroundColor: Colors.light.primary, borderColor: Colors.light.primary },
+  categoryText: { fontSize: 13, fontWeight: "600", color: Colors.light.textSecondary },
+  categoryTextActive: { color: Colors.light.white },
+  exerciseCard: { flexDirection: "row", alignItems: "center", backgroundColor: Colors.light.white, borderRadius: 16, padding: 14, marginBottom: 10, borderWidth: 1, borderColor: Colors.light.border },
   exerciseIcon: { width: 50, height: 50, borderRadius: 25, alignItems: "center", justifyContent: "center" },
   exerciseInfo: { flex: 1, marginLeft: 12 },
-  exerciseTitle: { fontSize: 15, fontWeight: "800", color: "#263238" },
-  exerciseMeta: { fontSize: 12, color: "#8A8F95", marginTop: 2 },
+  exerciseTitle: { fontSize: 15, fontWeight: "800", color: Colors.light.text },
+  exerciseMeta: { fontSize: 12, color: Colors.light.textMuted, marginTop: 2 },
   difficultyText: { fontSize: 11, fontWeight: "700", marginTop: 4 },
-  warningCard: { backgroundColor: "#FFF3E0", borderRadius: 16, padding: 16, marginTop: 16, borderWidth: 1, borderColor: "#F5A623" },
-  warningTitle: { fontSize: 15, fontWeight: "800", color: "#F5A623", marginTop: 8 },
-  warningText: { fontSize: 13, color: "#7B8288", lineHeight: 20, marginTop: 8 },
-  historyRow: { flexDirection: "row", alignItems: "center", paddingVertical: 10, borderBottomWidth: 1, borderBottomColor: "#E0E7E7" },
+  warningCard: { backgroundColor: Colors.light.accentLight, borderRadius: 16, padding: 16, marginTop: 16, borderWidth: 1, borderColor: Colors.light.accent },
+  warningTitle: { fontSize: 15, fontWeight: "800", color: Colors.light.accent, marginTop: 8 },
+  warningText: { fontSize: 13, color: Colors.light.textSecondary, lineHeight: 20, marginTop: 8 },
+  historyRow: { flexDirection: "row", alignItems: "center", paddingVertical: 10, borderBottomWidth: 1, borderBottomColor: Colors.light.border },
   historyText: { fontSize: 14, color: "#37474F", fontWeight: "600" },
-  historyDate: { fontSize: 11, color: "#8A8F95", marginTop: 2 },
-  historyDuration: { fontSize: 13, fontWeight: "700", color: "#2FA99A" },
+  historyDate: { fontSize: 11, color: Colors.light.textMuted, marginTop: 2 },
+  historyDuration: { fontSize: 13, fontWeight: "700", color: Colors.light.primary },
   detailContent: { paddingHorizontal: 27, paddingTop: Platform.OS === "ios" ? 50 : 40, paddingBottom: 120 },
-  backBtn: { width: 52, height: 52, borderRadius: 26, backgroundColor: "#fff", alignItems: "center", justifyContent: "center", marginBottom: 20 },
+  backBtn: { width: 52, height: 52, borderRadius: 26, backgroundColor: Colors.light.white, alignItems: "center", justifyContent: "center", marginBottom: 20 },
   exerciseHero: { width: "100%", height: 180, borderRadius: 20, alignItems: "center", justifyContent: "center", marginBottom: 20 },
-  exerciseName: { fontSize: 24, fontWeight: "800", color: "#263238", textAlign: "center" },
-  exerciseCategory: { fontSize: 14, color: "#32A99A", fontWeight: "700", textAlign: "center", marginTop: 4 },
+  exerciseName: { fontSize: 24, fontWeight: "800", color: Colors.light.text, textAlign: "center" },
+  exerciseCategory: { fontSize: 14, color: Colors.light.primary, fontWeight: "700", textAlign: "center", marginTop: 4 },
   infoRow: { flexDirection: "row", justifyContent: "space-around", marginTop: 16, marginBottom: 12 },
   infoItem: { flexDirection: "row", alignItems: "center", gap: 6 },
   infoText: { fontSize: 13, color: "#37474F", fontWeight: "600" },
   videoCard: { width: "100%", height: 150, borderRadius: 16, overflow: "hidden", marginBottom: 16 },
   videoThumbnailContainer: { flex: 1 },
   videoGradient: { flex: 1, justifyContent: "center", alignItems: "center", padding: 16 },
-  videoPlayText: { color: "#FFFFFF", fontWeight: "700", fontSize: 15, marginTop: 8 },
-  playBadge: { flexDirection: "row", alignItems: "center", backgroundColor: "#32A99A", paddingHorizontal: 12, paddingVertical: 6, borderRadius: 20, gap: 6, marginTop: 8 },
-  playBadgeText: { color: "#FFFFFF", fontSize: 12, fontWeight: "700" },
-  description: { fontSize: 14, color: "#7B8288", lineHeight: 22 },
+  videoPlayText: { color: Colors.light.white, fontWeight: "700", fontSize: 15, marginTop: 8 },
+  playBadge: { flexDirection: "row", alignItems: "center", backgroundColor: Colors.light.primary, paddingHorizontal: 12, paddingVertical: 6, borderRadius: 20, gap: 6, marginTop: 8 },
+  playBadgeText: { color: Colors.light.white, fontSize: 12, fontWeight: "700" },
+  description: { fontSize: 14, color: Colors.light.textSecondary, lineHeight: 22 },
   stepRow: { flexDirection: "row", alignItems: "flex-start", marginBottom: 12 },
-  stepNumber: { width: 28, height: 28, borderRadius: 14, backgroundColor: "#32A99A", alignItems: "center", justifyContent: "center", marginRight: 10 },
-  stepNumberText: { color: "#fff", fontWeight: "800", fontSize: 13 },
+  stepNumber: { width: 28, height: 28, borderRadius: 14, backgroundColor: Colors.light.primary, alignItems: "center", justifyContent: "center", marginRight: 10 },
+  stepNumberText: { color: Colors.light.white, fontWeight: "800", fontSize: 13 },
   stepText: { flex: 1, fontSize: 14, color: "#37474F", lineHeight: 20 },
-  repetitions: { fontSize: 15, fontWeight: "700", color: "#32A99A" },
+  repetitions: { fontSize: 15, fontWeight: "700", color: Colors.light.primary },
   safetyRow: { flexDirection: "row", alignItems: "flex-start", marginBottom: 8, gap: 8 },
-  safetyText: { flex: 1, fontSize: 13, color: "#7B8288", lineHeight: 18 },
-  startBtn: { flexDirection: "row", alignItems: "center", justifyContent: "center", backgroundColor: "#32A99A", paddingVertical: 16, borderRadius: 12, gap: 10, marginTop: 24 },
-  startBtnText: { color: "#fff", fontSize: 17, fontWeight: "800" },
-  timerContainer: { flex: 1, backgroundColor: "#F5FAF9" },
+  safetyText: { flex: 1, fontSize: 13, color: Colors.light.textSecondary, lineHeight: 18 },
+  startBtn: { flexDirection: "row", alignItems: "center", justifyContent: "center", backgroundColor: Colors.light.primary, paddingVertical: 16, borderRadius: 12, gap: 10, marginTop: 24 },
+  startBtnText: { color: Colors.light.white, fontSize: 17, fontWeight: "800" },
+  timerContainer: { flex: 1, backgroundColor: Colors.light.background },
   timerGradient: { flex: 1, alignItems: "center", justifyContent: "center", paddingHorizontal: 27 },
-  timerTitle: { fontSize: 22, fontWeight: "800", color: "#fff", marginTop: 20 },
-  timerText: { fontSize: 72, fontWeight: "800", color: "#fff", marginTop: 20 },
+  timerTitle: { fontSize: 22, fontWeight: "800", color: Colors.light.white, marginTop: 20 },
+  timerText: { fontSize: 72, fontWeight: "800", color: Colors.light.white, marginTop: 20 },
   timerSubtext: { fontSize: 16, color: "#E7FFFB", marginTop: 10, marginBottom: 40 },
   timerControls: { flexDirection: "row", gap: 20 },
   timerBtn: { flexDirection: "row", alignItems: "center", backgroundColor: "rgba(255,255,255,0.2)", paddingHorizontal: 24, paddingVertical: 14, borderRadius: 12, gap: 8 },
   resetBtn: { backgroundColor: "rgba(255,0,0,0.3)" },
-  timerBtnText: { color: "#fff", fontSize: 15, fontWeight: "700" },
+  timerBtnText: { color: Colors.light.white, fontSize: 15, fontWeight: "700" },
 });

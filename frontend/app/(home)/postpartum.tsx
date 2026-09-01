@@ -1,3 +1,4 @@
+import { Colors } from "@/constants/theme";
 import useAuth from "@/hooks/useAuth";
 import {
   Feather,
@@ -52,7 +53,7 @@ export default function PostpartumHome() {
       const data = await res.json();
       if (data?.success) setProfile(data.data);
     } catch (error) {
-      console.log("Profile fetch error:", error);
+      console.error("Profile fetch error:", error);
     } finally {
       setProfileLoading(false);
     }
@@ -78,10 +79,10 @@ export default function PostpartumHome() {
             <Text style={styles.name}>{name}</Text>
           </View>
           <Pressable style={styles.topIconBtn} onPress={() => router.push("/(notifications)" as any)}>
-            <Feather name="bell" size={22} color="#263238" />
+            <Feather name="bell" size={22} color={Colors.light.text} />
           </Pressable>
           <Pressable style={styles.topIconBtn} onPress={() => router.push("/(settings)" as any)}>
-            <Feather name="settings" size={22} color="#263238" />
+            <Feather name="settings" size={22} color={Colors.light.text} />
           </Pressable>
         </View>
 
@@ -98,7 +99,7 @@ export default function PostpartumHome() {
         {/* TODAY STATUS */}
         <View style={styles.statusCard}>
           <View style={styles.statusIconBox}>
-            <Feather name="heart" size={25} color="#2FA99A" />
+            <Feather name="heart" size={25} color={Colors.light.primary} />
           </View>
           <View style={styles.statusTextBox}>
             <Text style={styles.statusSmall}>Todays health</Text>
@@ -112,7 +113,7 @@ export default function PostpartumHome() {
         {/* EMERGENCY */}
         <Pressable style={styles.emergencyCard} onPress={() => router.push("/(help)/emergency" as any)}>
           <View style={styles.emergencyIconBox}>
-            <Feather name="alert-triangle" size={25} color="#fff" />
+            <Feather name="alert-triangle" size={25} color={Colors.light.white} />
           </View>
           <View style={styles.emergencyTextBox}>
             <Text style={styles.emergencyTitle}>Emergency Help</Text>
@@ -120,7 +121,7 @@ export default function PostpartumHome() {
               {profile?.emergencyContact || "Tap for immediate support"}
             </Text>
           </View>
-          <Feather name="phone-call" size={25} color="#fff" />
+          <Feather name="phone-call" size={25} color={Colors.light.white} />
         </Pressable>
 
         {/* CARE TOOLS */}
@@ -130,56 +131,56 @@ export default function PostpartumHome() {
             bg="#A8DCAD"
             iconBg="#CDEFD0"
             title="Health Check"
-            icon={<MaterialCommunityIcons name="emoticon-happy-outline" size={27} color="#263238" />}
+            icon={<MaterialCommunityIcons name="emoticon-happy-outline" size={27} color={Colors.light.text} />}
             onPress={() => router.push("/(health)/checkin" as any)}
           />
           <ToolCard
             bg="#E7C7DC"
             iconBg="#F2DBEA"
             title="Reminder"
-            icon={<Feather name="bell" size={26} color="#263238" />}
+            icon={<Feather name="bell" size={26} color={Colors.light.text} />}
             onPress={() => router.push("/(reminder)/reminder" as any)}
           />
           <ToolCard
             bg="#F4E8A6"
             iconBg="#FFF4C8"
             title="AI Chat"
-            icon={<Ionicons name="chatbubble-outline" size={27} color="#263238" />}
+            icon={<Ionicons name="chatbubble-outline" size={27} color={Colors.light.text} />}
             onPress={() => router.push("/(chat)" as any)}
           />
           <ToolCard
             bg="#9FC5DF"
             iconBg="#C9E0EF"
             title="Medical Profile"
-            icon={<Feather name="file-text" size={26} color="#263238" />}
+            icon={<Feather name="file-text" size={26} color={Colors.light.text} />}
             onPress={() => router.push("/(profile)/medicalProfile" as any)}
           />
           <ToolCard
             bg="#FFF4E0"
             iconBg="#FFF8EC"
             title="Nutrition"
-            icon={<MaterialCommunityIcons name="food-apple" size={27} color="#263238" />}
+            icon={<MaterialCommunityIcons name="food-apple" size={27} color={Colors.light.text} />}
             onPress={() => router.push("/(nutrition)/postpartumNutrition" as any)}
           />
           <ToolCard
             bg="#D5F5E3"
             iconBg="#E8F8F0"
             title="Exercise"
-            icon={<MaterialCommunityIcons name="yoga" size={27} color="#263238" />}
+            icon={<MaterialCommunityIcons name="yoga" size={27} color={Colors.light.text} />}
             onPress={() => router.push("/(exercise)/postpartumExercise" as any)}
           />
           <ToolCard
             bg="#FFD5D5"
             iconBg="#FFE8E8"
             title="Community"
-            icon={<MaterialCommunityIcons name="account-group" size={27} color="#263238" />}
+            icon={<MaterialCommunityIcons name="account-group" size={27} color={Colors.light.text} />}
             onPress={() => router.push("/(community)/community" as any)}
           />
           <ToolCard
             bg="#FFE0E0"
             iconBg="#FFF0F0"
             title="Emergency"
-            icon={<Feather name="phone" size={26} color="#263238" />}
+            icon={<Feather name="phone" size={26} color={Colors.light.text} />}
             onPress={() => router.push("/(help)/emergency" as any)}
           />
         </View>
@@ -194,7 +195,7 @@ export default function PostpartumHome() {
 function LoadingScreen() {
   return (
     <View style={styles.loader}>
-      <ActivityIndicator size="large" color="#32A99A" />
+      <ActivityIndicator size="large" color={Colors.light.primary} />
     </View>
   );
 }
@@ -219,11 +220,11 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#F5FAF9",
+    backgroundColor: Colors.light.background,
   },
   screen: {
     flex: 1,
-    backgroundColor: "#F5FAF9",
+    backgroundColor: Colors.light.background,
   },
   content: {
     paddingHorizontal: 27,
@@ -239,7 +240,7 @@ const styles = StyleSheet.create({
     width: 54,
     height: 54,
     borderRadius: 27,
-    backgroundColor: "#2FA99A",
+    backgroundColor: Colors.light.primary,
   },
   userBox: {
     flex: 1,
@@ -247,19 +248,19 @@ const styles = StyleSheet.create({
   },
   welcome: {
     fontSize: 13,
-    color: "#8A8F95",
+    color: Colors.light.textMuted,
     marginBottom: 3,
   },
   name: {
     fontSize: 18,
     fontWeight: "800",
-    color: "#263238",
+    color: Colors.light.text,
   },
   topIconBtn: {
     width: 42,
     height: 42,
     borderRadius: 21,
-    backgroundColor: "#fff",
+    backgroundColor: Colors.light.white,
     borderWidth: 1,
     borderColor: "#D8E2E2",
     alignItems: "center",
@@ -267,7 +268,7 @@ const styles = StyleSheet.create({
     marginLeft: 9,
   },
   journeyCard: {
-    backgroundColor: "#32A99A",
+    backgroundColor: Colors.light.primary,
     borderRadius: 15,
     paddingHorizontal: 24,
     paddingVertical: 18,
@@ -281,7 +282,7 @@ const styles = StyleSheet.create({
   journeyTitle: {
     fontSize: 20,
     fontWeight: "800",
-    color: "#fff",
+    color: Colors.light.white,
   },
   progressTrack: {
     height: 8,
@@ -293,7 +294,7 @@ const styles = StyleSheet.create({
   },
   progressFill: {
     height: "100%",
-    backgroundColor: "#fff",
+    backgroundColor: Colors.light.white,
     borderRadius: 999,
   },
   journeyText: {
@@ -302,7 +303,7 @@ const styles = StyleSheet.create({
   },
   statusCard: {
     height: 73,
-    backgroundColor: "#fff",
+    backgroundColor: Colors.light.white,
     borderRadius: 13,
     borderWidth: 1,
     borderColor: "#BDE8E2",
@@ -315,7 +316,7 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 10,
-    backgroundColor: "#DDF5F1",
+    backgroundColor: Colors.light.primaryLight,
     alignItems: "center",
     justifyContent: "center",
     marginRight: 14,
@@ -325,22 +326,22 @@ const styles = StyleSheet.create({
   },
   statusSmall: {
     fontSize: 13,
-    color: "#8A8F95",
+    color: Colors.light.textMuted,
   },
   statusTitle: {
     marginTop: 3,
-    color: "#263238",
+    color: Colors.light.text,
     fontSize: 15,
     fontWeight: "800",
   },
   checkNow: {
-    color: "#159B8D",
+    color: Colors.light.primaryDark,
     fontSize: 13,
     fontWeight: "800",
   },
   emergencyCard: {
     height: 72,
-    backgroundColor: "#E83E48",
+    backgroundColor: Colors.light.danger,
     borderRadius: 13,
     paddingHorizontal: 12,
     flexDirection: "row",
@@ -360,7 +361,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   emergencyTitle: {
-    color: "#fff",
+    color: Colors.light.white,
     fontSize: 16,
     fontWeight: "800",
   },
@@ -372,7 +373,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 15,
     fontWeight: "800",
-    color: "#263238",
+    color: Colors.light.text,
     marginBottom: 12,
   },
   grid: {
@@ -398,6 +399,6 @@ const styles = StyleSheet.create({
   toolTitle: {
     fontSize: 14,
     fontWeight: "800",
-    color: "#263238",
+    color: Colors.light.text,
   },
 });

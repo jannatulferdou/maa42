@@ -1,3 +1,4 @@
+import { Colors } from "@/constants/theme";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Feather } from "@expo/vector-icons";
 import { router } from "expo-router";
@@ -184,7 +185,7 @@ export default function SettingsScreen() {
     <View style={styles.screen}>
       <View style={styles.header}>
         <Pressable style={styles.backBtn} onPress={() => router.back()}>
-          <Feather name="chevron-left" size={34} color="#263238" />
+          <Feather name="chevron-left" size={34} color={Colors.light.text} />
         </Pressable>
         <Text style={styles.headerTitle}>Settings</Text>
       </View>
@@ -265,13 +266,13 @@ export default function SettingsScreen() {
       </View>
 
       <Pressable style={styles.deleteCard} onPress={handleDeleteAccount}>
-        <Feather name="trash-2" size={23} color="#EF3340" />
+        <Feather name="trash-2" size={23} color={Colors.light.danger} />
         <Text style={styles.deleteText}>Delete account</Text>
-        <Feather name="chevron-right" size={25} color="#EF3340" />
+        <Feather name="chevron-right" size={25} color={Colors.light.danger} />
       </Pressable>
 
       <Pressable style={styles.logoutBtn} onPress={handleLogout}>
-        <Feather name="log-out" size={24} color="#EF3340" />
+        <Feather name="log-out" size={24} color={Colors.light.danger} />
         <Text style={styles.logoutText}>Logout</Text>
       </Pressable>
     </View>
@@ -321,8 +322,8 @@ function SettingSwitchRow({
       <Switch
         value={value}
         onValueChange={onValueChange}
-        trackColor={{ false: "#D1D5DB", true: "#32A99A" }}
-        thumbColor="#fff"
+        trackColor={{ false: "#D1D5DB", true: Colors.light.primary }}
+        thumbColor={Colors.light.white}
       />
     </View>
   );
@@ -331,7 +332,7 @@ function SettingSwitchRow({
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: "#F5FAF9",
+    backgroundColor: Colors.light.background,
     paddingHorizontal: 27,
     paddingTop: 42,
   },
@@ -344,7 +345,7 @@ const styles = StyleSheet.create({
     width: 52,
     height: 52,
     borderRadius: 26,
-    backgroundColor: "#fff",
+    backgroundColor: Colors.light.white,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -352,10 +353,10 @@ const styles = StyleSheet.create({
     marginLeft: 12,
     fontSize: 20,
     fontWeight: "800",
-    color: "#263238",
+    color: Colors.light.text,
   },
   card: {
-    backgroundColor: "#fff",
+    backgroundColor: Colors.light.white,
     borderRadius: 13,
     paddingHorizontal: 12,
     paddingVertical: 8,
@@ -376,7 +377,7 @@ const styles = StyleSheet.create({
     marginLeft: 12,
     fontSize: 15,
     fontWeight: "800",
-    color: "#263238",
+    color: Colors.light.text,
   },
   languageHeader: {
     flexDirection: "row",
@@ -388,7 +389,7 @@ const styles = StyleSheet.create({
     marginLeft: 12,
     fontSize: 15,
     fontWeight: "800",
-    color: "#263238",
+    color: Colors.light.text,
   },
   langRow: {
     flexDirection: "row",
@@ -404,22 +405,22 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   langActive: {
-    backgroundColor: "#32A99A",
+    backgroundColor: Colors.light.primary,
   },
   langText: {
-    color: "#7A7F86",
+    color: Colors.light.textSecondary,
     fontWeight: "800",
     fontSize: 15,
   },
   langActiveText: {
-    color: "#fff",
+    color: Colors.light.white,
     fontWeight: "800",
     fontSize: 15,
   },
   deleteCard: {
     height: 64,
     borderRadius: 12,
-    backgroundColor: "#fff",
+    backgroundColor: Colors.light.white,
     paddingHorizontal: 20,
     flexDirection: "row",
     alignItems: "center",
@@ -428,7 +429,7 @@ const styles = StyleSheet.create({
   deleteText: {
     flex: 1,
     marginLeft: 12,
-    color: "#EF3340",
+    color: Colors.light.danger,
     fontSize: 15,
     fontWeight: "800",
   },
@@ -442,7 +443,7 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   logoutText: {
-    color: "#EF3340",
+    color: Colors.light.danger,
     fontSize: 16,
     fontWeight: "800",
   },

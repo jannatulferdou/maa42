@@ -1,3 +1,4 @@
+import { Colors } from "@/constants/theme";
 import React, { useState, useEffect, useRef } from "react";
 import {
   View,
@@ -78,7 +79,7 @@ export default function CommunityScreen() {
   return (
     <View style={styles.container}>
       <LinearGradient
-        colors={["#F5FAF9", "#E8F5F1", "#DDF5F1"]}
+        colors={[Colors.light.background, "#E8F5F1", Colors.light.primaryLight]}
         style={styles.backgroundGradient}
       />
 
@@ -94,13 +95,13 @@ export default function CommunityScreen() {
           ]}
         >
           <LinearGradient
-            colors={["#32A99A", "#159B8D"]}
+            colors={[Colors.light.primary, Colors.light.primaryDark]}
             style={styles.iconGradient}
           >
             <MaterialCommunityIcons
               name="account-group"
               size={60}
-              color="#FFFFFF"
+              color={Colors.light.white}
             />
           </LinearGradient>
         </Animated.View>
@@ -121,35 +122,35 @@ export default function CommunityScreen() {
           
           <View style={styles.featureRow}>
             <View style={styles.featureIcon}>
-              <Feather name="message-circle" size={20} color="#32A99A" />
+              <Feather name="message-circle" size={20} color={Colors.light.primary} />
             </View>
             <Text style={styles.featureText}>Discussion Forums</Text>
           </View>
 
           <View style={styles.featureRow}>
             <View style={styles.featureIcon}>
-              <Feather name="users" size={20} color="#32A99A" />
+              <Feather name="users" size={20} color={Colors.light.primary} />
             </View>
             <Text style={styles.featureText}>Support Groups</Text>
           </View>
 
           <View style={styles.featureRow}>
             <View style={styles.featureIcon}>
-              <Feather name="share-2" size={20} color="#32A99A" />
+              <Feather name="share-2" size={20} color={Colors.light.primary} />
             </View>
             <Text style={styles.featureText}>Experience Sharing</Text>
           </View>
 
           <View style={styles.featureRow}>
             <View style={styles.featureIcon}>
-              <Feather name="heart" size={20} color="#32A99A" />
+              <Feather name="heart" size={20} color={Colors.light.primary} />
             </View>
             <Text style={styles.featureText}>Peer Support</Text>
           </View>
 
           <View style={styles.featureRow}>
             <View style={styles.featureIcon}>
-              <Feather name="clock" size={20} color="#32A99A" />
+              <Feather name="clock" size={20} color={Colors.light.primary} />
             </View>
             <Text style={styles.featureText}>Q&A Sessions</Text>
           </View>
@@ -157,13 +158,13 @@ export default function CommunityScreen() {
 
         {/* Work in Progress Badge */}
         <View style={styles.wipBadge}>
-          <Feather name="tool" size={16} color="#F5A623" />
+          <Feather name="tool" size={16} color={Colors.light.accent} />
           <Text style={styles.wipText}>Work in Progress</Text>
         </View>
 
         {/* Back Button */}
         <Pressable style={styles.backBtn} onPress={() => router.back()}>
-          <Feather name="arrow-left" size={20} color="#32A99A" />
+          <Feather name="arrow-left" size={20} color={Colors.light.primary} />
           <Text style={styles.backBtnText}>Go Back</Text>
         </Pressable>
       </View>
@@ -181,7 +182,7 @@ export default function CommunityScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F5FAF9",
+    backgroundColor: Colors.light.background,
   },
   backgroundGradient: {
     position: "absolute",
@@ -199,7 +200,7 @@ const styles = StyleSheet.create({
   },
   iconContainer: {
     marginBottom: 24,
-    shadowColor: "#2FA99A",
+    shadowColor: Colors.light.primary,
     shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.3,
     shadowRadius: 20,
@@ -215,36 +216,36 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: "800",
-    color: "#263238",
+    color: Colors.light.text,
     marginBottom: 4,
   },
   comingSoon: {
     fontSize: 18,
     fontWeight: "700",
-    color: "#32A99A",
+    color: Colors.light.primary,
     marginBottom: 16,
   },
   description: {
     fontSize: 14,
-    color: "#7B8288",
+    color: Colors.light.textSecondary,
     textAlign: "center",
     lineHeight: 22,
     marginBottom: 24,
     maxWidth: width * 0.85,
   },
   featuresCard: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: Colors.light.white,
     borderRadius: 20,
     padding: 20,
     width: "100%",
     borderWidth: 1,
-    borderColor: "#E0E7E7",
+    borderColor: Colors.light.border,
     marginBottom: 20,
   },
   featuresTitle: {
     fontSize: 15,
     fontWeight: "800",
-    color: "#263238",
+    color: Colors.light.text,
     marginBottom: 16,
   },
   featureRow: {
@@ -256,7 +257,7 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 10,
-    backgroundColor: "#DDF5F1",
+    backgroundColor: Colors.light.primaryLight,
     alignItems: "center",
     justifyContent: "center",
     marginRight: 12,
@@ -269,7 +270,7 @@ const styles = StyleSheet.create({
   wipBadge: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#FFF3E0",
+    backgroundColor: Colors.light.accentLight,
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 20,
@@ -279,7 +280,7 @@ const styles = StyleSheet.create({
   wipText: {
     fontSize: 13,
     fontWeight: "700",
-    color: "#F5A623",
+    color: Colors.light.accent,
   },
   backBtn: {
     flexDirection: "row",
@@ -288,12 +289,12 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: "#32A99A",
+    borderColor: Colors.light.primary,
     gap: 8,
   },
   backBtnText: {
     fontSize: 15,
     fontWeight: "700",
-    color: "#32A99A",
+    color: Colors.light.primary,
   },
 });

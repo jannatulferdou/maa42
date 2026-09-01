@@ -1,3 +1,4 @@
+import { Colors } from "@/constants/theme";
 import useAuth from "@/hooks/useAuth";
 import { Feather, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
@@ -21,24 +22,24 @@ export default function Summary() {
   } catch {}
 
   const riskColor =
-    risk === "High Risk" ? "#EF3340" : risk === "Moderate Risk" ? "#FFA31A" : "#2FA99A";
+    risk === "High Risk" ? Colors.light.danger : risk === "Moderate Risk" ? "#FFA31A" : Colors.light.primary;
 
   const riskBg =
-    risk === "High Risk" ? "#FFE7E8" : risk === "Moderate Risk" ? "#FFF1DF" : "#DDF5F1";
+    risk === "High Risk" ? "#FFE7E8" : risk === "Moderate Risk" ? "#FFF1DF" : Colors.light.primaryLight;
 
   return (
     <View style={styles.screen}>
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.header}>
           <Pressable style={styles.backBtn} onPress={() => router.back()}>
-            <Feather name="chevron-left" size={34} color="#263238" />
+            <Feather name="chevron-left" size={34} color={Colors.light.text} />
           </Pressable>
           <Text style={styles.headerTitle}>Health Summary</Text>
         </View>
 
         <View style={[styles.riskCard, { backgroundColor: riskBg }]}>
           <View style={[styles.riskIcon, { backgroundColor: riskColor }]}>
-            <Feather name="shield" size={34} color="#fff" />
+            <Feather name="shield" size={34} color={Colors.light.white} />
           </View>
           <Text style={styles.riskSmall}>Your current status</Text>
           <Text style={[styles.riskTitle, { color: riskColor }]}>{risk}</Text>
@@ -62,7 +63,7 @@ export default function Summary() {
         ))}
 
         <Pressable style={styles.aiBtn} onPress={() => router.push("/(chat)" as any)}>
-          <Ionicons name="chatbubble-outline" size={25} color="#fff" />
+          <Ionicons name="chatbubble-outline" size={25} color={Colors.light.white} />
           <Text style={styles.aiText}>Talk to AI</Text>
         </Pressable>
       </ScrollView>
@@ -80,7 +81,7 @@ function Step({ icon, title, active, badge }: any) {
   return (
     <View style={[styles.stepCard, active && styles.activeStep]}>
       <View style={[styles.stepIconBox, active && styles.activeStepIcon]}>
-        <Feather name={icon} size={23} color={active ? "#fff" : "#2FA99A"} />
+        <Feather name={icon} size={23} color={active ? Colors.light.white : Colors.light.primary} />
       </View>
       <Text style={styles.stepTitle}>{title}</Text>
       {badge && <Text style={styles.badge}>{badge}</Text>}
@@ -90,26 +91,26 @@ function Step({ icon, title, active, badge }: any) {
 
 
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: "#F5FAF9" },
+  screen: { flex: 1, backgroundColor: Colors.light.background },
   content: { paddingHorizontal: 27, paddingTop: 40, paddingBottom: 120 },
   header: { flexDirection: "row", alignItems: "center", marginBottom: 35 },
-  backBtn: { width: 52, height: 52, borderRadius: 26, backgroundColor: "#fff", alignItems: "center", justifyContent: "center" },
-  headerTitle: { marginLeft: 12, fontSize: 20, fontWeight: "800", color: "#263238" },
+  backBtn: { width: 52, height: 52, borderRadius: 26, backgroundColor: Colors.light.white, alignItems: "center", justifyContent: "center" },
+  headerTitle: { marginLeft: 12, fontSize: 20, fontWeight: "800", color: Colors.light.text },
   riskCard: { height: 157, borderRadius: 12, alignItems: "center", justifyContent: "center", marginBottom: 24 },
   riskIcon: { width: 60, height: 60, borderRadius: 30, alignItems: "center", justifyContent: "center", marginBottom: 12 },
-  riskSmall: { color: "#8A8F95", fontSize: 13 },
+  riskSmall: { color: Colors.light.textMuted, fontSize: 13 },
   riskTitle: { fontSize: 22, fontWeight: "800", marginTop: 3 },
-  reasonCard: { backgroundColor: "#fff", borderWidth: 1, borderColor: "#CED9DD", borderRadius: 12, padding: 18, marginBottom: 28 },
-  reasonTitle: { fontSize: 15, fontWeight: "800", color: "#263238", marginBottom: 9 },
-  reasonText: { color: "#7B8288", fontSize: 15, lineHeight: 22 },
-  sectionTitle: { color: "#263238", fontWeight: "800", marginBottom: 12 },
-  stepCard: { height: 58, backgroundColor: "#fff", borderRadius: 10, flexDirection: "row", alignItems: "center", paddingHorizontal: 12, marginBottom: 12 },
-  activeStep: { backgroundColor: "#DDF5F1", borderWidth: 1, borderColor: "#2FA99A" },
+  reasonCard: { backgroundColor: Colors.light.white, borderWidth: 1, borderColor: "#CED9DD", borderRadius: 12, padding: 18, marginBottom: 28 },
+  reasonTitle: { fontSize: 15, fontWeight: "800", color: Colors.light.text, marginBottom: 9 },
+  reasonText: { color: Colors.light.textSecondary, fontSize: 15, lineHeight: 22 },
+  sectionTitle: { color: Colors.light.text, fontWeight: "800", marginBottom: 12 },
+  stepCard: { height: 58, backgroundColor: Colors.light.white, borderRadius: 10, flexDirection: "row", alignItems: "center", paddingHorizontal: 12, marginBottom: 12 },
+  activeStep: { backgroundColor: Colors.light.primaryLight, borderWidth: 1, borderColor: Colors.light.primary },
   stepIconBox: { width: 38, height: 38, borderRadius: 8, backgroundColor: "#E7FAF7", alignItems: "center", justifyContent: "center", marginRight: 12 },
-  activeStepIcon: { backgroundColor: "#32A99A" },
-  stepTitle: { flex: 1, fontSize: 15, fontWeight: "800", color: "#263238" },
-  badge: { color: "#159B8D", fontSize: 12, fontWeight: "800" },
-  aiBtn: { height: 58, borderRadius: 10, backgroundColor: "#32A99A", flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 10, marginTop: 24 },
-  aiText: { color: "#fff", fontSize: 18, fontWeight: "800" },
+  activeStepIcon: { backgroundColor: Colors.light.primary },
+  stepTitle: { flex: 1, fontSize: 15, fontWeight: "800", color: Colors.light.text },
+  badge: { color: Colors.light.primaryDark, fontSize: 12, fontWeight: "800" },
+  aiBtn: { height: 58, borderRadius: 10, backgroundColor: Colors.light.primary, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 10, marginTop: 24 },
+  aiText: { color: Colors.light.white, fontSize: 18, fontWeight: "800" },
 
 });

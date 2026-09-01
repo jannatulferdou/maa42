@@ -1,3 +1,4 @@
+import { Colors } from "@/constants/theme";
 import { Feather } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
@@ -38,11 +39,11 @@ export default function NotificationsScreen() {
   };
 
   const getColor = (type?: string | null) => {
-    if (type === "alert") return { bg: "#FFECEF", color: "#EF3340" };
-    if (type === "checkup") return { bg: "#FFF1DF", color: "#F5A623" };
-    if (type === "emergency") return { bg: "#FFECEF", color: "#EF3340" };
+    if (type === "alert") return { bg: "#FFECEF", color: Colors.light.danger };
+    if (type === "checkup") return { bg: "#FFF1DF", color: Colors.light.accent };
+    if (type === "emergency") return { bg: "#FFECEF", color: Colors.light.danger };
     if (type === "completed") return { bg: "#E8F8EE", color: "#35B66A" };
-    return { bg: "#E1F7F3", color: "#2FA99A" };
+    return { bg: "#E1F7F3", color: Colors.light.primary };
   };
 
   const fetchNotifications = async () => {
@@ -104,14 +105,14 @@ export default function NotificationsScreen() {
     <View style={styles.screen}>
       <View style={styles.header}>
         <Pressable style={styles.backBtn} onPress={() => router.back()}>
-          <Feather name="chevron-left" size={34} color="#263238" />
+          <Feather name="chevron-left" size={34} color={Colors.light.text} />
         </Pressable>
 
         <Text style={styles.headerTitle}>Notifications</Text>
       </View>
 
       {loading ? (
-        <ActivityIndicator size="large" color="#32A99A" />
+        <ActivityIndicator size="large" color={Colors.light.primary} />
       ) : (
         <ScrollView showsVerticalScrollIndicator={false}>
           {notifications.length === 0 ? (
@@ -178,7 +179,7 @@ export default function NotificationsScreen() {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: "#F5FAF9",
+    backgroundColor: Colors.light.background,
     paddingHorizontal: 27,
     paddingTop: 42,
   },
@@ -191,7 +192,7 @@ const styles = StyleSheet.create({
     width: 52,
     height: 52,
     borderRadius: 26,
-    backgroundColor: "#fff",
+    backgroundColor: Colors.light.white,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -199,7 +200,7 @@ const styles = StyleSheet.create({
     marginLeft: 12,
     fontSize: 20,
     fontWeight: "800",
-    color: "#263238",
+    color: Colors.light.text,
   },
   wrapper: {
     marginBottom: 12,
@@ -211,14 +212,14 @@ const styles = StyleSheet.create({
     top: 0,
     bottom: 0,
     width: 5,
-    backgroundColor: "#32A99A",
+    backgroundColor: Colors.light.primary,
     borderTopLeftRadius: 10,
     borderBottomLeftRadius: 10,
   },
   card: {
     minHeight: 72,
     borderRadius: 10,
-    backgroundColor: "#fff",
+    backgroundColor: Colors.light.white,
     paddingHorizontal: 13,
     paddingVertical: 12,
     flexDirection: "row",
@@ -236,12 +237,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   title: {
-    color: "#263238",
+    color: Colors.light.text,
     fontSize: 15,
     fontWeight: "800",
   },
   subtitle: {
-    color: "#8A8F95",
+    color: Colors.light.textMuted,
     fontSize: 13,
     marginTop: 4,
   },
@@ -253,7 +254,7 @@ const styles = StyleSheet.create({
   emptyText: {
     textAlign: "center",
     marginTop: 40,
-    color: "#8A8F95",
+    color: Colors.light.textMuted,
     fontSize: 15,
     fontWeight: "600",
   },

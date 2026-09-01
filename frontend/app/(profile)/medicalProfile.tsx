@@ -1,3 +1,4 @@
+import { Colors } from "@/constants/theme";
 import useAuth from "@/hooks/useAuth";
 import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
@@ -100,7 +101,7 @@ export default function ProfileScreen() {
   if (loading || profileLoading) {
     return (
       <View style={styles.loader}>
-        <ActivityIndicator size="large" color="#2FA99A" />
+        <ActivityIndicator size="large" color={Colors.light.primary} />
       </View>
     );
   }
@@ -187,7 +188,7 @@ export default function ProfileScreen() {
           style={styles.settingsBtn}
           onPress={() => router.push("/(profile)/editProfile" as any)}
         >
-          <Feather name="edit-2" size={23} color="#2FA99A" />
+          <Feather name="edit-2" size={23} color={Colors.light.primary} />
           <Text style={styles.settingsText}>Edit Profile</Text>
         </Pressable>
 
@@ -195,7 +196,7 @@ export default function ProfileScreen() {
           style={[styles.settingsBtn, { marginTop: 12 }]}
           onPress={() => router.push("/(settings)/index" as any)}
         >
-          <Feather name="settings" size={25} color="#2FA99A" />
+          <Feather name="settings" size={25} color={Colors.light.primary} />
           <Text style={styles.settingsText}>Settings</Text>
         </Pressable>
 
@@ -223,27 +224,27 @@ export default function ProfileScreen() {
 const styles = StyleSheet.create({
   loader: {
     flex: 1,
-    backgroundColor: "#F5FAF9",
+    backgroundColor: Colors.light.background,
     alignItems: "center",
     justifyContent: "center",
   },
-  screen: { flex: 1, backgroundColor: "#F5FAF9" },
+  screen: { flex: 1, backgroundColor: Colors.light.background },
   content: { paddingHorizontal: 27, paddingTop: 35, paddingBottom: 120 },
   header: { flexDirection: "row", alignItems: "center", marginBottom: 34 },
   avatar: {
     width: 54,
     height: 54,
     borderRadius: 27,
-    backgroundColor: "#2FA99A",
+    backgroundColor: Colors.light.primary,
   },
   userBox: { flex: 1, marginLeft: 12 },
-  name: { fontSize: 18, fontWeight: "800", color: "#263238" },
-  meta: { fontSize: 13, color: "#7A7F86", marginTop: 4 },
+  name: { fontSize: 18, fontWeight: "800", color: Colors.light.text },
+  meta: { fontSize: 13, color: Colors.light.textSecondary, marginTop: 4 },
   circleBtn: {
     width: 42,
     height: 42,
     borderRadius: 21,
-    backgroundColor: "#fff",
+    backgroundColor: Colors.light.white,
     borderWidth: 1,
     borderColor: "#D8E2E2",
     alignItems: "center",
@@ -251,7 +252,7 @@ const styles = StyleSheet.create({
     marginLeft: 9,
   },
   card: {
-    backgroundColor: "#fff",
+    backgroundColor: Colors.light.white,
     borderRadius: 14,
     paddingHorizontal: 14,
     paddingVertical: 15,
@@ -265,11 +266,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: 6,
   },
-  label: { flex: 1, fontSize: 15, color: "#7A7F86" },
+  label: { flex: 1, fontSize: 15, color: Colors.light.textSecondary },
   value: {
     flex: 1,
     fontSize: 15,
-    color: "#263238",
+    color: Colors.light.text,
     fontWeight: "800",
     textAlign: "right",
   },
@@ -277,15 +278,15 @@ const styles = StyleSheet.create({
     height: 50,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: "#2FA99A",
-    backgroundColor: "#fff",
+    borderColor: Colors.light.primary,
+    backgroundColor: Colors.light.white,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
     gap: 10,
   },
   settingsText: {
-    color: "#2FA99A",
+    color: Colors.light.primary,
     fontSize: 17,
     fontWeight: "800",
   },

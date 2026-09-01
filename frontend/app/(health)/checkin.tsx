@@ -1,3 +1,4 @@
+import { Colors } from "@/constants/theme";
 import useAuth from "@/hooks/useAuth";
 import { Feather, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
@@ -18,17 +19,17 @@ import PregnantFooter from "../(footer)/PregnantFooter";
 const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
 const symptoms = [
-  { title: "Feeling well", icon: "emoticon-happy-outline", type: "mc", color: "#2FA99A", bg: "#E1F7F3" },
-  { title: "Fever", icon: "thermometer", type: "feather", color: "#EF3340", bg: "#FFE7E8" },
-  { title: "Heavy bleeding", icon: "drop", type: "feather", color: "#EF3340", bg: "#FFE7E8" },
-  { title: "Weakness", icon: "wind", type: "feather", color: "#F5A623", bg: "#FFF1D8" },
-  { title: "Dizziness", icon: "zap", type: "feather", color: "#F5A623", bg: "#FFF1D8" },
-  { title: "Sadness", icon: "frown-outline", type: "ion", color: "#7A7F86", bg: "#F1F4F5" },
-  { title: "Swelling", icon: "wind", type: "feather", color: "#F5A623", bg: "#FFF1D8" },
-  { title: "Pain", icon: "zap", type: "feather", color: "#EF3340", bg: "#FFE7E8" },
-  { title: "Headache", icon: "frown-outline", type: "ion", color: "#F5A623", bg: "#FFF1D8" },
-  { title: "Infection signs", icon: "wind", type: "feather", color: "#EF3340", bg: "#FFE7E8" },
-  { title: "Trouble feeding", icon: "zap", type: "feather", color: "#F5A623", bg: "#FFF1D8" },
+  { title: "Feeling well", icon: "emoticon-happy-outline", type: "mc", color: Colors.light.primary, bg: "#E1F7F3" },
+  { title: "Fever", icon: "thermometer", type: "feather", color: Colors.light.danger, bg: "#FFE7E8" },
+  { title: "Heavy bleeding", icon: "drop", type: "feather", color: Colors.light.danger, bg: "#FFE7E8" },
+  { title: "Weakness", icon: "wind", type: "feather", color: Colors.light.accent, bg: "#FFF1D8" },
+  { title: "Dizziness", icon: "zap", type: "feather", color: Colors.light.accent, bg: "#FFF1D8" },
+  { title: "Sadness", icon: "frown-outline", type: "ion", color: Colors.light.textSecondary, bg: "#F1F4F5" },
+  { title: "Swelling", icon: "wind", type: "feather", color: Colors.light.accent, bg: "#FFF1D8" },
+  { title: "Pain", icon: "zap", type: "feather", color: Colors.light.danger, bg: "#FFE7E8" },
+  { title: "Headache", icon: "frown-outline", type: "ion", color: Colors.light.accent, bg: "#FFF1D8" },
+  { title: "Infection signs", icon: "wind", type: "feather", color: Colors.light.danger, bg: "#FFE7E8" },
+  { title: "Trouble feeding", icon: "zap", type: "feather", color: Colors.light.accent, bg: "#FFF1D8" },
 ];
 
 export default function Checkin() {
@@ -101,7 +102,7 @@ export default function Checkin() {
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.header}>
           <Pressable style={styles.backBtn} onPress={() => router.back()}>
-            <Feather name="chevron-left" size={34} color="#263238" />
+            <Feather name="chevron-left" size={34} color={Colors.light.text} />
           </Pressable>
           <Text style={styles.headerTitle}>Health Checkin</Text>
         </View>
@@ -120,13 +121,13 @@ export default function Checkin() {
                 ]}
               >
                 {item.type === "mc" && (
-                  <MaterialCommunityIcons name={item.icon as any} size={25} color={active ? item.color : "#7A7F86"} />
+                  <MaterialCommunityIcons name={item.icon as any} size={25} color={active ? item.color : Colors.light.textSecondary} />
                 )}
                 {item.type === "feather" && (
-                  <Feather name={item.icon as any} size={25} color={active ? item.color : "#7A7F86"} />
+                  <Feather name={item.icon as any} size={25} color={active ? item.color : Colors.light.textSecondary} />
                 )}
                 {item.type === "ion" && (
-                  <Ionicons name={item.icon as any} size={25} color={active ? item.color : "#7A7F86"} />
+                  <Ionicons name={item.icon as any} size={25} color={active ? item.color : Colors.light.textSecondary} />
                 )}
 
                 <Text style={[styles.symptomText, active && { color: item.color }]}>
@@ -168,7 +169,7 @@ export default function Checkin() {
           multiline
           value={notes}
           onChangeText={setNotes}
-          placeholderTextColor="#8A8F95"
+          placeholderTextColor={Colors.light.textMuted}
         />
 
         <Pressable
@@ -177,7 +178,7 @@ export default function Checkin() {
           disabled={loading}
         >
           {loading ? (
-            <ActivityIndicator color="#fff" />
+            <ActivityIndicator color={Colors.light.white} />
           ) : (
             <Text style={styles.submitText}>Submit</Text>
           )}
@@ -195,22 +196,22 @@ export default function Checkin() {
 
 
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: "#F5FAF9" },
+  screen: { flex: 1, backgroundColor: Colors.light.background },
   content: { paddingHorizontal: 27, paddingTop: 40, paddingBottom: 120 },
   header: { flexDirection: "row", alignItems: "center", marginBottom: 30 },
-  backBtn: { width: 52, height: 52, borderRadius: 26, backgroundColor: "#fff", alignItems: "center", justifyContent: "center" },
-  headerTitle: { marginLeft: 12, fontSize: 20, fontWeight: "800", color: "#263238" },
+  backBtn: { width: 52, height: 52, borderRadius: 26, backgroundColor: Colors.light.white, alignItems: "center", justifyContent: "center" },
+  headerTitle: { marginLeft: 12, fontSize: 20, fontWeight: "800", color: Colors.light.text },
   grid: { flexDirection: "row", flexWrap: "wrap", justifyContent: "space-between", rowGap: 10, marginBottom: 28 },
-  symptomCard: { width: "31.5%", height: 64, borderRadius: 10, borderWidth: 1, borderColor: "#CED9DD", backgroundColor: "#fff", alignItems: "center", justifyContent: "center" },
+  symptomCard: { width: "31.5%", height: 64, borderRadius: 10, borderWidth: 1, borderColor: "#CED9DD", backgroundColor: Colors.light.white, alignItems: "center", justifyContent: "center" },
   symptomText: { marginTop: 5, fontSize: 11, fontWeight: "700", color: "#6F747B", textAlign: "center" },
-  label: { fontSize: 15, fontWeight: "800", color: "#263238", marginBottom: 12 },
+  label: { fontSize: 15, fontWeight: "800", color: Colors.light.text, marginBottom: 12 },
   severityRow: { flexDirection: "row", justifyContent: "space-between", marginBottom: 28 },
-  severityBtn: { width: "31.5%", height: 50, borderRadius: 10, borderWidth: 1, borderColor: "#CED9DD", backgroundColor: "#fff", alignItems: "center", justifyContent: "center" },
-  activeSeverity: { backgroundColor: "#32A99A", borderColor: "#32A99A" },
-  severityText: { fontSize: 15, fontWeight: "800", color: "#7A7F86" },
-  activeSeverityText: { fontSize: 15, fontWeight: "800", color: "#fff" },
-  notes: { height: 90, backgroundColor: "#fff", borderRadius: 12, borderWidth: 1, borderColor: "#CED9DD", padding: 18, fontSize: 15, textAlignVertical: "top", marginBottom: 24 },
-  submitBtn: { height: 56, borderRadius: 11, backgroundColor: "#32A99A", alignItems: "center", justifyContent: "center" },
-  submitText: { color: "#fff", fontSize: 17, fontWeight: "800" },
+  severityBtn: { width: "31.5%", height: 50, borderRadius: 10, borderWidth: 1, borderColor: "#CED9DD", backgroundColor: Colors.light.white, alignItems: "center", justifyContent: "center" },
+  activeSeverity: { backgroundColor: Colors.light.primary, borderColor: Colors.light.primary },
+  severityText: { fontSize: 15, fontWeight: "800", color: Colors.light.textSecondary },
+  activeSeverityText: { fontSize: 15, fontWeight: "800", color: Colors.light.white },
+  notes: { height: 90, backgroundColor: Colors.light.white, borderRadius: 12, borderWidth: 1, borderColor: "#CED9DD", padding: 18, fontSize: 15, textAlignVertical: "top", marginBottom: 24 },
+  submitBtn: { height: 56, borderRadius: 11, backgroundColor: Colors.light.primary, alignItems: "center", justifyContent: "center" },
+  submitText: { color: Colors.light.white, fontSize: 17, fontWeight: "800" },
 
 });

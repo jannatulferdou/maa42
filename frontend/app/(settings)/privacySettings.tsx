@@ -1,3 +1,4 @@
+import { Colors } from "@/constants/theme";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Feather } from "@expo/vector-icons";
 import { router } from "expo-router";
@@ -115,7 +116,7 @@ export default function PrivacyScreen() {
             <Feather
               name="chevron-left"
               size={30}
-              color="#263238"
+              color={Colors.light.text}
             />
           </Pressable>
 
@@ -178,7 +179,7 @@ export default function PrivacyScreen() {
           <Feather
             name="download"
             size={20}
-            color="#2FA99A"
+            color={Colors.light.primary}
           />
           <Text style={styles.actionText}>
             Export My Data
@@ -192,7 +193,7 @@ export default function PrivacyScreen() {
           <Feather
             name="trash-2"
             size={20}
-            color="#EF3340"
+            color={Colors.light.danger}
           />
           <Text style={styles.deleteText}>
             Delete Local Data
@@ -223,7 +224,7 @@ function SettingRow({
         onValueChange={onChange}
         trackColor={{
           false: "#D1D5DB",
-          true: "#32A99A",
+          true: Colors.light.primary,
         }}
       />
     </View>
@@ -233,7 +234,7 @@ function SettingRow({
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: "#F5FAF9",
+    backgroundColor: Colors.light.background,
   },
 
   content: {
@@ -251,7 +252,7 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 25,
-    backgroundColor: "#fff",
+    backgroundColor: Colors.light.white,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -260,11 +261,11 @@ const styles = StyleSheet.create({
     marginLeft: 12,
     fontSize: 22,
     fontWeight: "800",
-    color: "#263238",
+    color: Colors.light.text,
   },
 
   card: {
-    backgroundColor: "#fff",
+    backgroundColor: Colors.light.white,
     borderRadius: 14,
     paddingHorizontal: 15,
     marginBottom: 25,
@@ -283,14 +284,14 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 15,
     fontWeight: "600",
-    color: "#263238",
+    color: Colors.light.text,
   },
 
   actionBtn: {
     height: 55,
-    backgroundColor: "#fff",
+    backgroundColor: Colors.light.white,
     borderWidth: 1,
-    borderColor: "#2FA99A",
+    borderColor: Colors.light.primary,
     borderRadius: 12,
     alignItems: "center",
     justifyContent: "center",
@@ -300,7 +301,7 @@ const styles = StyleSheet.create({
   },
 
   actionText: {
-    color: "#2FA99A",
+    color: Colors.light.primary,
     fontWeight: "800",
     fontSize: 16,
   },
@@ -316,7 +317,7 @@ const styles = StyleSheet.create({
   },
 
   deleteText: {
-    color: "#EF3340",
+    color: Colors.light.danger,
     fontWeight: "800",
     fontSize: 16,
   },

@@ -59,19 +59,15 @@ export default function AuthProvider({
   // Helper function to fetch user from backend
   const fetchUserFromBackend = async (uid: string) => {
     try {
-      console.log("Fetching user profile for:", uid);
-      
       const res = await fetch(`${API_URL}/users/${uid}`);
       const data = await res.json();
-
-      console.log("Backend user response:", data);
 
       if (res.ok && data?.success) {
         return data.data;
       }
       return null;
     } catch (error) {
-      console.log("Error fetching user:", error);
+      console.error("Error fetching user:", error);
       return null;
     }
   };
@@ -81,24 +77,20 @@ export default function AuthProvider({
       auth,
       async (firebaseUser: User | null) => {
         if (!firebaseUser) {
-          console.log("No Firebase user, clearing state");
           setUser(null);
           setLoading(false);
           return;
         }
 
-        console.log("Firebase user detected:", firebaseUser.uid);
-
         // Try to fetch from backend with retry
         let backendUser = null;
         let retryCount = 0;
         const maxRetries = 5;
-        
+
         while (!backendUser && retryCount < maxRetries) {
           backendUser = await fetchUserFromBackend(firebaseUser.uid);
-          
+
           if (!backendUser) {
-            console.log(`Backend user not found, retry ${retryCount + 1}/${maxRetries}...`);
             retryCount++;
             // Wait before retry
             await new Promise(resolve => setTimeout(resolve, 1000));
@@ -106,13 +98,11 @@ export default function AuthProvider({
         }
 
         if (backendUser) {
-          console.log("User set with role:", backendUser.role, "careStage:", backendUser.careStage);
           setUser({
             ...firebaseUser,
             ...backendUser,
           });
         } else {
-          console.log("Backend user not found after retries, setting basic user");
           setUser({
             ...firebaseUser,
             role: null,

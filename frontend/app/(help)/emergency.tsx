@@ -1,3 +1,4 @@
+import { Colors } from "@/constants/theme";
 import useAuth from "@/hooks/useAuth";
 import { Feather } from "@expo/vector-icons";
 import { router } from "expo-router";
@@ -53,7 +54,7 @@ export default function EmergencyScreen() {
         setContacts(data.data);
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 
@@ -189,7 +190,7 @@ export default function EmergencyScreen() {
 
       fetchContacts();
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 
@@ -216,7 +217,7 @@ export default function EmergencyScreen() {
           <Feather
             name="chevron-left"
             size={30}
-            color="#263238"
+            color={Colors.light.text}
           />
         </Pressable>
 
@@ -229,7 +230,7 @@ export default function EmergencyScreen() {
         <Feather
           name="shield"
           size={22}
-          color="#2FA99A"
+          color={Colors.light.primary}
         />
 
         <Text style={styles.noticeText}>
@@ -304,7 +305,7 @@ export default function EmergencyScreen() {
                   size={22}
                   color={
                     item.isFavorite
-                      ? "#F5A623"
+                      ? Colors.light.accent
                       : "#B0B8BC"
                   }
                 />
@@ -318,7 +319,7 @@ export default function EmergencyScreen() {
                 <Feather
                   name="phone"
                   size={22}
-                  color="#2FA99A"
+                  color={Colors.light.primary}
                 />
               </Pressable>
 
@@ -342,7 +343,7 @@ export default function EmergencyScreen() {
                 <Feather
                   name="trash-2"
                   size={22}
-                  color="#E83E48"
+                  color={Colors.light.danger}
                 />
               </Pressable>
             </View>
@@ -353,19 +354,19 @@ export default function EmergencyScreen() {
       <Pressable
         style={[
           styles.card,
-          { backgroundColor: "#E83E48" },
+          { backgroundColor: Colors.light.danger },
         ]}
         onPress={() => makeCall("999")}
       >
         <Feather
           name="truck"
           size={24}
-          color="#fff"
+          color={Colors.light.white}
         />
 
         <Text
           style={{
-            color: "#fff",
+            color: Colors.light.white,
             fontWeight: "700",
             marginLeft: 10,
           }}
@@ -380,7 +381,7 @@ export default function EmergencyScreen() {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: "#F5FAF9",
+    backgroundColor: Colors.light.background,
     padding: 24,
     paddingTop: 50,
   },
@@ -395,7 +396,7 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 25,
-    backgroundColor: "#fff",
+    backgroundColor: Colors.light.white,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -408,7 +409,7 @@ const styles = StyleSheet.create({
 
   notice: {
     flexDirection: "row",
-    backgroundColor: "#DDF5F1",
+    backgroundColor: Colors.light.primaryLight,
     padding: 14,
     borderRadius: 12,
     marginBottom: 20,
@@ -422,7 +423,7 @@ const styles = StyleSheet.create({
 
   input: {
     height: 54,
-    backgroundColor: "#fff",
+    backgroundColor: Colors.light.white,
     borderRadius: 12,
     borderWidth: 1,
     borderColor: "#ddd",
@@ -432,7 +433,7 @@ const styles = StyleSheet.create({
 
   saveBtn: {
     height: 54,
-    backgroundColor: "#2FA99A",
+    backgroundColor: Colors.light.primary,
     borderRadius: 12,
     justifyContent: "center",
     alignItems: "center",
@@ -440,13 +441,13 @@ const styles = StyleSheet.create({
   },
 
   saveText: {
-    color: "#fff",
+    color: Colors.light.white,
     fontSize: 16,
     fontWeight: "700",
   },
 
   card: {
-    backgroundColor: "#fff",
+    backgroundColor: Colors.light.white,
     borderRadius: 12,
     padding: 16,
     flexDirection: "row",

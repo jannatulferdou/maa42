@@ -1,3 +1,4 @@
+import { Colors } from "@/constants/theme";
 import useAuth from "@/hooks/useAuth";
 import { router } from "expo-router";
 import { useState } from "react";
@@ -49,12 +50,8 @@ const handleLogin = async () => {
     const credential = await loginUser(email.trim(), password);
     const uid = credential.user.uid;
 
-    console.log("Login successful, fetching user profile...");
-
     const res = await fetch(`${API_URL}/users/${uid}`);
     const data = await res.json();
-
-    console.log("LOGIN USER PROFILE:", data);
 
     if (!res.ok || !data?.success) {
       throw new Error(data?.message || "User profile not found in backend.");
@@ -62,10 +59,7 @@ const handleLogin = async () => {
 
     showToast("success", "Login Successful", `Welcome back, ${data.data.name}`);
 
-    console.log("Login complete, will redirect to home in 1 second");
-
     setTimeout(() => {
-      console.log("Redirecting to home now");
       router.replace("/(home)" as any);
     }, 1000);
   } catch (error: any) {
@@ -152,11 +146,10 @@ const handleLogin = async () => {
     <Feather
       name={showPassword ? "eye-off" : "eye"}
       size={22}
-      color="#8A8F95"
+      color={Colors.light.textMuted}
     />
   </Pressable>
 </View>
-
 
       <Text style={styles.forgot} onPress={handleForgotPassword}>
         Forgot password?
@@ -193,7 +186,7 @@ const handleLogin = async () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F5FAF9",
+    backgroundColor: Colors.light.background,
     padding: 27,
     paddingTop: 70,
   },
@@ -201,18 +194,18 @@ const styles = StyleSheet.create({
     width: 52,
     height: 52,
     borderRadius: 26,
-    backgroundColor: "#fff",
+    backgroundColor: Colors.light.white,
     alignItems: "center",
     justifyContent: "center",
     marginBottom: 12,
   },
-  backText: { fontSize: 38, color: "#263238" },
-  title: { fontSize: 22, fontWeight: "700", color: "#263238" },
-  subtitle: { color: "#7B8288", marginTop: 4, marginBottom: 45 },
-  label: { fontWeight: "600", color: "#263238", marginBottom: 8 },
+  backText: { fontSize: 38, color: Colors.light.text },
+  title: { fontSize: 22, fontWeight: "700", color: Colors.light.text },
+  subtitle: { color: Colors.light.textSecondary, marginTop: 4, marginBottom: 45 },
+  label: { fontWeight: "600", color: Colors.light.text, marginBottom: 8 },
   input: {
     height: 54,
-    backgroundColor: "#fff",
+    backgroundColor: Colors.light.white,
     borderWidth: 1,
     borderColor: "#CFD8DC",
     borderRadius: 12,
@@ -221,21 +214,21 @@ const styles = StyleSheet.create({
     marginBottom: 22,
   },
   forgot: {
-    color: "#159B8D",
+    color: Colors.light.primaryDark,
     textAlign: "right",
     fontWeight: "600",
     marginBottom: 30,
   },
   primaryBtn: {
     height: 56,
-    backgroundColor: "#32A99A",
+    backgroundColor: Colors.light.primary,
     borderRadius: 11,
     alignItems: "center",
     justifyContent: "center",
   },
   passwordContainer: {
   height: 54,
-  backgroundColor: "#fff",
+  backgroundColor: Colors.light.white,
   borderWidth: 1,
   borderColor: "#CFD8DC",
   borderRadius: 12,
@@ -250,18 +243,18 @@ passwordInput: {
   flex: 1,
   fontSize: 16,
 },
-  primaryText: { color: "#fff", fontSize: 17, fontWeight: "700" },
-  or: { textAlign: "center", color: "#8A8F95", marginVertical: 24 },
+  primaryText: { color: Colors.light.white, fontSize: 17, fontWeight: "700" },
+  or: { textAlign: "center", color: Colors.light.textMuted, marginVertical: 24 },
   googleBtn: {
     height: 54,
     borderWidth: 1,
-    borderColor: "#32A99A",
+    borderColor: Colors.light.primary,
     borderRadius: 11,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#fff",
+    backgroundColor: Colors.light.white,
   },
-  googleText: { color: "#159B8D", fontWeight: "700", fontSize: 16 },
-  bottomText: { textAlign: "center", color: "#8A8F95", marginTop: 24 },
-  link: { color: "#159B8D", fontWeight: "700" },
+  googleText: { color: Colors.light.primaryDark, fontWeight: "700", fontSize: 16 },
+  bottomText: { textAlign: "center", color: Colors.light.textMuted, marginTop: 24 },
+  link: { color: Colors.light.primaryDark, fontWeight: "700" },
 });

@@ -1,3 +1,4 @@
+import { Colors } from "@/constants/theme";
 import React, { useState, useEffect, useRef } from "react";
 import {
   View,
@@ -244,12 +245,12 @@ const getDefaultWeekData = (week: number) => ({
 const getWeekData = (week: number) => {
   const exact = WEEKLY_DATA[week];
   if (exact) return exact;
-  
+
   const availableWeeks = Object.keys(WEEKLY_DATA).map(Number).sort((a, b) => a - b);
-  const nearest = availableWeeks.reduce((prev, curr) => 
+  const nearest = availableWeeks.reduce((prev, curr) =>
     Math.abs(curr - week) < Math.abs(prev - week) ? curr : prev
   );
-  
+
   return { ...WEEKLY_DATA[nearest], ...getDefaultWeekData(week) };
 };
 
@@ -362,7 +363,7 @@ export default function PregnantHomeScreen() {
         }
       }
     } catch (error) {
-      console.log("Profile fetch error:", error);
+      console.error("Profile fetch error:", error);
     } finally {
       setLoading(false);
     }
@@ -383,14 +384,14 @@ export default function PregnantHomeScreen() {
   if (loading) {
     return (
       <View style={[styles.container, { justifyContent: "center", alignItems: "center" }]}>
-        <Text style={{ color: "#8A8F95", fontSize: 16 }}>Loading...</Text>
+        <Text style={{ color: Colors.light.textMuted, fontSize: 16 }}>Loading...</Text>
       </View>
     );
   }
 
   return (
     <View style={styles.container}>
-      <LinearGradient colors={["#F5FAF9", "#E8F5F1", "#F5FAF9"]} style={styles.backgroundGradient} />
+      <LinearGradient colors={[Colors.light.background, "#E8F5F1", Colors.light.background]} style={styles.backgroundGradient} />
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 100 }}>
         <View style={styles.topBar}>
@@ -439,10 +440,10 @@ export default function PregnantHomeScreen() {
               <Text style={styles.insightLabel}>Week {currentWeek}</Text>
             </View>
             <View style={styles.cardIconCircle}>
-              <MaterialCommunityIcons name="baby" size={24} color="#2FA99A" />
+              <MaterialCommunityIcons name="baby" size={24} color={Colors.light.primary} />
             </View>
             <Text style={styles.insightTitle}>Your baby</Text>
-            <Text style={{ fontSize: 10, color: "#2FA99A", marginTop: 2 }}>{weekData.babyWeight}</Text>
+            <Text style={{ fontSize: 10, color: Colors.light.primary, marginTop: 2 }}>{weekData.babyWeight}</Text>
           </LinearGradient>
 
           <LinearGradient colors={["#F4E8A6", "#FFF4C8"]} style={[styles.insightCard, { width: "100%", marginTop: 0 }]}>
@@ -457,13 +458,13 @@ export default function PregnantHomeScreen() {
           <View style={styles.trackerCard}>
             <View style={styles.trackerHeader}>
               <View style={styles.trackerIconBox}>
-                <Feather name="droplet" size={22} color="#32A99A" />
+                <Feather name="droplet" size={22} color={Colors.light.primary} />
               </View>
               <Text style={styles.trackerLabel}>Water Intake</Text>
               <Text style={styles.trackerValue}>{waterCurrent}L / {weekData.waterGoal}L</Text>
             </View>
             <View style={styles.progressBar}>
-              <View style={[styles.progressFill, { width: `${Math.min((waterCurrent / weekData.waterGoal) * 100, 100)}%`, backgroundColor: "#32A99A" }]} />
+              <View style={[styles.progressFill, { width: `${Math.min((waterCurrent / weekData.waterGoal) * 100, 100)}%`, backgroundColor: Colors.light.primary }]} />
             </View>
             <Text style={styles.trackerHint}>Aim for {Math.round(weekData.waterGoal * 4)} glasses today! 💧</Text>
           </View>
@@ -472,7 +473,7 @@ export default function PregnantHomeScreen() {
             <View style={[styles.trackerCard, { flex: 1, marginRight: 8 }]}>
               <View style={styles.trackerHeader}>
                 <View style={[styles.trackerIconBox, { backgroundColor: "#CDEFD0" }]}>
-                  <Feather name="activity" size={22} color="#2FA99A" />
+                  <Feather name="activity" size={22} color={Colors.light.primary} />
                 </View>
                 <Text style={styles.trackerLabel}>Weight</Text>
               </View>
@@ -482,8 +483,8 @@ export default function PregnantHomeScreen() {
 
             <View style={[styles.trackerCard, { flex: 1, marginLeft: 8 }]}>
               <View style={styles.trackerHeader}>
-                <View style={[styles.trackerIconBox, { backgroundColor: "#DDF5F1" }]}>
-                  <Feather name="moon" size={22} color="#2FA99A" />
+                <View style={[styles.trackerIconBox, { backgroundColor: Colors.light.primaryLight }]}>
+                  <Feather name="moon" size={22} color={Colors.light.primary} />
                 </View>
                 <Text style={styles.trackerLabel}>Sleep</Text>
               </View>
@@ -495,7 +496,7 @@ export default function PregnantHomeScreen() {
           <View style={styles.trackerCard}>
             <View style={styles.trackerHeader}>
               <View style={[styles.trackerIconBox, { backgroundColor: "#F2DBEA" }]}>
-                <MaterialCommunityIcons name="food-apple" size={22} color="#2FA99A" />
+                <MaterialCommunityIcons name="food-apple" size={22} color={Colors.light.primary} />
               </View>
               <Text style={styles.trackerLabel}>Todays Focus Diet</Text>
             </View>
@@ -506,7 +507,7 @@ export default function PregnantHomeScreen() {
 
           <View style={styles.tipsContainer}>
             <View style={styles.tipsHeader}>
-              <Feather name="info" size={18} color="#32A99A" />
+              <Feather name="info" size={18} color={Colors.light.primary} />
               <Text style={styles.tipsTitle}>Important Tips for Week {currentWeek}</Text>
             </View>
             {weekData.tips.map((tip, idx) => (
@@ -515,18 +516,18 @@ export default function PregnantHomeScreen() {
                 <Text style={styles.tipText}>{tip}</Text>
               </View>
             ))}
-            
-            <View style={{ marginTop: 12, paddingTop: 12, borderTopWidth: 1, borderTopColor: "#E0E7E7" }}>
+
+            <View style={{ marginTop: 12, paddingTop: 12, borderTopWidth: 1, borderTopColor: Colors.light.border }}>
               <Text style={[styles.tipsTitle, { marginBottom: 8 }]}>Your Body This Week</Text>
               <Text style={styles.tipText}>{weekData.motherChanges}</Text>
             </View>
 
-            <View style={{ marginTop: 12, paddingTop: 12, borderTopWidth: 1, borderTopColor: "#E0E7E7" }}>
+            <View style={{ marginTop: 12, paddingTop: 12, borderTopWidth: 1, borderTopColor: Colors.light.border }}>
               <Text style={[styles.tipsTitle, { marginBottom: 8 }]}>Babys Development</Text>
               <Text style={styles.tipText}>{weekData.development}</Text>
             </View>
 
-            <View style={{ marginTop: 12, paddingTop: 12, borderTopWidth: 1, borderTopColor: "#E0E7E7" }}>
+            <View style={{ marginTop: 12, paddingTop: 12, borderTopWidth: 1, borderTopColor: Colors.light.border }}>
               <Text style={[styles.tipsTitle, { marginBottom: 8 }]}>Quick Info</Text>
               <Text style={styles.tipText}>📅 Trimester: {weekData.trimester}</Text>
               <Text style={styles.tipText}>📆 Due Date: {dueDate}</Text>
@@ -540,19 +541,19 @@ export default function PregnantHomeScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#F5FAF9", paddingTop: Platform.OS === "ios" ? 50 : 40 },
+  container: { flex: 1, backgroundColor: Colors.light.background, paddingTop: Platform.OS === "ios" ? 50 : 40 },
   backgroundGradient: { position: "absolute", top: 0, left: 0, right: 0, height: 500 },
   topBar: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", paddingHorizontal: 27, marginBottom: 20 },
-  smallLabel: { fontSize: 12, color: "#8A8F95", fontWeight: "600", letterSpacing: 1 },
-  weekLabel: { fontSize: 16, fontWeight: "800", color: "#263238" },
+  smallLabel: { fontSize: 12, color: Colors.light.textMuted, fontWeight: "600", letterSpacing: 1 },
+  weekLabel: { fontSize: 16, fontWeight: "800", color: Colors.light.text },
   weekSelector: { flexDirection: "row", justifyContent: "space-between", paddingHorizontal: 27, marginBottom: 30 },
   weekDayBox: { alignItems: "center", justifyContent: "center", width: 40, height: 60, borderRadius: 20 },
-  weekDayBoxActive: { backgroundColor: "#FFFFFF", shadowColor: "#000", shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.05, shadowRadius: 10, elevation: 3 },
-  weekDayText: { fontSize: 16, fontWeight: "700", color: "#8A8F95" },
-  weekDayTextActive: { color: "#263238" },
-  weekDayLabel: { fontSize: 10, color: "#8A8F95", marginTop: 4, fontWeight: "600" },
-  weekDayLabelActive: { color: "#32A99A" },
-  currentDayDot: { width: 5, height: 5, borderRadius: 3, backgroundColor: "#32A99A", marginTop: 6 },
+  weekDayBoxActive: { backgroundColor: Colors.light.white, shadowColor: "#000", shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.05, shadowRadius: 10, elevation: 3 },
+  weekDayText: { fontSize: 16, fontWeight: "700", color: Colors.light.textMuted },
+  weekDayTextActive: { color: Colors.light.text },
+  weekDayLabel: { fontSize: 10, color: Colors.light.textMuted, marginTop: 4, fontWeight: "600" },
+  weekDayLabelActive: { color: Colors.light.primary },
+  currentDayDot: { width: 5, height: 5, borderRadius: 3, backgroundColor: Colors.light.primary, marginTop: 6 },
   babyHeroContainer: { alignItems: "center", marginBottom: 30 },
   babyImageContainer: {
     justifyContent: "center",
@@ -564,45 +565,45 @@ const styles = StyleSheet.create({
     elevation: 8,
   },
   heroInfo: { marginTop: 24, alignItems: "center" },
-  heroWeekText: { fontSize: 28, fontWeight: "800", color: "#263238" },
-  heroDaysText: { fontSize: 16, color: "#7B8288", marginTop: 4 },
-  heroSubText: { fontSize: 14, color: "#32A99A", fontWeight: "600", marginTop: 4 },
+  heroWeekText: { fontSize: 28, fontWeight: "800", color: Colors.light.text },
+  heroDaysText: { fontSize: 16, color: Colors.light.textSecondary, marginTop: 4 },
+  heroSubText: { fontSize: 14, color: Colors.light.primary, fontWeight: "600", marginTop: 4 },
   trimesterBadge: {
     marginTop: 8,
     fontSize: 12,
     fontWeight: "700",
-    color: "#32A99A",
-    backgroundColor: "#DDF5F1",
+    color: Colors.light.primary,
+    backgroundColor: Colors.light.primaryLight,
     paddingHorizontal: 16,
     paddingVertical: 6,
     borderRadius: 20,
   },
-  sectionTitle: { fontSize: 18, fontWeight: "800", color: "#263238", paddingHorizontal: 27, marginBottom: 16 },
+  sectionTitle: { fontSize: 18, fontWeight: "800", color: Colors.light.text, paddingHorizontal: 27, marginBottom: 16 },
   insightGrid: { flexDirection: "row", flexWrap: "wrap", justifyContent: "space-between", paddingHorizontal: 27, gap: 10 },
   insightCard: { width: "48%", padding: 16, borderRadius: 16, minHeight: 110, justifyContent: "space-between" },
-  insightLabel: { fontSize: 12, color: "#7B8288", fontWeight: "600" },
-  insightBigNumber: { fontSize: 28, fontWeight: "800", color: "#263238" },
-  insightSubText: { fontSize: 12, color: "#8A8F95", marginTop: -4 },
+  insightLabel: { fontSize: 12, color: Colors.light.textSecondary, fontWeight: "600" },
+  insightBigNumber: { fontSize: 28, fontWeight: "800", color: Colors.light.text },
+  insightSubText: { fontSize: 12, color: Colors.light.textMuted, marginTop: -4 },
   cardHeaderRow: { flexDirection: "row", justifyContent: "space-between" },
-  cardIconCircle: { width: 40, height: 40, borderRadius: 12, backgroundColor: "#FFFFFF", alignItems: "center", justifyContent: "center", alignSelf: "flex-start", marginTop: 8 },
-  insightTitle: { fontSize: 16, fontWeight: "700", color: "#263238", marginTop: 6 },
+  cardIconCircle: { width: 40, height: 40, borderRadius: 12, backgroundColor: Colors.light.white, alignItems: "center", justifyContent: "center", alignSelf: "flex-start", marginTop: 8 },
+  insightTitle: { fontSize: 16, fontWeight: "700", color: Colors.light.text, marginTop: 6 },
   trackerContainer: { paddingHorizontal: 27, marginTop: 20 },
-  trackerTitle: { fontSize: 18, fontWeight: "700", color: "#263238", marginBottom: 16 },
-  trackerCard: { backgroundColor: "#FFFFFF", borderRadius: 16, padding: 16, marginBottom: 12, borderWidth: 1, borderColor: "#E0E7E7" },
+  trackerTitle: { fontSize: 18, fontWeight: "700", color: Colors.light.text, marginBottom: 16 },
+  trackerCard: { backgroundColor: Colors.light.white, borderRadius: 16, padding: 16, marginBottom: 12, borderWidth: 1, borderColor: Colors.light.border },
   trackerHeader: { flexDirection: "row", alignItems: "center", marginBottom: 12 },
-  trackerIconBox: { width: 40, height: 40, borderRadius: 12, backgroundColor: "#DDF5F1", alignItems: "center", justifyContent: "center", marginRight: 10 },
-  trackerLabel: { flex: 1, fontSize: 14, fontWeight: "600", color: "#263238" },
-  trackerValue: { fontSize: 14, fontWeight: "700", color: "#32A99A" },
-  trackerBigValue: { fontSize: 24, fontWeight: "800", color: "#263238" },
-  progressBar: { height: 8, backgroundColor: "#E0E7E7", borderRadius: 4, overflow: "hidden", marginBottom: 6 },
+  trackerIconBox: { width: 40, height: 40, borderRadius: 12, backgroundColor: Colors.light.primaryLight, alignItems: "center", justifyContent: "center", marginRight: 10 },
+  trackerLabel: { flex: 1, fontSize: 14, fontWeight: "600", color: Colors.light.text },
+  trackerValue: { fontSize: 14, fontWeight: "700", color: Colors.light.primary },
+  trackerBigValue: { fontSize: 24, fontWeight: "800", color: Colors.light.text },
+  progressBar: { height: 8, backgroundColor: Colors.light.border, borderRadius: 4, overflow: "hidden", marginBottom: 6 },
   progressFill: { height: "100%", borderRadius: 4 },
-  trackerHint: { fontSize: 12, color: "#8A8F95", marginTop: 4 },
+  trackerHint: { fontSize: 12, color: Colors.light.textMuted, marginTop: 4 },
   rowTrackerContainer: { flexDirection: "row", marginBottom: 12 },
-  dietText: { fontSize: 14, color: "#7B8288", lineHeight: 22, marginBottom: 4 },
-  tipsContainer: { backgroundColor: "#FFFFFF", borderRadius: 16, padding: 16, borderWidth: 1, borderColor: "#E0E7E7" },
+  dietText: { fontSize: 14, color: Colors.light.textSecondary, lineHeight: 22, marginBottom: 4 },
+  tipsContainer: { backgroundColor: Colors.light.white, borderRadius: 16, padding: 16, borderWidth: 1, borderColor: Colors.light.border },
   tipsHeader: { flexDirection: "row", alignItems: "center", marginBottom: 12 },
-  tipsTitle: { fontSize: 14, fontWeight: "700", color: "#263238", marginLeft: 8 },
+  tipsTitle: { fontSize: 14, fontWeight: "700", color: Colors.light.text, marginLeft: 8 },
   tipRow: { flexDirection: "row", marginBottom: 8 },
-  bulletPoint: { fontSize: 16, color: "#32A99A", marginRight: 8 },
-  tipText: { flex: 1, fontSize: 13, color: "#7B8288", lineHeight: 20 },
+  bulletPoint: { fontSize: 16, color: Colors.light.primary, marginRight: 8 },
+  tipText: { flex: 1, fontSize: 13, color: Colors.light.textSecondary, lineHeight: 20 },
 });

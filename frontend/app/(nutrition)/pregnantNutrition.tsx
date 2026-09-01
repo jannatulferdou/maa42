@@ -1,3 +1,4 @@
+import { Colors } from "@/constants/theme";
 import React, { useState, useEffect } from "react";
 import {
   View,
@@ -328,11 +329,11 @@ export default function PregnantNutritionScreen() {
           <Text style={styles.mainTitle}>🤰 Pregnancy Nutrition</Text>
           <Text style={styles.subtitle}>You have a saved nutrition plan</Text>
           <Pressable style={styles.viewBtn} onPress={() => setStep(3)}>
-            <Feather name="eye" size={22} color="#fff" />
+            <Feather name="eye" size={22} color={Colors.light.white} />
             <Text style={styles.viewBtnText}>View Saved Plan</Text>
           </Pressable>
           <Pressable style={styles.editBtn} onPress={() => { setStep(1); setSaved(false); }}>
-            <Feather name="edit-2" size={22} color="#32A99A" />
+            <Feather name="edit-2" size={22} color={Colors.light.primary} />
             <Text style={styles.editBtnText}>Create New Plan</Text>
           </Pressable>
         </ScrollView>
@@ -352,7 +353,7 @@ export default function PregnantNutritionScreen() {
             {renderChips(allergiesList, selectedAllergies, setSelectedAllergies)}
             <Pressable style={styles.nextBtn} onPress={() => setStep(2)}>
               <Text style={styles.nextBtnText}>Next</Text>
-              <Feather name="arrow-right" size={20} color="#fff" />
+              <Feather name="arrow-right" size={20} color={Colors.light.white} />
             </Pressable>
           </>
         )}
@@ -372,19 +373,19 @@ export default function PregnantNutritionScreen() {
                   style={[styles.dietOption, dietType === d && styles.dietOptionActive]}
                   onPress={() => setDietType(d)}
                 >
-                  <MaterialCommunityIcons name={d === "vegetarian" ? "leaf" : "food-drumstick"} size={22} color={dietType === d ? "#fff" : "#32A99A"} />
+                  <MaterialCommunityIcons name={d === "vegetarian" ? "leaf" : "food-drumstick"} size={22} color={dietType === d ? Colors.light.white : Colors.light.primary} />
                   <Text style={[styles.dietText, dietType === d && styles.dietTextActive]}>{d === "vegetarian" ? "Vegetarian" : "Non-Veg"}</Text>
                 </Pressable>
               ))}
             </View>
             <View style={styles.stepButtons}>
               <Pressable style={styles.backBtn} onPress={() => setStep(1)}>
-                <Feather name="arrow-left" size={20} color="#32A99A" />
+                <Feather name="arrow-left" size={20} color={Colors.light.primary} />
                 <Text style={styles.backBtnText}>Back</Text>
               </Pressable>
               <Pressable style={styles.nextBtn} onPress={generatePlan}>
                 <Text style={styles.nextBtnText}>Generate Plan</Text>
-                <Feather name="check" size={20} color="#fff" />
+                <Feather name="check" size={20} color={Colors.light.white} />
               </Pressable>
             </View>
           </>
@@ -395,7 +396,7 @@ export default function PregnantNutritionScreen() {
             <View style={styles.planHeader}>
               <Text style={styles.mainTitle}>Your Pregnancy Meal Plan</Text>
               <Pressable style={styles.saveBtn} onPress={savePlan}>
-                <Feather name="download" size={20} color="#fff" />
+                <Feather name="download" size={20} color={Colors.light.white} />
                 <Text style={styles.saveBtnText}>{saved ? "Saved!" : "Save"}</Text>
               </Pressable>
             </View>
@@ -411,13 +412,13 @@ export default function PregnantNutritionScreen() {
                 <View style={styles.foodList}>
                   {meal.foods.map((food, idx) => (
                     <View key={idx} style={styles.foodItem}>
-                      <Feather name="check-circle" size={16} color="#32A99A" />
+                      <Feather name="check-circle" size={16} color={Colors.light.primary} />
                       <Text style={styles.foodText}>{food}</Text>
                     </View>
                   ))}
                 </View>
                 <View style={styles.mealFooter}>
-                  <Feather name="info" size={14} color="#8A8F95" />
+                  <Feather name="info" size={14} color={Colors.light.textMuted} />
                   <Text style={styles.benefitsText}>{meal.benefits}</Text>
                 </View>
                 <View style={styles.budgetTag}><Text style={styles.budgetTagText}>💰 {meal.budget}</Text></View>
@@ -436,19 +437,19 @@ export default function PregnantNutritionScreen() {
                 <View style={styles.foodList}>
                   {meal.foods.map((food, idx) => (
                     <View key={idx} style={styles.foodItem}>
-                      <Feather name="check-circle" size={16} color="#F5A623" />
+                      <Feather name="check-circle" size={16} color={Colors.light.accent} />
                       <Text style={styles.foodText}>{food}</Text>
                     </View>
                   ))}
                 </View>
                 <View style={styles.mealFooter}>
-                  <Feather name="info" size={14} color="#8A8F95" />
+                  <Feather name="info" size={14} color={Colors.light.textMuted} />
                   <Text style={styles.benefitsText}>{meal.benefits}</Text>
                 </View>
               </View>
             ))}
             <Pressable style={styles.editPlanBtn} onPress={() => { setStep(1); setSaved(false); }}>
-              <Feather name="edit-2" size={20} color="#32A99A" />
+              <Feather name="edit-2" size={20} color={Colors.light.primary} />
               <Text style={styles.editPlanBtnText}>Edit Preferences</Text>
             </Pressable>
           </>
@@ -460,50 +461,50 @@ export default function PregnantNutritionScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#F5FAF9" },
+  container: { flex: 1, backgroundColor: Colors.light.background },
   content: { paddingHorizontal: 27, paddingTop: Platform.OS === "ios" ? 50 : 40, paddingBottom: 120 },
-  mainTitle: { fontSize: 24, fontWeight: "800", color: "#263238", marginBottom: 8 },
-  subtitle: { fontSize: 14, color: "#8A8F95", marginBottom: 24 },
-  questionTitle: { fontSize: 16, fontWeight: "700", color: "#263238", marginBottom: 4, marginTop: 20 },
+  mainTitle: { fontSize: 24, fontWeight: "800", color: Colors.light.text, marginBottom: 8 },
+  subtitle: { fontSize: 14, color: Colors.light.textMuted, marginBottom: 24 },
+  questionTitle: { fontSize: 16, fontWeight: "700", color: Colors.light.text, marginBottom: 4, marginTop: 20 },
   optionsGrid: { flexDirection: "row", flexWrap: "wrap", gap: 8, marginBottom: 16 },
-  optionChip: { paddingHorizontal: 16, paddingVertical: 10, borderRadius: 20, backgroundColor: "#FFFFFF", borderWidth: 1, borderColor: "#E0E7E7" },
-  optionChipActive: { backgroundColor: "#32A99A", borderColor: "#32A99A" },
-  optionText: { fontSize: 13, fontWeight: "600", color: "#7B8288" },
-  optionTextActive: { color: "#FFFFFF" },
-  nextBtn: { flexDirection: "row", alignItems: "center", justifyContent: "center", backgroundColor: "#32A99A", paddingVertical: 14, borderRadius: 12, gap: 8, marginTop: 20, flex: 1 },
-  nextBtnText: { color: "#fff", fontSize: 16, fontWeight: "700" },
-  backBtn: { flexDirection: "row", alignItems: "center", justifyContent: "center", paddingVertical: 14, borderRadius: 12, gap: 8, flex: 1, borderWidth: 1, borderColor: "#32A99A" },
-  backBtnText: { color: "#32A99A", fontSize: 16, fontWeight: "700" },
+  optionChip: { paddingHorizontal: 16, paddingVertical: 10, borderRadius: 20, backgroundColor: Colors.light.white, borderWidth: 1, borderColor: Colors.light.border },
+  optionChipActive: { backgroundColor: Colors.light.primary, borderColor: Colors.light.primary },
+  optionText: { fontSize: 13, fontWeight: "600", color: Colors.light.textSecondary },
+  optionTextActive: { color: Colors.light.white },
+  nextBtn: { flexDirection: "row", alignItems: "center", justifyContent: "center", backgroundColor: Colors.light.primary, paddingVertical: 14, borderRadius: 12, gap: 8, marginTop: 20, flex: 1 },
+  nextBtnText: { color: Colors.light.white, fontSize: 16, fontWeight: "700" },
+  backBtn: { flexDirection: "row", alignItems: "center", justifyContent: "center", paddingVertical: 14, borderRadius: 12, gap: 8, flex: 1, borderWidth: 1, borderColor: Colors.light.primary },
+  backBtnText: { color: Colors.light.primary, fontSize: 16, fontWeight: "700" },
   stepButtons: { flexDirection: "row", gap: 12, marginTop: 20 },
   dietRow: { flexDirection: "row", gap: 12, marginBottom: 16 },
-  dietOption: { flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center", paddingVertical: 14, borderRadius: 12, borderWidth: 1, borderColor: "#E0E7E7", backgroundColor: "#FFFFFF", gap: 8 },
-  dietOptionActive: { backgroundColor: "#32A99A", borderColor: "#32A99A" },
-  dietText: { fontSize: 14, fontWeight: "700", color: "#32A99A" },
-  dietTextActive: { color: "#FFFFFF" },
+  dietOption: { flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center", paddingVertical: 14, borderRadius: 12, borderWidth: 1, borderColor: Colors.light.border, backgroundColor: Colors.light.white, gap: 8 },
+  dietOptionActive: { backgroundColor: Colors.light.primary, borderColor: Colors.light.primary },
+  dietText: { fontSize: 14, fontWeight: "700", color: Colors.light.primary },
+  dietTextActive: { color: Colors.light.white },
   planHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 20 },
-  saveBtn: { flexDirection: "row", alignItems: "center", backgroundColor: "#32A99A", paddingHorizontal: 16, paddingVertical: 10, borderRadius: 10, gap: 6 },
-  saveBtnText: { color: "#fff", fontSize: 13, fontWeight: "700" },
-  mealCard: { backgroundColor: "#FFFFFF", borderRadius: 16, padding: 16, marginBottom: 12, borderWidth: 1, borderColor: "#E0E7E7" },
-  budgetCard: { borderColor: "#F5A623", borderWidth: 2 },
+  saveBtn: { flexDirection: "row", alignItems: "center", backgroundColor: Colors.light.primary, paddingHorizontal: 16, paddingVertical: 10, borderRadius: 10, gap: 6 },
+  saveBtnText: { color: Colors.light.white, fontSize: 13, fontWeight: "700" },
+  mealCard: { backgroundColor: Colors.light.white, borderRadius: 16, padding: 16, marginBottom: 12, borderWidth: 1, borderColor: Colors.light.border },
+  budgetCard: { borderColor: Colors.light.accent, borderWidth: 2 },
   mealHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 },
-  mealTitle: { fontSize: 16, fontWeight: "800", color: "#263238" },
-  mealTime: { fontSize: 12, color: "#8A8F95", marginTop: 2 },
-  calorieBadge: { backgroundColor: "#DDF5F1", paddingHorizontal: 12, paddingVertical: 6, borderRadius: 8 },
-  calorieText: { fontSize: 12, fontWeight: "700", color: "#32A99A" },
-  budgetBadge: { backgroundColor: "#FFF3E0", paddingHorizontal: 12, paddingVertical: 6, borderRadius: 8 },
-  budgetBadgeText: { fontSize: 12, fontWeight: "700", color: "#F5A623" },
+  mealTitle: { fontSize: 16, fontWeight: "800", color: Colors.light.text },
+  mealTime: { fontSize: 12, color: Colors.light.textMuted, marginTop: 2 },
+  calorieBadge: { backgroundColor: Colors.light.primaryLight, paddingHorizontal: 12, paddingVertical: 6, borderRadius: 8 },
+  calorieText: { fontSize: 12, fontWeight: "700", color: Colors.light.primary },
+  budgetBadge: { backgroundColor: Colors.light.accentLight, paddingHorizontal: 12, paddingVertical: 6, borderRadius: 8 },
+  budgetBadgeText: { fontSize: 12, fontWeight: "700", color: Colors.light.accent },
   foodList: { marginBottom: 12 },
   foodItem: { flexDirection: "row", alignItems: "center", marginBottom: 6, gap: 8 },
   foodText: { fontSize: 14, color: "#37474F", flex: 1 },
   mealFooter: { flexDirection: "row", alignItems: "flex-start", gap: 6, marginBottom: 8 },
-  benefitsText: { fontSize: 12, color: "#8A8F95", flex: 1, lineHeight: 16 },
-  budgetTag: { backgroundColor: "#FFF3E0", paddingVertical: 6, paddingHorizontal: 12, borderRadius: 8, alignSelf: "flex-start" },
-  budgetTagText: { fontSize: 12, fontWeight: "700", color: "#F5A623" },
-  sectionTitle: { fontSize: 18, fontWeight: "800", color: "#263238", marginTop: 24, marginBottom: 12 },
-  editPlanBtn: { flexDirection: "row", alignItems: "center", justifyContent: "center", paddingVertical: 14, borderRadius: 12, gap: 8, marginTop: 20, borderWidth: 1, borderColor: "#32A99A" },
-  editPlanBtnText: { color: "#32A99A", fontSize: 15, fontWeight: "700" },
-  viewBtn: { flexDirection: "row", alignItems: "center", justifyContent: "center", backgroundColor: "#32A99A", paddingVertical: 16, borderRadius: 12, gap: 10, marginBottom: 12 },
-  viewBtnText: { color: "#fff", fontSize: 16, fontWeight: "700" },
-  editBtn: { flexDirection: "row", alignItems: "center", justifyContent: "center", paddingVertical: 16, borderRadius: 12, gap: 10, borderWidth: 1, borderColor: "#32A99A" },
-  editBtnText: { color: "#32A99A", fontSize: 16, fontWeight: "700" },
+  benefitsText: { fontSize: 12, color: Colors.light.textMuted, flex: 1, lineHeight: 16 },
+  budgetTag: { backgroundColor: Colors.light.accentLight, paddingVertical: 6, paddingHorizontal: 12, borderRadius: 8, alignSelf: "flex-start" },
+  budgetTagText: { fontSize: 12, fontWeight: "700", color: Colors.light.accent },
+  sectionTitle: { fontSize: 18, fontWeight: "800", color: Colors.light.text, marginTop: 24, marginBottom: 12 },
+  editPlanBtn: { flexDirection: "row", alignItems: "center", justifyContent: "center", paddingVertical: 14, borderRadius: 12, gap: 8, marginTop: 20, borderWidth: 1, borderColor: Colors.light.primary },
+  editPlanBtnText: { color: Colors.light.primary, fontSize: 15, fontWeight: "700" },
+  viewBtn: { flexDirection: "row", alignItems: "center", justifyContent: "center", backgroundColor: Colors.light.primary, paddingVertical: 16, borderRadius: 12, gap: 10, marginBottom: 12 },
+  viewBtnText: { color: Colors.light.white, fontSize: 16, fontWeight: "700" },
+  editBtn: { flexDirection: "row", alignItems: "center", justifyContent: "center", paddingVertical: 16, borderRadius: 12, gap: 10, borderWidth: 1, borderColor: Colors.light.primary },
+  editBtnText: { color: Colors.light.primary, fontSize: 16, fontWeight: "700" },
 });

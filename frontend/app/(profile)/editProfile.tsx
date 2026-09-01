@@ -1,3 +1,4 @@
+import { Colors } from "@/constants/theme";
 import useAuth from "@/hooks/useAuth";
 import { Feather } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
@@ -97,7 +98,7 @@ export default function EditProfileScreen() {
         profile.emergencyContact || ""
       );
     } catch (err) {
-      console.log(err);
+      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -181,7 +182,7 @@ export default function EditProfileScreen() {
       <View style={styles.loader}>
         <ActivityIndicator
           size="large"
-          color="#2FA99A"
+          color={Colors.light.primary}
         />
       </View>
     );
@@ -202,7 +203,7 @@ export default function EditProfileScreen() {
           <Feather
             name="chevron-left"
             size={32}
-            color="#263238"
+            color={Colors.light.text}
           />
         </Pressable>
 
@@ -342,7 +343,7 @@ function Input({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F5FAF9",
+    backgroundColor: Colors.light.background,
     paddingHorizontal: 27,
     paddingTop: 40,
   },
@@ -363,7 +364,7 @@ const styles = StyleSheet.create({
     width: 52,
     height: 52,
     borderRadius: 26,
-    backgroundColor: "#fff",
+    backgroundColor: Colors.light.white,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -390,19 +391,19 @@ const styles = StyleSheet.create({
   },
 
   imageBtnText: {
-    color: "#2FA99A",
+    color: Colors.light.primary,
     fontWeight: "700",
   },
 
   label: {
     marginBottom: 6,
     fontWeight: "700",
-    color: "#263238",
+    color: Colors.light.text,
   },
 
   input: {
     height: 54,
-    backgroundColor: "#fff",
+    backgroundColor: Colors.light.white,
     borderWidth: 1,
     borderColor: "#D8E2E2",
     borderRadius: 12,
@@ -412,7 +413,7 @@ const styles = StyleSheet.create({
 
   saveBtn: {
     height: 56,
-    backgroundColor: "#2FA99A",
+    backgroundColor: Colors.light.primary,
     borderRadius: 12,
     justifyContent: "center",
     alignItems: "center",
@@ -420,7 +421,7 @@ const styles = StyleSheet.create({
   },
 
   saveText: {
-    color: "#fff",
+    color: Colors.light.white,
     fontSize: 16,
     fontWeight: "800",
   },

@@ -1,3 +1,4 @@
+import { Colors } from "@/constants/theme";
 import useAuth from "@/hooks/useAuth";
 import { Feather } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
@@ -155,7 +156,7 @@ export default function Register() {
     currentDate?: string
   ) => {
     setDatePickerType(type);
-    
+
     if (currentDate) {
       const [year, month, day] = currentDate.split("-").map(Number);
       setTempYear(year);
@@ -167,7 +168,7 @@ export default function Register() {
       setTempMonth(now.getMonth());
       setTempDay(now.getDate());
     }
-    
+
     setShowCustomPicker(true);
   };
 
@@ -199,7 +200,7 @@ export default function Register() {
       if (type === "dob") currentDate = dateOfBirth;
       else if (type === "delivery") currentDate = expectedDeliveryDate;
       else if (type === "childbirth") currentDate = childbirthDate;
-      
+
       openCustomDatePicker(type, currentDate || undefined);
     }
   };
@@ -324,15 +325,11 @@ export default function Register() {
   }
 
   try {
-    console.log("Starting registration process...");
-    
     // Step 1: Register with Firebase
     const result = await registerUser(
       email.trim(),
       password
     );
-    
-    console.log("Firebase registration successful:", result.user.uid);
 
     // Step 2: Prepare user data for backend
     const userData = {
@@ -387,8 +384,6 @@ export default function Register() {
       analyticsEnabled: false,
     };
 
-    console.log("Saving user to backend with role:", role, "careStage:", careStage);
-
     // Step 3: Save to backend
     const res = await fetch(
       `${API_URL}/users`,
@@ -403,8 +398,6 @@ export default function Register() {
 
     const data = await res.json().catch(() => null);
 
-    console.log("Backend response:", data);
-
     if (!res.ok) {
       throw new Error(
         data?.message || "Failed to save user profile."
@@ -417,16 +410,13 @@ export default function Register() {
       "Welcome to Maa42"
     );
 
-    console.log("Registration complete, will redirect to home in 2 seconds");
-
     // Step 4: Wait for AuthProvider to fetch user data, then redirect
     setTimeout(() => {
-      console.log("Redirecting to home now");
       router.replace("/(home)" as any);
     }, 2000); // 2 seconds delay
 
   } catch (error: any) {
-    console.log("REGISTER ERROR:", error);
+    console.error("REGISTER ERROR:", error);
     showToast(
       "error",
       "Registration Failed",
@@ -451,8 +441,8 @@ export default function Register() {
                 <Text style={styles.modalCancel}>Cancel</Text>
               </TouchableOpacity>
               <Text style={styles.modalTitle}>
-                {datePickerType === "dob" ? "Select Birth Date" : 
-                 datePickerType === "delivery" ? "Select Delivery Date" : 
+                {datePickerType === "dob" ? "Select Birth Date" :
+                 datePickerType === "delivery" ? "Select Delivery Date" :
                  "Select Childbirth Date"}
               </Text>
               <TouchableOpacity onPress={handleCustomDateConfirm}>
@@ -587,7 +577,7 @@ export default function Register() {
         style={styles.backBtn}
         onPress={() => router.back()}
       >
-        <Feather name="chevron-left" size={32} color="#263238" />
+        <Feather name="chevron-left" size={32} color={Colors.light.text} />
       </Pressable>
 
       <Text style={styles.title}>Create Account</Text>
@@ -612,7 +602,7 @@ export default function Register() {
         <Text style={dateOfBirth ? styles.dateText : styles.placeholderText}>
           {dateOfBirth || "Select your date of birth"}
         </Text>
-        <Feather name="calendar" size={20} color="#8A8F95" />
+        <Feather name="calendar" size={20} color={Colors.light.textMuted} />
       </Pressable>
 
       {/* iOS Native Date Picker */}
@@ -684,7 +674,7 @@ export default function Register() {
                 <Text style={expectedDeliveryDate ? styles.dateText : styles.placeholderText}>
                   {expectedDeliveryDate || "Select expected delivery date"}
                 </Text>
-                <Feather name="calendar" size={20} color="#8A8F95" />
+                <Feather name="calendar" size={20} color={Colors.light.textMuted} />
               </Pressable>
 
               <Text style={styles.label}>Pregnancy Week</Text>
@@ -710,7 +700,7 @@ export default function Register() {
                 <Text style={childbirthDate ? styles.dateText : styles.placeholderText}>
                   {childbirthDate || "Select childbirth date"}
                 </Text>
-                <Feather name="calendar" size={20} color="#8A8F95" />
+                <Feather name="calendar" size={20} color={Colors.light.textMuted} />
               </Pressable>
 
               <Text style={styles.label}>Delivery Type</Text>
@@ -858,7 +848,7 @@ export default function Register() {
           secureTextEntry={!showPassword}
         />
         <Pressable onPress={() => setShowPassword(!showPassword)}>
-          <Feather name={showPassword ? "eye-off" : "eye"} size={21} color="#8A8F95" />
+          <Feather name={showPassword ? "eye-off" : "eye"} size={21} color={Colors.light.textMuted} />
         </Pressable>
       </View>
 
@@ -867,7 +857,7 @@ export default function Register() {
         <Checkbox
           value={consent}
           onValueChange={setConsent}
-          color={consent ? "#2FA99A" : undefined}
+          color={consent ? Colors.light.primary : undefined}
         />
         <Text style={styles.consentText}>
           I agree to securely share my information for healthcare
@@ -886,7 +876,7 @@ export default function Register() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F5FAF9",
+    backgroundColor: Colors.light.background,
     paddingHorizontal: 27,
     paddingTop: 55,
   },
@@ -897,7 +887,7 @@ const styles = StyleSheet.create({
     width: 52,
     height: 52,
     borderRadius: 26,
-    backgroundColor: "#fff",
+    backgroundColor: Colors.light.white,
     alignItems: "center",
     justifyContent: "center",
     marginBottom: 8,
@@ -905,22 +895,22 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 22,
     fontWeight: "700",
-    color: "#263238",
+    color: Colors.light.text,
   },
   subtitle: {
-    color: "#7B8288",
+    color: Colors.light.textSecondary,
     marginTop: 4,
     marginBottom: 28,
   },
   label: {
     fontWeight: "600",
-    color: "#263238",
+    color: Colors.light.text,
     marginBottom: 8,
     marginTop: 4,
   },
   input: {
     height: 54,
-    backgroundColor: "#fff",
+    backgroundColor: Colors.light.white,
     borderWidth: 1,
     borderColor: "#CFD8DC",
     borderRadius: 12,
@@ -935,7 +925,7 @@ const styles = StyleSheet.create({
   },
   dateInput: {
     height: 54,
-    backgroundColor: "#fff",
+    backgroundColor: Colors.light.white,
     borderWidth: 1,
     borderColor: "#CFD8DC",
     borderRadius: 12,
@@ -946,7 +936,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   dateText: {
-    color: "#263238",
+    color: Colors.light.text,
     fontSize: 16,
   },
   placeholderText: {
@@ -964,16 +954,16 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#CFD8DC",
     borderRadius: 12,
-    backgroundColor: "#fff",
+    backgroundColor: Colors.light.white,
     justifyContent: "center",
     alignItems: "center",
   },
   activeOption: {
-    backgroundColor: "#DDF5F1",
-    borderColor: "#2FA99A",
+    backgroundColor: Colors.light.primaryLight,
+    borderColor: Colors.light.primary,
   },
   optionText: {
-    color: "#263238",
+    color: Colors.light.text,
     fontWeight: "600",
   },
   activeOptionText: {
@@ -981,7 +971,7 @@ const styles = StyleSheet.create({
   },
   passwordContainer: {
     height: 54,
-    backgroundColor: "#fff",
+    backgroundColor: Colors.light.white,
     borderWidth: 1,
     borderColor: "#CFD8DC",
     borderRadius: 12,
@@ -993,7 +983,7 @@ const styles = StyleSheet.create({
   passwordInput: {
     flex: 1,
     fontSize: 16,
-    color: "#263238",
+    color: Colors.light.text,
   },
   consentContainer: {
     flexDirection: "row",
@@ -1009,13 +999,13 @@ const styles = StyleSheet.create({
   },
   primaryBtn: {
     height: 56,
-    backgroundColor: "#32A99A",
+    backgroundColor: Colors.light.primary,
     borderRadius: 11,
     alignItems: "center",
     justifyContent: "center",
   },
   primaryText: {
-    color: "#fff",
+    color: Colors.light.white,
     fontSize: 17,
     fontWeight: "700",
   },
@@ -1026,7 +1016,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
   },
   modalContent: {
-    backgroundColor: "#fff",
+    backgroundColor: Colors.light.white,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     height: 380,
@@ -1047,12 +1037,12 @@ const styles = StyleSheet.create({
     fontWeight: "500",
   },
   modalTitle: {
-    color: "#263238",
+    color: Colors.light.text,
     fontSize: 17,
     fontWeight: "600",
   },
   modalDone: {
-    color: "#32A99A",
+    color: Colors.light.primary,
     fontSize: 16,
     fontWeight: "600",
   },
@@ -1085,11 +1075,11 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   pickerItemSelected: {
-    backgroundColor: "#DDF5F1",
+    backgroundColor: Colors.light.primaryLight,
     borderRadius: 8,
   },
   pickerItemText: {
-    color: "#263238",
+    color: Colors.light.text,
     fontSize: 16,
   },
   pickerItemTextSelected: {

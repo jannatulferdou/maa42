@@ -1,3 +1,4 @@
+import { Colors } from "@/constants/theme";
 import { Feather } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
@@ -42,13 +43,13 @@ export default function SessionDetail() {
     <View style={styles.screen}>
       <View style={styles.header}>
         <Pressable style={styles.backBtn} onPress={() => router.back()}>
-          <Feather name="chevron-left" size={34} color="#263238" />
+          <Feather name="chevron-left" size={34} color={Colors.light.text} />
         </Pressable>
         <Text style={styles.headerTitle}>Conversation</Text>
       </View>
 
       {loading ? (
-        <ActivityIndicator color="#2FA99A" style={{ marginTop: 40 }} />
+        <ActivityIndicator color={Colors.light.primary} style={{ marginTop: 40 }} />
       ) : (
         <FlatList
           data={messages}
@@ -73,12 +74,12 @@ export default function SessionDetail() {
 }
 
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: "#F5FAF9", paddingHorizontal: 27, paddingTop: 52 },
+  screen: { flex: 1, backgroundColor: Colors.light.background, paddingHorizontal: 27, paddingTop: 52 },
   header: { flexDirection: "row", alignItems: "center", marginBottom: 20 },
-  backBtn: { width: 52, height: 52, borderRadius: 26, backgroundColor: "#fff", alignItems: "center", justifyContent: "center" },
-  headerTitle: { marginLeft: 12, fontSize: 20, fontWeight: "800", color: "#263238" },
+  backBtn: { width: 52, height: 52, borderRadius: 26, backgroundColor: Colors.light.white, alignItems: "center", justifyContent: "center" },
+  headerTitle: { marginLeft: 12, fontSize: 20, fontWeight: "800", color: Colors.light.text },
   aiBubble: { backgroundColor: "#DFF2EE", borderRadius: 14, padding: 16, marginBottom: 12, alignSelf: "flex-start", maxWidth: "92%" },
-  userBubble: { backgroundColor: "#32A99A", borderRadius: 14, padding: 16, marginBottom: 12, alignSelf: "flex-end", maxWidth: "92%" },
-  bubbleText: { color: "#263238", fontSize: 15, lineHeight: 21 },
-  userText: { color: "#fff", fontSize: 15, lineHeight: 21 },
+  userBubble: { backgroundColor: Colors.light.primary, borderRadius: 14, padding: 16, marginBottom: 12, alignSelf: "flex-end", maxWidth: "92%" },
+  bubbleText: { color: Colors.light.text, fontSize: 15, lineHeight: 21 },
+  userText: { color: Colors.light.white, fontSize: 15, lineHeight: 21 },
 });

@@ -1,3 +1,4 @@
+import { Colors } from "@/constants/theme";
 import { Feather, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { fetch as expoFetch } from "expo/fetch";
@@ -194,7 +195,7 @@ export default function AIChat() {
           style={styles.historyBtn}
           onPress={() => router.push("/(chat)/history" as any)}
         >
-          <Feather name="clock" size={24} color="#7A7F86" />
+          <Feather name="clock" size={24} color={Colors.light.textSecondary} />
         </Pressable>
       </View>
 
@@ -222,7 +223,7 @@ export default function AIChat() {
       </View>
 
       <View style={styles.warning}>
-        <Feather name="shield" size={15} color="#F5A623" />
+        <Feather name="shield" size={15} color={Colors.light.accent} />
         <Text style={styles.warningText}>
           For emergencies, use the emergency button or contact a health expert.
         </Text>
@@ -230,7 +231,7 @@ export default function AIChat() {
 
       <View style={styles.inputRow}>
         <Pressable style={styles.micBtn}>
-          <Feather name="mic" size={21} color="#7A7F86" />
+          <Feather name="mic" size={21} color={Colors.light.textSecondary} />
         </Pressable>
 
         <TextInput
@@ -243,7 +244,7 @@ export default function AIChat() {
         />
 
         <Pressable style={styles.sendBtn} onPress={handleSend}>
-          <Feather name="send" size={22} color="#fff" />
+          <Feather name="send" size={22} color={Colors.light.white} />
         </Pressable>
       </View>
       {user?.careStage === "pregnant" ? (
@@ -260,7 +261,7 @@ export default function AIChat() {
 
 
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: "#F5FAF9", paddingTop: 42 },
+  screen: { flex: 1, backgroundColor: Colors.light.background, paddingTop: 42 },
   header: {
     flexDirection: "row",
     alignItems: "center",
@@ -280,7 +281,7 @@ const styles = StyleSheet.create({
     height: 34,
     borderRadius: 17,
   },
-  title: { fontSize: 19, fontWeight: "800", color: "#263238" },
+  title: { fontSize: 19, fontWeight: "800", color: Colors.light.text },
   online: {
     color: "#149B55",
     fontSize: 13,
@@ -291,7 +292,7 @@ const styles = StyleSheet.create({
     width: 42,
     height: 42,
     borderRadius: 21,
-    backgroundColor: "#fff",
+    backgroundColor: Colors.light.white,
     borderWidth: 1,
     borderColor: "#D8E2E2",
     alignItems: "center",
@@ -317,18 +318,18 @@ const styles = StyleSheet.create({
     maxWidth: "92%",
   },
   userBubble: {
-    backgroundColor: "#32A99A",
+    backgroundColor: Colors.light.primary,
     borderRadius: 14,
     padding: 16,
     marginBottom: 12,
     alignSelf: "flex-end",
     maxWidth: "92%",
   },
-  bubbleText: { color: "#263238", fontSize: 15, lineHeight: 21 },
-  userText: { color: "#fff", fontSize: 15, lineHeight: 21 },
+  bubbleText: { color: Colors.light.text, fontSize: 15, lineHeight: 21 },
+  userText: { color: Colors.light.white, fontSize: 15, lineHeight: 21 },
   warning: {
     height: 32,
-    backgroundColor: "#FFF3E3",
+    backgroundColor: Colors.light.accentLight,
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 18,
@@ -364,7 +365,7 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: "#32A99A",
+    backgroundColor: Colors.light.primary,
     alignItems: "center",
     justifyContent: "center",
   },

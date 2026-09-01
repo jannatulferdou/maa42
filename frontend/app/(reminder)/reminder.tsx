@@ -1,3 +1,4 @@
+import { Colors } from "@/constants/theme";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
@@ -48,16 +49,16 @@ const monthNames = [
 ];
 
 const COLORS = {
-  bg: "#F5FAF9",
-  cardBg: "#FFFFFF",
-  primary: "#32A99A",
-  primaryDark: "#159B8D",
-  primaryLight: "#DDF5F1",
-  textDark: "#263238",
-  textMuted: "#7A7F86",
+  bg: Colors.light.background,
+  cardBg: Colors.light.white,
+  primary: Colors.light.primary,
+  primaryDark: Colors.light.primaryDark,
+  primaryLight: Colors.light.primaryLight,
+  textDark: Colors.light.text,
+  textMuted: Colors.light.textSecondary,
   mutedDay: "#D2D8DA",
   border: "#CED9DD",
-  deleteBtn: "#E83E48",
+  deleteBtn: Colors.light.danger,
 };
 
 export default function ReminderScreen() {
@@ -350,7 +351,7 @@ export default function ReminderScreen() {
               value={alarm}
               onValueChange={setAlarm}
               trackColor={{ false: "#D1D5DB", true: COLORS.primary }}
-              thumbColor="#FFF"
+              thumbColor={Colors.light.white}
             />
           </View>
 
@@ -486,7 +487,7 @@ const styles = StyleSheet.create({
   activeDayCircle: { backgroundColor: COLORS.primary },
   dayText: { fontSize: 13, color: COLORS.textDark, fontWeight: "600" },
   mutedText: { color: COLORS.mutedDay, backgroundColor: "transparent" },
-  activeText: { color: "#FFF", fontWeight: "800" },
+  activeText: { color: Colors.light.white, fontWeight: "800" },
 
   reminderRow: { flexDirection: "row", alignItems: "center", paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: COLORS.bg },
   checkIcon: { width: 36, height: 36, borderRadius: 9, backgroundColor: COLORS.primaryLight, alignItems: "center", justifyContent: "center" },

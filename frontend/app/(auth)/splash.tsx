@@ -1,3 +1,4 @@
+import { Colors } from "@/constants/theme";
 import { router } from "expo-router";
 import { useEffect } from "react";
 import { Image, StyleSheet, Text, View } from "react-native";
@@ -31,7 +32,7 @@ export default function SplashScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F5FAF9",
+    backgroundColor: Colors.light.background,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -47,15 +48,15 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
   },
   green: {
-    color: "#2FA99A",
+    color: Colors.light.primary,
   },
   orange: {
-    color: "#f58523",
+    color: Colors.light.accent,
   },
   healthcare: {
     fontSize: 40,
     fontWeight: "800",
-    color: "#2FA99A",
+    color: Colors.light.primary,
     letterSpacing: 1,
   },
 });

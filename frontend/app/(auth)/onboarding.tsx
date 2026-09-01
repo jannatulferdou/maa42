@@ -1,3 +1,4 @@
+import { Colors } from "@/constants/theme";
 import { router } from "expo-router";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -56,7 +57,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 27,
-    backgroundColor: "#F5FAF9",
+    backgroundColor: Colors.light.background,
     justifyContent: "center",
   },
   imageBox: {
@@ -72,18 +73,18 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: "700",
     textAlign: "center",
-    color: "#263238",
+    color: Colors.light.text,
   },
   subtitle: {
     fontSize: 15,
     textAlign: "center",
-    color: "#7B8288",
+    color: Colors.light.textSecondary,
     marginTop: 8,
     marginBottom: 45,
   },
   label: {
     textAlign: "center",
-    color: "#8A8F95",
+    color: Colors.light.textMuted,
     marginBottom: 14,
   },
   langRow: {
@@ -99,11 +100,11 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#fff",
+    backgroundColor: Colors.light.white,
   },
   activeLang: {
-    backgroundColor: "#DDF5F1",
-    borderColor: "#2FA99A",
+    backgroundColor: Colors.light.primaryLight,
+    borderColor: Colors.light.primary,
   },
   langText: {
     fontSize: 15,
@@ -111,20 +112,20 @@ const styles = StyleSheet.create({
     color: "#37474F",
   },
   primaryBtn: {
-    backgroundColor: "#32A99A",
+    backgroundColor: Colors.light.primary,
     height: 56,
     borderRadius: 11,
     alignItems: "center",
     justifyContent: "center",
   },
   primaryText: {
-    color: "#fff",
+    color: Colors.light.white,
     fontSize: 17,
     fontWeight: "700",
   },
   footer: {
     textAlign: "center",
-    color: "#8A8F95",
+    color: Colors.light.textMuted,
     fontSize: 12,
     marginTop: 20,
   },

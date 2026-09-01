@@ -1,3 +1,4 @@
+import { Colors } from "@/constants/theme";
 import useAuth from "@/hooks/useAuth";
 import {
   Feather,
@@ -60,7 +61,7 @@ export default function DoctorHome() {
         setProfile(data.data);
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
     } finally {
       setProfileLoading(false);
     }
@@ -74,7 +75,7 @@ export default function DoctorHome() {
       <View style={styles.loader}>
         <ActivityIndicator
           size="large"
-          color="#32A99A"
+          color={Colors.light.primary}
         />
       </View>
     );
@@ -129,7 +130,7 @@ export default function DoctorHome() {
             <Feather
               name="bell"
               size={22}
-              color="#263238"
+              color={Colors.light.text}
             />
           </Pressable>
 
@@ -144,7 +145,7 @@ export default function DoctorHome() {
             <Feather
               name="settings"
               size={22}
-              color="#263238"
+              color={Colors.light.text}
             />
           </Pressable>
         </View>
@@ -194,7 +195,7 @@ export default function DoctorHome() {
               <Feather
                 name="users"
                 size={26}
-                color="#263238"
+                color={Colors.light.text}
               />
             }
           />
@@ -207,7 +208,7 @@ export default function DoctorHome() {
               <Feather
                 name="calendar"
                 size={26}
-                color="#263238"
+                color={Colors.light.text}
               />
             }
           />
@@ -220,7 +221,7 @@ export default function DoctorHome() {
               <Feather
                 name="file-text"
                 size={26}
-                color="#263238"
+                color={Colors.light.text}
               />
             }
           />
@@ -233,7 +234,7 @@ export default function DoctorHome() {
               <Ionicons
                 name="chatbubble-outline"
                 size={26}
-                color="#263238"
+                color={Colors.light.text}
               />
             }
           />
@@ -250,7 +251,7 @@ export default function DoctorHome() {
             <Feather
               name="alert-triangle"
               size={25}
-              color="#fff"
+              color={Colors.light.white}
             />
           </View>
 
@@ -273,7 +274,7 @@ export default function DoctorHome() {
           <Feather
             name="chevron-right"
             size={24}
-            color="#fff"
+            color={Colors.light.white}
           />
         </Pressable>
 
@@ -342,7 +343,7 @@ function StatCard({
       <Feather
         name={icon}
         size={22}
-        color="#2FA99A"
+        color={Colors.light.primary}
       />
 
       <Text
@@ -410,7 +411,7 @@ function PatientCard({
         <Feather
           name="user"
           size={22}
-          color="#2FA99A"
+          color={Colors.light.primary}
         />
       </View>
 
@@ -433,7 +434,7 @@ function PatientCard({
       <Feather
         name="chevron-right"
         size={22}
-        color="#8A8F95"
+        color={Colors.light.textMuted}
       />
     </Pressable>
   );
@@ -446,7 +447,7 @@ function NavItem({
   active,
 }: any) {
   const color = active
-    ? "#2FA99A"
+    ? Colors.light.primary
     : "#A7AFB3";
 
   return (
@@ -488,12 +489,12 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#F5FAF9",
+    backgroundColor: Colors.light.background,
   },
 
   screen: {
     flex: 1,
-    backgroundColor: "#F5FAF9",
+    backgroundColor: Colors.light.background,
   },
 
   content: {
@@ -519,19 +520,19 @@ const styles = StyleSheet.create({
   },
 
   welcome: {
-    color: "#8A8F95",
+    color: Colors.light.textMuted,
     fontSize: 13,
   },
 
   name: {
-    color: "#263238",
+    color: Colors.light.text,
     fontSize: 18,
     fontWeight: "800",
     marginTop: 3,
   },
 
   specialization: {
-    color: "#2FA99A",
+    color: Colors.light.primary,
     fontSize: 12,
     marginTop: 3,
   },
@@ -540,7 +541,7 @@ const styles = StyleSheet.create({
     width: 42,
     height: 42,
     borderRadius: 21,
-    backgroundColor: "#fff",
+    backgroundColor: Colors.light.white,
     borderWidth: 1,
     borderColor: "#D8E2E2",
     alignItems: "center",
@@ -551,7 +552,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 16,
     fontWeight: "800",
-    color: "#263238",
+    color: Colors.light.text,
     marginBottom: 12,
     marginTop: 5,
   },
@@ -564,7 +565,7 @@ const styles = StyleSheet.create({
 
   statCard: {
     width: "31%",
-    backgroundColor: "#fff",
+    backgroundColor: Colors.light.white,
     borderRadius: 13,
     padding: 14,
     borderWidth: 1,
@@ -574,13 +575,13 @@ const styles = StyleSheet.create({
   statNumber: {
     fontSize: 22,
     fontWeight: "800",
-    color: "#263238",
+    color: Colors.light.text,
     marginTop: 8,
   },
 
   statLabel: {
     fontSize: 11,
-    color: "#8A8F95",
+    color: Colors.light.textMuted,
     marginTop: 3,
   },
 
@@ -609,14 +610,14 @@ const styles = StyleSheet.create({
   },
 
   actionTitle: {
-    color: "#263238",
+    color: Colors.light.text,
     fontWeight: "800",
     fontSize: 14,
   },
 
   alertCard: {
     height: 72,
-    backgroundColor: "#E83E48",
+    backgroundColor: Colors.light.danger,
     borderRadius: 13,
     padding: 12,
     flexDirection: "row",
@@ -640,7 +641,7 @@ const styles = StyleSheet.create({
   },
 
   alertTitle: {
-    color: "#fff",
+    color: Colors.light.white,
     fontSize: 16,
     fontWeight: "800",
   },
@@ -653,21 +654,21 @@ const styles = StyleSheet.create({
 
   patientCard: {
     height: 70,
-    backgroundColor: "#fff",
+    backgroundColor: Colors.light.white,
     borderRadius: 12,
     paddingHorizontal: 14,
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 10,
     borderWidth: 1,
-    borderColor: "#E0E7E7",
+    borderColor: Colors.light.border,
   },
 
   patientAvatar: {
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: "#DDF5F1",
+    backgroundColor: Colors.light.primaryLight,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -678,13 +679,13 @@ const styles = StyleSheet.create({
   },
 
   patientName: {
-    color: "#263238",
+    color: Colors.light.text,
     fontSize: 15,
     fontWeight: "800",
   },
 
   patientStatus: {
-    color: "#8A8F95",
+    color: Colors.light.textMuted,
     fontSize: 12,
     marginTop: 3,
   },
@@ -695,9 +696,9 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     height: 72,
-    backgroundColor: "#fff",
+    backgroundColor: Colors.light.white,
     borderTopWidth: 1,
-    borderColor: "#E0E7E7",
+    borderColor: Colors.light.border,
     flexDirection: "row",
     justifyContent: "space-around",
     alignItems: "center",
